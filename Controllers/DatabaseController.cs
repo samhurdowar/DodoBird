@@ -94,13 +94,7 @@ namespace DodoBird.Controllers
 
                 throw;
             }
-
-
         }
-
-
-
-
 
         public string SyncDatabases()
         {

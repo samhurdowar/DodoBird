@@ -1,7 +1,4 @@
 
-
-<span class="width150 command-bar" onclick="SyncDatabases();">Sync Databases</span>  
-
 <center>
     <table style="width:98%;">
 
@@ -107,18 +104,6 @@
     $(document).ready(function () {
         GetDatabaseList();
     });
-
-    function SyncDatabases() {
-        AppSpinner(true);
-        $.ajax({
-            url: "./Database/SyncDatabases",
-            dataType: "text",
-            success: function (response) {
-                AppSpinner(false);
-                MessageBox("Information", response, true);
-            }
-        });
-    }
 
     function GetDatabaseList() {
         $.ajax({
