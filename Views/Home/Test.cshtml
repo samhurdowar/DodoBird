@@ -1,0 +1,71 @@
+
+<style>
+    .menu-item {
+        min-width: 200px;
+        white-space: nowrap;
+        padding: 0.5em;
+    }
+
+
+    #sortable > div {
+        float: left;
+    }
+</style>
+
+
+
+
+
+
+<div class="demo">
+    <div id="sortable">
+        <div id="draggable1" class="menu-item">
+            Administration
+            <ul id="sortable1" class="connectedSortable">
+                <li>AdminSub Menu I</li>
+                <li>AdminSub Menu II</li>
+                <li>AdminSub Menu III</li>
+                <li>AdminSub Menu IV</li>
+                <li>AdminSub Menu V</li>
+            </ul>
+        </div>
+        <div id="draggable2" class="menu-item">Contact Us</div>
+        <div id="draggable3" class="menu-item">FAQs</div>
+        <div id="draggable4" class="menu-item">Menu Item 4</div>
+        <div id="draggable5" class="menu-item">
+            Menu Item 5
+            <ul id="sortable2" class="connectedSortable">
+                <li>Sub Menu I</li>
+                <li>Sub Menu II</li>
+                <li>
+                    Sub Menu III
+                    <ul id="sortable3" class="connectedSortable">
+                        <li>Sub Menu One</li>
+                        <li>Sub Menu Two</li>
+                        <li>Sub Menu Three</li>
+
+                    </ul>
+                </li>
+                <li>Sub Menu IV</li>
+                <li>Sub Menu V</li>
+            </ul>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+$("#sortable").sortable({
+    revert: true
+});
+
+$("#sortable1, #sortable2").sortable({
+    connectWith: ".connectedSortable"
+});
+
+$("#sortable3").sortable({
+
+});
+
+</script>

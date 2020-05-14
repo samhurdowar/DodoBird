@@ -1,0 +1,208 @@
+﻿
+@using SourceControl.Services;
+
+<div id="progressPageTemplate">
+
+	<div style="position:relative;width: 98%;">
+		<div style="position:relative;width: 100%;">
+			Database: <input id="DbEntityId" name="DbEntityId" style="width:250px;" />&nbsp;&nbsp;&nbsp;
+			<a href="javascript:OpenNewPageTemplateWindow()" style="text-decoration:none;margin-right:10px;"><img src="/Images/ToolBar/add.png" /> <span style="position:relative;top:1px;">Add Template</span></a>
+			<a href="javascript:DeletePageTemplate()" style="text-decoration:none;margin-right:10px;"><img src="/Images/ToolBar/delete.png" /> <span style="position:relative;top:1px;">Delete Template</span></a>
+		</div>
+	</div>
+
+
+	<div id="splitterPageTemplate">
+		<div id="panePageTemplate1">
+			@Html.Partial("_PageTemplateGrid")
+		</div>
+
+		<div id="panePageTemplate2">
+
+			<div id="tabPageTemplate" style="display:none;">
+				<br />
+				<ul>
+					<li class="k-state-active">Table</li>
+					<li id="tabDetailFields">Detail Fields</li>
+					<li>Layout</li>
+				</ul>
+				<div>
+					@Html.Partial("_PageTemplateTable")
+				</div>
+				<div>
+					@Html.Partial("_PageTemplateColumn")
+				</div>
+				<div>
+					@Html.Partial("_PageTemplateLayout")
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+</div>
+
+<script>
+	var PageTemplateId = 0;
+	var ColumnDefId = 0;
+	var NewPageTemplateId = 0;
+
+
+	$("#DbEntityId").kendoDropDownList({
+		autoBind: true,
+		dataValueField: "ValueField",
+		dataTextField: "TextField",
+		dataSource: {
+			transport: {
+				read: {
+					dataType: "json",
+					url: "/PageTemplate/GetDbEntity"
+				}
+			}
+		},
+		change: function (e) {
+			$("#tabPageTemplate").hide();
+
+
+			RefreshEntityDependents();
+		},
+		dataBound: function (e) {
+
+			RefreshEntityDependents();
+			
+		}
+	});
+
+
+
+	function RefreshEntityDependents() {
+
+
+		try {
+			$("#NewTableName").data().kendoGrid.destroy();
+			$("#NewTableName").empty();
+		} catch (e) {
+		}
+
+		$("#NewTableName").kendoDropDownList({
+			autoBind: false,
+			dataTextField: "TextField",
+			dataValueField: "ValueField",
+			dataSource: {
+				transport: {
+					read: {
+						dataType: "json",
+						url: "/PageTemplate/GetTableOptions?dbEntityId=" + $("#DbEntityId").data("kendoDropDownList").value()
+					}
+				}
+			}
+		});	
+
+
+		var grd = $("#gridPageTemplate").data("kendoGrid");
+		grd.dataSource.transport.options.read.url = "/PageTemplate/GetPageTemplate?dbEntityId=" + $("#DbEntityId").data("kendoDropDownList").value();
+		grd.dataSource.read();
+
+
+
+		//PageTemplateId2
+		var pageTemplateId2 = $("#PageTemplateId2").data("kendoDropDownList");
+		pageTemplateId2.dataSource.transport.options.read.url = "/PageTemplate/GetPageTemplate?dbEntityId=" + $("#DbEntityId").data("kendoDropDownList").value();
+		pageTemplateId2.dataSource.read();
+
+
+	}
+
+
+
+
+
+
+	$(document).ready(function () {
+
+		 try {
+			  // set splitter pane
+			  var splitter = $("#splitterPageTemplate").kendoSplitter({
+					panes: [
+						 { collapsible: true, size: 320 },
+						 {}
+					],
+					orientation: "horizontal"
+			  });
+
+			  $("#tabPageTemplate").kendoTabStrip({
+					animation: {
+						 open: {
+							  effects: "fadeIn"
+						 }
+					}
+			  });
+
+			  $("#splitterPageTemplate").height(window.innerHeight - 180);
+			  $("#splitterPageTemplate").css("overflow", "hidden");
+
+			  $("#PageTemplateLayout").css("height", (window.innerHeight - 212) + "px");
+
+			  $("#PageTemplateLayout").kendoEditor({
+					//encoded: false,
+					tools: [
+						 "pdf",
+						 "bold",
+						 "italic",
+						 "underline",
+						 "strikethrough",
+						 "justifyLeft",
+						 "justifyCenter",
+						 "justifyRight",
+						 "justifyFull",
+						 "insertUnorderedList",
+						 "insertOrderedList",
+						 "indent",
+						 "outdent",
+						 "createLink",
+						 "unlink",
+						 "subscript",
+						 "superscript",
+						 "createTable",
+						 "addRowAbove",
+						 "addRowBelow",
+						 "addColumnLeft",
+						 "addColumnRight",
+						 "deleteRow",
+						 "deleteColumn",
+						 "viewHtml",
+						 "formatting",
+						 "cleanFormatting",
+						 "fontName",
+						 "fontSize",
+						 "foreColor",
+						 "backColor"
+					],
+					stylesheets: ["/Content/pdf.css"],
+					pdf: {
+						 fileName: "Layout.pdf",
+						 //proxyurl: "http://demos.telerik.com/kendo-ui/service/export",
+						 paperSize: "a4",
+						 margin: {
+							  bottom: 20,
+							  left: 20,
+							  right: 20,
+							  top: 20
+						 }
+					}
+
+			  });
+
+
+			  // Bind form elements to enable save button
+			  BindButtonToForm("FormLayout", "cmdSavePageTemplateLayout", "SaveLayout()");
+
+			  
+		 } catch (e) {
+			 alert("document.ready _PageTemplate.cshtml " + e);
+			 
+		 }
+
+
+	});
+</script>

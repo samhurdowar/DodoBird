@@ -1,0 +1,235 @@
+﻿
+/*  menu styles  */
+#main_nav {
+    margin: 0;
+    padding: 0;
+}
+
+#main_nav ul {
+    margin: 0;
+    padding: 0;
+    background: white;
+    float: left;
+    -webkit-transition: .1s;
+    transition: .1s;
+}
+
+    #main_nav li {
+        margin: 0;
+        padding: 3px;
+        padding-right: 30px;
+        float: left;
+        position: relative;
+        /*min-width: 150px;*/
+        list-style: none;
+        -webkit-transition: .1s;
+        transition: .1s;
+        /*border: 1px solid red;*/
+        white-space: nowrap;
+    }
+
+    #main_nav ul ul {
+        position: absolute;
+        left: 0;
+        top: 100%;
+        visibility: hidden;
+        opacity: 0;
+    }
+    #main_nav ul ul li {
+
+        min-width: 200px;
+    }
+#main_nav ul ul ul {
+    left: 100%;
+    top: 0;
+}
+
+#main_nav li:hover, #main_nav li:hover li {
+    cursor: pointer;
+    background: #ddd;
+}
+
+#main_nav li li:hover, #main_nav li li:hover li {
+    background: #bbb;
+}
+
+#main_nav li li li:hover {
+    background: #999;
+}
+
+#main_nav li:hover > ul {
+    visibility: visible;
+    opacity: 1;
+}
+
+
+/*  tab styles */
+.main-tab-ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333333;
+}
+
+
+.main-tab-ul li {
+    cursor: pointer;
+    float: left;
+    display: block;
+    color: white;
+    text-align: left;
+    padding: 5px;
+    width: 220px;
+    text-decoration: none;
+    border-right: 1px solid #bbb;
+}
+
+.main-tab-refresh-close {
+    padding: 3px;
+    cursor:pointer;
+    font-size: .8em;
+    border-radius: 3px;
+    float: right;
+}
+
+    .main-tab-refresh-close:hover {
+        background-color: #faeeaa;
+    }
+
+.main-tab-li-hover:hover {
+    background-color: #111111;
+}
+
+.tab-active {
+    background-color: darkseagreen;
+}
+
+#MainPage {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* common styles */
+.sort-grey {
+    color: #ccc;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.width150 {
+    width: 150px;
+}
+.width200 {
+    width: 200px;
+}
+.width250 {
+    width: 250px;
+}
+.width300 {
+    width: 300px;
+}
+.width350 {
+    width: 350px;
+}
+.width400 {
+    width:400px;
+}
+
+
+/* command-bar with span to the right */
+.command-bar {
+    background: #ddd;
+    padding: 5px;
+    padding-left: 7px;
+}
+
+    .command-bar span {
+        float: right;
+        cursor:pointer;
+        margin-right:3px;
+    }
+        .command-bar span:hover {
+            border-radius:3px;
+            background: #f9733d;
+        }
+
+/* command-bar-select 1-6 */
+.command-bar-active {
+    background: #f9733d;
+}
+
+.command-bar-select1 {
+    cursor: pointer;
+}
+    .command-bar-select1:hover {
+        background: #eee;
+    }
+
+.command-bar-select2 {
+    cursor: pointer;
+}
+
+    .command-bar-select2:hover {
+        background: #eee;
+    }
+
+.command-bar-select3 {
+    cursor: pointer;
+}
+
+    .command-bar-select3:hover {
+        background: #eee;
+    }
+
+.command-bar-select4 {
+    cursor: pointer;
+}
+
+    .command-bar-select4:hover {
+        background: #eee;
+    }
+
+.command-bar-select5 {
+    cursor: pointer;
+}
+
+    .command-bar-select5:hover {
+        background: #eee;
+    }
+
+.command-bar-select6 {
+    cursor: pointer;
+}
+
+    .command-bar-select6:hover {
+        background: #eee;
+    }
+
+
+/***********  buttons  ***************/
+.app-btn {
+    border-radius:3px;
+    padding:5px;
+    padding-right:15px;
+    padding-left:15px;
+    color: #333333;
+    cursor:pointer;
+}
+    .app-btn:hover {
+        background: #cdf1ff;
+    }
+
+    .app-btn.primary {
+        background: #11b9fc;
+    }
+        .app-btn.primary:hover {
+            background: #079cd8;
+        }
+
+    .app-btn.secondary {
+        background: #999;
+    }

@@ -1,0 +1,180 @@
+﻿
+@using SourceControl.Services;
+
+@{
+	var vd = SessionService.VirtualDomain;
+}
+<style>
+
+	/*.k-editor-dialog {
+		top: 17px !important;
+	}
+
+	.k-autocomplete, .k-combobox, .k-datepicker, .k-timepicker, .k-datetimepicker, .k-colorpicker, .k-numerictextbox, .k-dropdown, .k-selectbox, .k-textbox, .k-toolbar .k-split-button {
+		position: relative;
+		display: inline-block;
+		width: 12.4em;
+		overflow: visible;
+		border-width: 0;
+		vertical-align: middle;
+	}
+
+	.k-colorpicker, .k-toolbar .k-split-button {
+		width: auto;
+	}
+
+	.k-tool-group.k-button-group {
+		padding: 0 !important;
+	}
+
+	.k-button-group .k-tool {
+		margin: 0 !important;
+	}
+
+	.k-button-group .k-tool {
+		display: inline-block;
+		vertical-align: middle;
+		margin: 1px 0;
+		width: 24px;
+		height: 30px;
+		line-height: 24px;
+	}*/
+
+	table.expandEditor {
+		border-width: 0;
+		width: 100%;
+		height: 100%;
+	}
+</style>
+
+<form id="FormLayout">
+
+    <div class="app-command-bar">
+        <span id="cmdSavePageTemplateLayout" class="app-command-item app-command-disabled"><img src="@vd/Images/ToolBar/x24/save_disabled.png" /><span> Save</span></span>
+
+        <a href="javascript:PreviewLayout()" class="app-command-item"><img src="@vd/Images/ToolBar/x24/form-find.png" /> Preview</a>
+
+        <span class="app-command-item">Insert Field <input id="insertTableField" name="insertTableField" style="width:250px;" /></span>
+
+        <span class="app-command-item">Load From <input id="loadFrom" name="loadFrom" style="width:250px;" /> &nbsp;&nbsp; Num of Columns<input id="numOfCol" name="numOfCol" style="width:100px;" /></span>
+    </div>
+
+    <div>
+        <div id="progressFormLayout">
+            <textarea id="PageTemplateLayout" name="PageTemplateLayout" cols="80" rows="200" class="expandEditor"></textarea>
+        </div>
+
+    </div>
+</form>
+
+<script>
+	var dsNumOfCol = [
+		{ Text: "1", Value: "1" },
+		{ Text: "2", Value: "2" },
+		{ Text: "3", Value: "3" }
+	];
+	var dsLoadFrom = [
+		{ Text: "", Value: "" },
+		{ Text: "Column definitions", Value: "COLUMNDEF" }
+	];
+
+
+	$("#loadFrom").kendoDropDownList({
+		autoBind: true,
+		dataTextField: "Text",
+		dataValueField: "Value",
+		change: onChangeLoadFrom,
+		dataSource: dsLoadFrom
+	});
+
+	$("#numOfCol").kendoDropDownList({
+		autoBind: true,
+		dataTextField: "Text",
+		dataValueField: "Value",
+		dataSource: dsNumOfCol
+	});
+
+	//C:\App\AppWeb\AppDev\Scripts\kendo\2015.3.930\kendo.all.min.js
+	// search for for first View HTML  <input type='button' id='saveViewHTML' value='Save' onclick='SaveViewHTML()'>
+
+	function SaveViewHTML() {
+		var saveViewHTML = $("textarea.k-editor-textarea").val();
+		$("#PageTemplateLayout").data("kendoEditor").value(saveViewHTML);
+	}
+
+	function onChangeInsertTableField() {
+		var columnName = "[" + $("#insertTableField").data("kendoDropDownList").value() + "]";
+
+		var editor = $("#PageTemplateLayout").data("kendoEditor");
+
+		editor.exec("inserthtml", { value: columnName });
+	}
+
+	function onChangeLoadFrom() {
+		var value = $("#loadFrom").data("kendoDropDownList").value();
+		if (value == "COLUMNDEF") {
+			$.ajax({
+				url: "@vd/PageTemplate/GetLayoutFromColumnDef",
+				data: { pageTemplateId: PageTemplateId, numOfCol: $("#numOfCol").data("kendoDropDownList").value() },
+				dataType: "text",
+				type: "POST",
+				success: function (response) {
+					$("#PageTemplateLayout").data("kendoEditor").value(response);
+					$("#loadFrom").data("kendoDropDownList").value("");
+				}
+			});
+		}
+	}
+
+	function SaveLayout() {
+
+		$.ajax({
+			url: "@vd/PageTemplate/SaveLayout",
+			type: "POST",
+			data: { pageTemplateId: PageTemplateId, layout: $("#PageTemplateLayout").data("kendoEditor").value() },
+			dataType: "text",
+			success: function (response) {
+				 if (response.indexOf("Unable to process") > -1) {
+					 MessageBox("Information", response, false);
+				 } else {
+					  DisableButton("cmdSavePageTemplateLayout");
+				 }
+
+			},
+			error: function (x, y, z) {
+				alert("Error SaveLayout()");
+			}
+		});
+	}
+
+
+	function PreviewLayout() {
+		AddTab("Preview", PageTemplateId, "")
+	}
+
+
+	$(document).ready(function () {
+    CreateDropDownList("insertTableField", "/PageTemplate/GetColumnDefs?pageTemplateId=" + $("#PageTemplateId").val(), "ColumnName","ColumnName");
+  });
+
+
+
+
+  function CreateDropDownList(fldName, targetURL, valueField, textField) {
+    $("#" + fldName).kendoDropDownList({
+      autoBind: true,
+      dataValueField: valueField,
+      dataTextField: textField,
+      dataSource: {
+        transport: {
+          read: {
+            dataType: "json",
+            url: targetURL
+          }
+        }
+      }
+    });
+  }
+
+
+</script>

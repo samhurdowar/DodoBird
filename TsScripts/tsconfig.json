@@ -1,0 +1,16 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "removeComments": false,
+    "sourceMap": true,
+    "lib": [ "es2017", "dom" ],
+    "target": "es5",
+    "outDir": "../AppScriptsJS"
+  },
+  "exclude": [
+    "node_modules",
+    "wwwroot"
+  ]
+}

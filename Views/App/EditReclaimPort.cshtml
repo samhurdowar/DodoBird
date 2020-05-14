@@ -1,0 +1,231 @@
+﻿@using SourceControl.Services;
+
+@{
+	var recordId = ViewData["RecordId"].ToString();
+	var vd = SessionService.VirtualDomain;
+
+	var pageTemplate = (SourceControl.Models.Db.PageTemplate)ViewData["PageTemplate"];
+	var pageTemplateId = pageTemplate.PageTemplateId;
+	var obj = "obj" + pageTemplateId;
+	var objP = "P" + pageTemplateId;
+}
+
+
+<div class="app-command-bar">
+	@{
+		if (recordId.ToString() == "0")
+		{
+			<a href="javascript:@Html.Raw(obj)Add()"><img src="/Images/ToolBar/save.png"> <span>Save</span></a>
+		}
+		else
+		{
+			<a href="javascript:@Html.Raw(obj)Save('default')"><img src="/Images/ToolBar/save.png"> <span>Save</span></a>
+		}
+	}
+
+
+	<a href="javascript:@Html.Raw(obj)Cancel()"><img src="/Images/ToolBar/cancel.png"> <span>Cancel</span></a>
+</div>
+
+<br>
+
+<form id="Form_@Html.Raw(pageTemplateId)">
+	<input type="hidden" id="@Html.Raw(objP)_PortGUID" value="@recordId">
+	<input type="hidden" id="InternalId_@Html.Raw(pageTemplateId)" value="@recordId">
+
+	<table>
+
+		<tr valign="top">
+			<td>
+				<table style="width:100%;">
+					<tbody>
+
+						<tr style="height:20px;">
+							<td nowrap="nowrap" style="width:15%;">
+								Switch Name
+							</td>
+							<td style="width:85%;">
+								<input type="text" id="@Html.Raw(objP)_DeviceName" name="@Html.Raw(objP)_DeviceName" style="width:300px;" maxlength="100" required validationmessage="Required">
+							</td>
+						</tr>
+
+						@{
+							if (recordId.ToString() == "0")
+							{
+
+								<tr style="height:20px;">
+									<td nowrap="nowrap" style="width:15%;">
+										Port Prefix: (Ethernet or Eth. please verify before using)
+									</td>
+									<td style="width:85%;">
+										<input type="text" id="PortPrefix" name="PortPrefix" style="width:300px;" required />
+									</td>
+								</tr>
+							}
+							else
+							{
+								<tr style="height:20px;">
+									<td nowrap="nowrap" style="width:15%;">
+										PortNum
+									</td>
+									<td style="width:85%;">
+										<input type="text" id="@Html.Raw(objP)_PortNum" name="@Html.Raw(objP)_PortNum" style="width:300px;" maxlength="100" required validationmessage="Required">
+									</td>
+								</tr>
+
+							}
+						}
+
+						<tr style="height:20px;">
+							<td nowrap="nowrap" style="width:15%;">
+								HostName (Use OPEN if its new)
+							</td>
+							<td style="width:85%;">
+								<input type="text" id="@Html.Raw(objP)_HostName" name="@Html.Raw(objP)_HostName" style="width:300px;" maxlength="100" required validationmessage="Required">
+							</td>
+						</tr>
+
+
+						<tr style="height:20px;">
+							<td nowrap="nowrap" style="width:15%;">
+								VLAN (Use 999 if its new)
+							</td>
+							<td style="width:85%;">
+								<input type="text" id="@Html.Raw(objP)_VLAN" name="@Html.Raw(objP)_VLAN" style="width:300px;" maxlength="100">
+							</td>
+						</tr>
+
+
+						<tr style="height:20px;">
+							<td nowrap="nowrap" style="width:15%;">
+								Port Type
+							</td>
+							<td style="width:85%;">
+								<input id="@Html.Raw(objP)_PortType" name="@Html.Raw(objP)_PortType" style="width:300px;">
+							</td>
+						</tr>
+
+
+						@{
+							if (recordId.ToString() == "0")
+							{
+								<tr style="height:20px;">
+									<td nowrap="nowrap" style="width:15%;">
+										Start Blade
+									</td>
+									<td style="width:85%;">
+										<input type="text" id="StartBlade" name="StartBlade" style="width:100px;" required /> &nbsp;&nbsp;&nbsp;&nbsp; End Blade <input type="text" id="EndBlade" name="EndBlade" style="width:100px;" required validationmessage="Required" />
+									</td>
+								</tr>
+
+								<tr style="height:20px;">
+									<td nowrap="nowrap" style="width:15%;">
+										Start Port
+									</td>
+									<td style="width:85%;">
+										<input type="text" id="StartPort" name="StartPort" style="width:100px;" required /> &nbsp;&nbsp;&nbsp;&nbsp; End Port <input type="text" id="EndPort" name="EndPort" style="width:100px;" required validationmessage="Required" />
+									</td>
+								</tr>
+							}
+						}
+
+
+
+						<tr style="height:20px;"><td nowrap="nowrap" style="width:15%;"><br></td><td style="width:85%;"><br></td></tr>
+
+
+
+					</tbody>
+				</table>
+
+			</td>
+		</tr>
+
+
+	</table>
+
+</form>
+
+
+
+<script>
+		$(document).ready(function () {
+
+			$("#@Html.Raw(objP)_PortType").kendoDropDownList({
+				dataTextField: "text",
+				dataValueField: "value",
+				dataSource: [
+					{ text: "", value: "" },
+					{ text: "Copper", value: "Copper" },
+					{ text: "Fiber", value: "Fiber" }
+				]
+			});
+
+
+			BindFormData(@Html.Raw(pageTemplateId), "@recordId");
+		});
+
+
+
+	function @Html.Raw(obj)Cancel() {
+		GoToListTab(@Html.Raw(pageTemplateId));
+	}
+
+	function @Html.Raw(obj)Save(nextStep) {
+
+		var validator = $("#Form_@Html.Raw(pageTemplateId)").kendoValidator().data("kendoValidator");
+
+		if (!validator.validate()) {
+			return;
+		}
+
+		var json = ToJsonString("Form_@Html.Raw(pageTemplateId)");
+
+		$.ajax({
+			url: "/Page/SaveFormData",
+			type: "POST",
+			data: { pageTemplateId: @Html.Raw(pageTemplateId), json: json, oldJson: "" },
+			async: false,
+			dataType: "text",
+			success: function (currentRowId) {
+
+
+			}
+		}).done(function () {
+
+			$("#grid_@Html.Raw(pageTemplateId)").data("kendoGrid").dataSource.read();
+			$("#grid_@Html.Raw(pageTemplateId)").data("kendoGrid").refresh();
+			if (nextStep == "close") {
+				CloseSpecificTab("PageTemplate@Html.Raw(pageTemplateId)");
+			} else {
+				GoToListTab(@Html.Raw(pageTemplateId));
+			}
+		});
+
+	}
+
+	function @Html.Raw(obj)Add() {
+
+		var validator = $("#Form_@Html.Raw(pageTemplateId)").kendoValidator().data("kendoValidator");
+
+		if (!validator.validate()) {
+			return;
+		}
+
+		var json = ToJsonString("Form_@Html.Raw(pageTemplateId)");
+
+		$.ajax({
+			url: "/SwitchPorts/AddSwitches",
+			type: "POST",
+			data: { pageTemplateId: @Html.Raw(pageTemplateId), json: json },
+			dataType: "text",
+			success: function (response) {
+				MessageBox("Information", response, true);
+			}
+		}).done(function () {
+			GoToListTab(@Html.Raw(pageTemplateId));
+		});
+
+	}
+</script>
+

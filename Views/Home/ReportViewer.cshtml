@@ -1,0 +1,83 @@
+﻿@using SourceControl.Services;
+
+@{
+	Layout = null;
+	var viewId = "reportViewer" + DateTime.Now.Hour.ToString() + DateTime.Now.Minute.ToString() + DateTime.Now.Second.ToString() + DateTime.Now.Millisecond.ToString();
+
+	int userId = ViewBag.UserId;
+	int pageTemplateId = ViewBag.PageTemplateId;
+
+	var vd = SessionService.VirtualDomain;
+}
+<!DOCTYPE html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+	<title></title>
+</head>
+<body>
+	<link href="@Url.Content("~/Content/kendo/2018.1.117/kendo.default.mobile.min.css")" rel="stylesheet" type="text/css" />
+	<link href="@Url.Content("~/Content/kendo/2018.1.117/kendo.default.min.css")" rel="stylesheet" type="text/css" />
+	<link href="@Url.Content("~/Content/kendo/2018.1.117/kendo.common-fiori.min.css")" rel="stylesheet" type="text/css" />
+	<link href="@Url.Content("~/Content/kendo/2018.1.117/kendo.mobile.all.min.css")" rel="stylesheet" type="text/css" />
+	<link href="@Url.Content("~/Content/kendo/2018.1.117/kendo.dataviz.min.css")" rel="stylesheet" type="text/css" />
+	<link href="@Url.Content("~/Content/kendo/2018.1.117/kendo.fiori.min.css")" rel="stylesheet" type="text/css" />
+	<link href="@Url.Content("~/Content/kendo/2018.1.117/kendo.dataviz.fiori.min.css")" rel="stylesheet" type="text/css" />
+	<link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
+	<link href="@Url.Content("~/Content/tooltipster.css")" rel="stylesheet" type="text/css" />
+	<link href="@Url.Content("~/Content/jquery-ui.min.css")" rel="stylesheet" type="text/css" />
+
+
+	<script src="@Url.Content("~/Scripts/kendo/2018.1.117/jquery.min.js")"></script>
+	<script src="@Url.Content("~/Scripts/kendo/2018.1.117/jszip.min.js")"></script>
+	<script src="@Url.Content("~/Scripts/kendo/2018.1.117/angular.min.js")"></script>
+	<script src="@Url.Content("~/Scripts/kendo/2018.1.117/kendo.all.min.js")"></script>
+	<script src="@Url.Content("~/Scripts/kendo/2018.1.117/kendo.aspnetmvc.min.js")"></script>
+	<script src="@Url.Content("~/Scripts/jquery.tooltipster.min.js")"></script>
+	<script src="@Url.Content("~/Scripts/jquery-ui.min.js")"></script>
+
+	<script src="@Url.Content("~/ReportViewer/js/telerikReportViewer.kendo-12.2.18.1017.min.js")"></script>
+	<script src="@Url.Content("~/ReportViewer/js/telerikReportViewer-12.2.18.1017.min.js")"></script>
+
+	<style>
+		#rptViewer_@viewId {
+			position: absolute;
+			left: 5px;
+			right: 5px;
+			top: 5px;
+			bottom: 5px;
+			overflow: hidden;
+		}
+
+		.trv-content {
+			top: 5.5em !important;
+		}
+	</style>
+
+
+	<div id="rptViewer_@viewId">
+		loading...
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function () {
+
+			
+
+			$("#rptViewer_@viewId")
+				.telerik_ReportViewer({
+					serviceUrl: "@vd/api/Reports",
+					reportSource: {
+						report: "SourceControl.ReportLibrary.Report1, SourceControl",
+						parameters: { UserId: @userId, PageTemplateId: @pageTemplateId }
+					},
+					viewMode: telerikReportViewer.ViewModes.INTERACTIVE,
+					scaleMode: telerikReportViewer.ScaleModes.SPECIFIC,
+					scale: 1.0
+				});
+		});
+	</script>
+
+
+</body>
+</html>
+

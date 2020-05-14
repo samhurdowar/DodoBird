@@ -1,0 +1,1426 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="DodoBirdModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="AppColumn">
+          <Key>
+            <PropertyRef Name="AppColumnId" />
+          </Key>
+          <Property Name="AppColumnId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AppTableId" Type="int" Nullable="false" />
+          <Property Name="ColumnName" Type="varchar" MaxLength="100" />
+          <Property Name="DisplayName" Type="varchar" MaxLength="300" />
+          <Property Name="ElementType" Type="varchar" MaxLength="50" />
+          <Property Name="ElementWidth" Type="int" Nullable="false" />
+          <Property Name="ElementHeight" Type="int" Nullable="false" />
+          <Property Name="ColumnOrder" Type="int" Nullable="false" />
+          <Property Name="IsIdentity" Type="bit" Nullable="false" />
+          <Property Name="IsRequired" Type="bit" Nullable="false" />
+          <Property Name="IsComputed" Type="bit" Nullable="false" />
+          <Property Name="IsPrimaryKey" Type="bit" Nullable="false" />
+          <Property Name="DataLength" Type="int" Nullable="false" />
+          <Property Name="DefaultValue" Type="varchar" MaxLength="250" />
+          <Property Name="DataType" Type="varchar" MaxLength="250" />
+          <Property Name="SystemTypeId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AppDatabase">
+          <Key>
+            <PropertyRef Name="AppDatabaseId" />
+          </Key>
+          <Property Name="AppDatabaseId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DatabaseName" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="ConnectionString" Type="varchar" MaxLength="1000" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AppTable">
+          <Key>
+            <PropertyRef Name="AppTableId" />
+          </Key>
+          <Property Name="AppTableId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AppDatabaseId" Type="int" Nullable="false" />
+          <Property Name="TableName" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="PrimaryKey" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="PrimaryKeyType" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="SystemTypeId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AppUser">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="FirstName" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="LastName" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="FullName" Type="varchar" MaxLength="201" StoreGeneratedPattern="Computed" Nullable="false" />
+          <Property Name="Email" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="PrimaryPhone" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="AdName" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="Password" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="ProfileIsComplete" Type="bit" Nullable="false" />
+          <Property Name="LogonCount" Type="int" Nullable="false" />
+          <Property Name="RoleNames" Type="varchar" MaxLength="500" StoreGeneratedPattern="Computed" />
+          <Property Name="RoleIds" Type="varchar" MaxLength="500" StoreGeneratedPattern="Computed" />
+          <Property Name="RoleMenuIds" Type="varchar" MaxLength="500" StoreGeneratedPattern="Computed" />
+          <Property Name="AddDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ColumnDef">
+          <Key>
+            <PropertyRef Name="ColumnDefId" />
+          </Key>
+          <Property Name="ColumnDefId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PageTemplateId" Type="int" Nullable="false" />
+          <Property Name="ColumnName" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="OverideValue" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="DisplayName" Type="varchar" MaxLength="300" Nullable="false" />
+          <Property Name="ChildTemplateId" Type="int" Nullable="false" />
+          <Property Name="LookupTable" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="LookupFilter" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="ValueField" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="TextField" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="OrderField" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="ElementType" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="ElementWidth" Type="int" Nullable="false" />
+          <Property Name="ElementHeight" Type="int" Nullable="false" />
+          <Property Name="ElementObject" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="ElementDocReady" Type="varchar" MaxLength="1000" Nullable="false" />
+          <Property Name="ElementFunction" Type="varchar" MaxLength="1000" Nullable="false" />
+          <Property Name="ElementLabelLink" Type="varchar" MaxLength="1000" Nullable="false" />
+          <Property Name="AddBlankOption" Type="bit" Nullable="false" />
+          <Property Name="DatePickerOption" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="NumberMin" Type="int" Nullable="false" />
+          <Property Name="NumberMax" Type="int" Nullable="false" />
+          <Property Name="NumberOfDecimal" Type="int" Nullable="false" />
+          <Property Name="ShowInGrid" Type="bit" Nullable="false" />
+          <Property Name="GridWidth" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="IsMultiSelect" Type="bit" Nullable="false" />
+          <Property Name="ColumnOrder" Type="int" Nullable="false" />
+          <Property Name="IsIdentity" Type="bit" Nullable="false" />
+          <Property Name="IsRequired" Type="bit" Nullable="false" />
+          <Property Name="IsComputed" Type="bit" Nullable="false" />
+          <Property Name="IsPrimaryKey" Type="bit" Nullable="false" />
+          <Property Name="DataLength" Type="int" Nullable="false" />
+          <Property Name="DefaultValue" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="DataType" Type="varchar" MaxLength="250" Nullable="false" />
+        </EntityType>
+        <EntityType Name="DbEntity">
+          <Key>
+            <PropertyRef Name="DbEntityId" />
+          </Key>
+          <Property Name="DbEntityId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EntityName" Type="varchar" MaxLength="250" />
+          <Property Name="DisplayName" Type="varchar" MaxLength="250" />
+          <Property Name="ConnectionString" Type="varchar" MaxLength="1000" />
+        </EntityType>
+        <EntityType Name="DebugLog">
+          <Key>
+            <PropertyRef Name="LogId" />
+          </Key>
+          <Property Name="LogId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Source" Type="nvarchar" MaxLength="1000" />
+          <Property Name="LogContent" Type="varchar(max)" />
+          <Property Name="LogDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Grid">
+          <Key>
+            <PropertyRef Name="GridId" />
+          </Key>
+          <Property Name="GridId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AppTableId" Type="int" Nullable="false" />
+          <Property Name="GridName" Type="varchar" MaxLength="500" Nullable="false" />
+        </EntityType>
+        <EntityType Name="GridColumn">
+          <Key>
+            <PropertyRef Name="GridColumnId" />
+          </Key>
+          <Property Name="GridColumnId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="GridId" Type="int" Nullable="false" />
+          <Property Name="AppColumnId" Type="int" Nullable="false" />
+          <Property Name="IsDisplayed" Type="bit" Nullable="false" />
+          <Property Name="SortOrder" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Help">
+          <Key>
+            <PropertyRef Name="HelpId" />
+          </Key>
+          <Property Name="HelpId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="HelpTitle" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="HelpContent" Type="varchar(max)" Nullable="false" />
+          <Property Name="HelpOrder" Type="int" Nullable="false" />
+          <Property Name="IsDoc" Type="bit" Nullable="false" />
+          <Property Name="ParentId" Type="int" Nullable="false" />
+          <Property Name="HasChildren" Type="bit" StoreGeneratedPattern="Computed" />
+        </EntityType>
+        <EntityType Name="HelpDocLog">
+          <Key>
+            <PropertyRef Name="HelpDocLogId" />
+          </Key>
+          <Property Name="HelpDocLogId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="HelpDocId" Type="int" Nullable="false" />
+          <Property Name="HelpContent" Type="varchar(max)" Nullable="false" />
+          <Property Name="UpdateDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Menu">
+          <Key>
+            <PropertyRef Name="MenuId" />
+          </Key>
+          <Property Name="MenuId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MenuTitle" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="MenuOrder" Type="int" Nullable="false" />
+          <Property Name="ParentId" Type="int" Nullable="false" />
+          <Property Name="PageFile" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="MenuPageTemplateId" Type="int" Nullable="false" />
+          <Property Name="HelpId" Type="int" Nullable="false" />
+          <Property Name="HasSubMenu" Type="bit" StoreGeneratedPattern="Computed" />
+          <Property Name="IsSystem" Type="bit" Nullable="false" />
+          <Property Name="IsLastSubmenu" Type="bit" StoreGeneratedPattern="Computed" />
+          <Property Name="TemplateName" Type="varchar" MaxLength="500" StoreGeneratedPattern="Computed" />
+          <Property Name="PageType" Type="varchar" MaxLength="50" />
+          <Property Name="PageUrl" Type="varchar" MaxLength="800" />
+          <Property Name="PageTarget" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Menu1Item">
+          <Key>
+            <PropertyRef Name="Menu1ItemId" />
+          </Key>
+          <Property Name="Menu1ItemId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MenuTitle" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="PageFile" Type="varchar" MaxLength="500" />
+          <Property Name="TsScript" Type="varchar" MaxLength="500" />
+          <Property Name="GridId" Type="int" Nullable="false" />
+          <Property Name="FormId" Type="int" Nullable="false" />
+          <Property Name="SortOrder" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Menu2Item">
+          <Key>
+            <PropertyRef Name="Menu2ItemId" />
+          </Key>
+          <Property Name="Menu2ItemId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Menu1ItemId" Type="int" Nullable="false" />
+          <Property Name="MenuTitle" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="PageFile" Type="varchar" MaxLength="500" />
+          <Property Name="TsScript" Type="varchar" MaxLength="500" />
+          <Property Name="GridId" Type="int" Nullable="false" />
+          <Property Name="FormId" Type="int" Nullable="false" />
+          <Property Name="SortOrder" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Menu3Item">
+          <Key>
+            <PropertyRef Name="Menu3ItemId" />
+          </Key>
+          <Property Name="Menu3ItemId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Menu2ItemId" Type="int" Nullable="false" />
+          <Property Name="MenuTitle" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="PageFile" Type="varchar" MaxLength="500" />
+          <Property Name="TsScript" Type="varchar" MaxLength="500" />
+          <Property Name="GridId" Type="int" Nullable="false" />
+          <Property Name="FormId" Type="int" Nullable="false" />
+          <Property Name="SortOrder" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PageTemplate">
+          <Key>
+            <PropertyRef Name="PageTemplateId" />
+          </Key>
+          <Property Name="PageTemplateId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DbEntityId" Type="int" Nullable="false" />
+          <Property Name="TemplateName" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="TableName" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="PrimaryKey" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="ReportGridColumns" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="GridColumns" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="SortColumns" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="AddTabLabel" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="EditTabLabel" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="Layout" Type="text" Nullable="false" />
+          <Property Name="PageType" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="FilterClause" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="HelpId" Type="int" Nullable="false" />
+          <Property Name="OnLoadScript" Type="varchar(max)" Nullable="false" />
+          <Property Name="BodyScript" Type="varchar(max)" Nullable="false" />
+          <Property Name="OnSaveScript" Type="varchar(max)" Nullable="false" />
+          <Property Name="PageTemplateId2" Type="int" Nullable="false" />
+          <Property Name="RefKey2" Type="int" Nullable="false" />
+          <Property Name="PrimaryKey2" Type="int" Nullable="false" />
+          <Property Name="GridBodyHTML" Type="varchar(max)" Nullable="false" />
+          <Property Name="GridScript" Type="varchar(max)" Nullable="false" />
+          <Property Name="GridCSS" Type="varchar(max)" Nullable="false" />
+          <Property Name="GridOnDataBound" Type="varchar(max)" Nullable="false" />
+          <Property Name="CustomEditForm" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="GroupByColumns" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="GridAutoBind" Type="bit" Nullable="false" />
+          <Property Name="GridCommand" Type="varchar(max)" Nullable="false" />
+          <Property Name="RefKey2Name" Type="varchar" MaxLength="250" StoreGeneratedPattern="Computed" />
+          <Property Name="PrimaryKey2Name" Type="varchar" MaxLength="250" StoreGeneratedPattern="Computed" />
+        </EntityType>
+        <EntityType Name="Role">
+          <Key>
+            <PropertyRef Name="RoleId" />
+          </Key>
+          <Property Name="RoleId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RoleName" Type="varchar" MaxLength="250" />
+        </EntityType>
+        <EntityType Name="RoleMenuAccess">
+          <Key>
+            <PropertyRef Name="RoleMenuAccessId" />
+          </Key>
+          <Property Name="RoleMenuAccessId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RoleId" Type="int" Nullable="false" />
+          <Property Name="MenuId" Type="int" Nullable="false" />
+          <Property Name="CanAdd" Type="bit" Nullable="false" />
+          <Property Name="CanEdit" Type="bit" Nullable="false" />
+          <Property Name="CanDelete" Type="bit" Nullable="false" />
+          <Property Name="CanDownload" Type="bit" Nullable="false" />
+          <Property Name="MenuTitle" Type="varchar" MaxLength="500" StoreGeneratedPattern="Computed" />
+          <Property Name="RoleName" Type="varchar" MaxLength="300" StoreGeneratedPattern="Computed" />
+        </EntityType>
+        <EntityType Name="UserMenuAccess">
+          <Key>
+            <PropertyRef Name="UserMenuAccessId" />
+          </Key>
+          <Property Name="UserMenuAccessId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="MenuId" Type="int" Nullable="false" />
+          <Property Name="CanAdd" Type="bit" Nullable="false" />
+          <Property Name="CanEdit" Type="bit" Nullable="false" />
+          <Property Name="CanDelete" Type="bit" Nullable="false" />
+          <Property Name="CanDownload" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UserQuery">
+          <Key>
+            <PropertyRef Name="UserQueryId" />
+          </Key>
+          <Property Name="UserQueryId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="PageTemplateId" Type="int" Nullable="false" />
+          <Property Name="CurrentQuery" Type="varchar(max)" Nullable="false" />
+          <Property Name="IsGrid" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UserRole">
+          <Key>
+            <PropertyRef Name="UserRoleId" />
+          </Key>
+          <Property Name="UserRoleId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="RoleId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="WebSiteSetting">
+          <Key>
+            <PropertyRef Name="WebSiteSettingId" />
+          </Key>
+          <Property Name="WebSiteSettingId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="WelcomeMessage" Type="varchar" MaxLength="500" />
+          <Property Name="BannerLogo" Type="varchar" MaxLength="500" />
+          <Property Name="HomePageLogo" Type="varchar" MaxLength="500" />
+          <Property Name="CompanyName" Type="varchar" MaxLength="500" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'NetworkToolbox.dbo.ViewAppTable' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="ViewAppTable">
+          <Key>
+            <PropertyRef Name="AppTableId" />
+            <PropertyRef Name="AppDatabaseId" />
+            <PropertyRef Name="TableName" />
+            <PropertyRef Name="PrimaryKey" />
+            <PropertyRef Name="PrimaryKeyType" />
+            <PropertyRef Name="SystemTypeId" />
+          </Key>
+          <Property Name="AppTableId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AppDatabaseId" Type="int" Nullable="false" />
+          <Property Name="TableName" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="PrimaryKey" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="PrimaryKeyType" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="SystemTypeId" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="fk_AppDatabase_AppTable">
+          <End Role="AppDatabase" Type="Self.AppDatabase" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AppTable" Type="Self.AppTable" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AppDatabase">
+              <PropertyRef Name="AppDatabaseId" />
+            </Principal>
+            <Dependent Role="AppTable">
+              <PropertyRef Name="AppDatabaseId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_AppTable_AppColumn">
+          <End Role="AppTable" Type="Self.AppTable" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AppColumn" Type="Self.AppColumn" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AppTable">
+              <PropertyRef Name="AppTableId" />
+            </Principal>
+            <Dependent Role="AppColumn">
+              <PropertyRef Name="AppTableId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_AppTable_Grid">
+          <End Role="AppTable" Type="Self.AppTable" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Grid" Type="Self.Grid" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AppTable">
+              <PropertyRef Name="AppTableId" />
+            </Principal>
+            <Dependent Role="Grid">
+              <PropertyRef Name="AppTableId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_DbEntity_PageTemplate">
+          <End Role="DbEntity" Type="Self.DbEntity" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="PageTemplate" Type="Self.PageTemplate" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DbEntity">
+              <PropertyRef Name="DbEntityId" />
+            </Principal>
+            <Dependent Role="PageTemplate">
+              <PropertyRef Name="DbEntityId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_Grid_GridColumn">
+          <End Role="Grid" Type="Self.Grid" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="GridColumn" Type="Self.GridColumn" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Grid">
+              <PropertyRef Name="GridId" />
+            </Principal>
+            <Dependent Role="GridColumn">
+              <PropertyRef Name="GridId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_GridColumn_AppColumn">
+          <End Role="AppColumn" Type="Self.AppColumn" Multiplicity="1" />
+          <End Role="GridColumn" Type="Self.GridColumn" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AppColumn">
+              <PropertyRef Name="AppColumnId" />
+            </Principal>
+            <Dependent Role="GridColumn">
+              <PropertyRef Name="AppColumnId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_Menu1Item_Menu2Item">
+          <End Role="Menu1Item" Type="Self.Menu1Item" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Menu2Item" Type="Self.Menu2Item" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Menu1Item">
+              <PropertyRef Name="Menu1ItemId" />
+            </Principal>
+            <Dependent Role="Menu2Item">
+              <PropertyRef Name="Menu1ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_Menu2Item_Menu3Item">
+          <End Role="Menu2Item" Type="Self.Menu2Item" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Menu3Item" Type="Self.Menu3Item" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Menu2Item">
+              <PropertyRef Name="Menu2ItemId" />
+            </Principal>
+            <Dependent Role="Menu3Item">
+              <PropertyRef Name="Menu2ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_PageTemplate_ColumnDef">
+          <End Role="PageTemplate" Type="Self.PageTemplate" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ColumnDef" Type="Self.ColumnDef" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PageTemplate">
+              <PropertyRef Name="PageTemplateId" />
+            </Principal>
+            <Dependent Role="ColumnDef">
+              <PropertyRef Name="PageTemplateId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="DodoBirdModelStoreContainer">
+          <EntitySet Name="AppColumn" EntityType="Self.AppColumn" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AppDatabase" EntityType="Self.AppDatabase" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AppTable" EntityType="Self.AppTable" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AppUser" EntityType="Self.AppUser" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ColumnDef" EntityType="Self.ColumnDef" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DbEntity" EntityType="Self.DbEntity" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DebugLog" EntityType="Self.DebugLog" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Grid" EntityType="Self.Grid" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="GridColumn" EntityType="Self.GridColumn" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Help" EntityType="Self.Help" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="HelpDocLog" EntityType="Self.HelpDocLog" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Menu" EntityType="Self.Menu" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Menu1Item" EntityType="Self.Menu1Item" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Menu2Item" EntityType="Self.Menu2Item" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Menu3Item" EntityType="Self.Menu3Item" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PageTemplate" EntityType="Self.PageTemplate" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Role" EntityType="Self.Role" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RoleMenuAccess" EntityType="Self.RoleMenuAccess" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserMenuAccess" EntityType="Self.UserMenuAccess" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserQuery" EntityType="Self.UserQuery" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserRole" EntityType="Self.UserRole" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="WebSiteSetting" EntityType="Self.WebSiteSetting" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ViewAppTable" EntityType="Self.ViewAppTable" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [ViewAppTable].[AppTableId] AS [AppTableId], 
+    [ViewAppTable].[AppDatabaseId] AS [AppDatabaseId], 
+    [ViewAppTable].[TableName] AS [TableName], 
+    [ViewAppTable].[PrimaryKey] AS [PrimaryKey], 
+    [ViewAppTable].[PrimaryKeyType] AS [PrimaryKeyType], 
+    [ViewAppTable].[SystemTypeId] AS [SystemTypeId]
+    FROM [dbo].[ViewAppTable] AS [ViewAppTable]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="fk_AppDatabase_AppTable" Association="Self.fk_AppDatabase_AppTable">
+            <End Role="AppDatabase" EntitySet="AppDatabase" />
+            <End Role="AppTable" EntitySet="AppTable" />
+          </AssociationSet>
+          <AssociationSet Name="fk_AppTable_AppColumn" Association="Self.fk_AppTable_AppColumn">
+            <End Role="AppTable" EntitySet="AppTable" />
+            <End Role="AppColumn" EntitySet="AppColumn" />
+          </AssociationSet>
+          <AssociationSet Name="fk_AppTable_Grid" Association="Self.fk_AppTable_Grid">
+            <End Role="AppTable" EntitySet="AppTable" />
+            <End Role="Grid" EntitySet="Grid" />
+          </AssociationSet>
+          <AssociationSet Name="fk_DbEntity_PageTemplate" Association="Self.fk_DbEntity_PageTemplate">
+            <End Role="DbEntity" EntitySet="DbEntity" />
+            <End Role="PageTemplate" EntitySet="PageTemplate" />
+          </AssociationSet>
+          <AssociationSet Name="fk_Grid_GridColumn" Association="Self.fk_Grid_GridColumn">
+            <End Role="Grid" EntitySet="Grid" />
+            <End Role="GridColumn" EntitySet="GridColumn" />
+          </AssociationSet>
+          <AssociationSet Name="fk_GridColumn_AppColumn" Association="Self.fk_GridColumn_AppColumn">
+            <End Role="AppColumn" EntitySet="AppColumn" />
+            <End Role="GridColumn" EntitySet="GridColumn" />
+          </AssociationSet>
+          <AssociationSet Name="fk_Menu1Item_Menu2Item" Association="Self.fk_Menu1Item_Menu2Item">
+            <End Role="Menu1Item" EntitySet="Menu1Item" />
+            <End Role="Menu2Item" EntitySet="Menu2Item" />
+          </AssociationSet>
+          <AssociationSet Name="fk_Menu2Item_Menu3Item" Association="Self.fk_Menu2Item_Menu3Item">
+            <End Role="Menu2Item" EntitySet="Menu2Item" />
+            <End Role="Menu3Item" EntitySet="Menu3Item" />
+          </AssociationSet>
+          <AssociationSet Name="fk_PageTemplate_ColumnDef" Association="Self.fk_PageTemplate_ColumnDef">
+            <End Role="PageTemplate" EntitySet="PageTemplate" />
+            <End Role="ColumnDef" EntitySet="ColumnDef" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="DodoBirdModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="DodoBirdEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="AppUsers" EntityType="DodoBirdModel.AppUser" />
+          <EntitySet Name="Helps" EntityType="DodoBirdModel.Help" />
+          <EntitySet Name="HelpDocLogs" EntityType="DodoBirdModel.HelpDocLog" />
+          <EntitySet Name="Menus" EntityType="DodoBirdModel.Menu" />
+          <EntitySet Name="Roles" EntityType="DodoBirdModel.Role" />
+          <EntitySet Name="RoleMenuAccesses" EntityType="DodoBirdModel.RoleMenuAccess" />
+          <EntitySet Name="UserMenuAccesses" EntityType="DodoBirdModel.UserMenuAccess" />
+          <EntitySet Name="UserQueries" EntityType="DodoBirdModel.UserQuery" />
+          <EntitySet Name="UserRoles" EntityType="DodoBirdModel.UserRole" />
+          <EntitySet Name="WebSiteSettings" EntityType="DodoBirdModel.WebSiteSetting" />
+          <EntitySet Name="DebugLogs" EntityType="DodoBirdModel.DebugLog" />
+          <EntitySet Name="ColumnDefs" EntityType="DodoBirdModel.ColumnDef" />
+          <EntitySet Name="DbEntities" EntityType="DodoBirdModel.DbEntity" />
+          <EntitySet Name="PageTemplates" EntityType="DodoBirdModel.PageTemplate" />
+          <AssociationSet Name="fk_PageTemplate_ColumnDef" Association="DodoBirdModel.fk_PageTemplate_ColumnDef">
+            <End Role="PageTemplate" EntitySet="PageTemplates" />
+            <End Role="ColumnDef" EntitySet="ColumnDefs" />
+          </AssociationSet>
+          <AssociationSet Name="fk_DbEntity_PageTemplate" Association="DodoBirdModel.fk_DbEntity_PageTemplate">
+            <End Role="DbEntity" EntitySet="DbEntities" />
+            <End Role="PageTemplate" EntitySet="PageTemplates" />
+          </AssociationSet>
+          <EntitySet Name="AppDatabases" EntityType="DodoBirdModel.AppDatabase" />
+          <EntitySet Name="Grids" EntityType="DodoBirdModel.Grid" />
+          <EntitySet Name="Menu1Item" EntityType="DodoBirdModel.Menu1Item" />
+          <EntitySet Name="Menu2Item" EntityType="DodoBirdModel.Menu2Item" />
+          <EntitySet Name="Menu3Item" EntityType="DodoBirdModel.Menu3Item" />
+          <AssociationSet Name="fk_Menu1Item_Menu2Item" Association="DodoBirdModel.fk_Menu1Item_Menu2Item">
+            <End Role="Menu1Item" EntitySet="Menu1Item" />
+            <End Role="Menu2Item" EntitySet="Menu2Item" />
+          </AssociationSet>
+          <AssociationSet Name="fk_Menu2Item_Menu3Item" Association="DodoBirdModel.fk_Menu2Item_Menu3Item">
+            <End Role="Menu2Item" EntitySet="Menu2Item" />
+            <End Role="Menu3Item" EntitySet="Menu3Item" />
+          </AssociationSet>
+          <EntitySet Name="AppColumns" EntityType="DodoBirdModel.AppColumn" />
+          <EntitySet Name="AppTables" EntityType="DodoBirdModel.AppTable" />
+          <AssociationSet Name="fk_AppTable_AppColumn" Association="DodoBirdModel.fk_AppTable_AppColumn">
+            <End Role="AppTable" EntitySet="AppTables" />
+            <End Role="AppColumn" EntitySet="AppColumns" />
+          </AssociationSet>
+          <AssociationSet Name="fk_AppDatabase_AppTable" Association="DodoBirdModel.fk_AppDatabase_AppTable">
+            <End Role="AppDatabase" EntitySet="AppDatabases" />
+            <End Role="AppTable" EntitySet="AppTables" />
+          </AssociationSet>
+          <AssociationSet Name="fk_AppTable_Grid" Association="DodoBirdModel.fk_AppTable_Grid">
+            <End Role="AppTable" EntitySet="AppTables" />
+            <End Role="Grid" EntitySet="Grids" />
+          </AssociationSet>
+          <EntitySet Name="GridColumns" EntityType="DodoBirdModel.GridColumn" />
+          <AssociationSet Name="fk_GridColumn_AppColumn" Association="DodoBirdModel.fk_GridColumn_AppColumn">
+            <End Role="AppColumn" EntitySet="AppColumns" />
+            <End Role="GridColumn" EntitySet="GridColumns" />
+          </AssociationSet>
+          <AssociationSet Name="fk_Grid_GridColumn" Association="DodoBirdModel.fk_Grid_GridColumn">
+            <End Role="Grid" EntitySet="Grids" />
+            <End Role="GridColumn" EntitySet="GridColumns" />
+          </AssociationSet>
+          <EntitySet Name="ViewAppTables" EntityType="DodoBirdModel.ViewAppTable" />
+          </EntityContainer>
+        <EntityType Name="AppUser">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="LastName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="FullName" Type="String" Nullable="false" MaxLength="201" FixedLength="false" Unicode="false" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="PrimaryPhone" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="AdName" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ProfileIsComplete" Type="Boolean" Nullable="false" />
+          <Property Name="LogonCount" Type="Int32" Nullable="false" />
+          <Property Name="RoleNames" Type="String" MaxLength="500" FixedLength="false" Unicode="false" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="RoleIds" Type="String" MaxLength="500" FixedLength="false" Unicode="false" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="RoleMenuIds" Type="String" MaxLength="500" FixedLength="false" Unicode="false" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="AddDate" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
+        <EntityType Name="Help">
+          <Key>
+            <PropertyRef Name="HelpId" />
+          </Key>
+          <Property Name="HelpId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="HelpTitle" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="HelpContent" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="HelpOrder" Type="Int32" Nullable="false" />
+          <Property Name="IsDoc" Type="Boolean" Nullable="false" />
+          <Property Name="ParentId" Type="Int32" Nullable="false" />
+          <Property Name="HasChildren" Type="Boolean" annotation:StoreGeneratedPattern="Computed" />
+        </EntityType>
+        <EntityType Name="HelpDocLog">
+          <Key>
+            <PropertyRef Name="HelpDocLogId" />
+          </Key>
+          <Property Name="HelpDocLogId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="HelpDocId" Type="Int32" Nullable="false" />
+          <Property Name="HelpContent" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="UpdateDate" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
+        <EntityType Name="Menu">
+          <Key>
+            <PropertyRef Name="MenuId" />
+          </Key>
+          <Property Name="MenuId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MenuTitle" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="MenuOrder" Type="Int32" Nullable="false" />
+          <Property Name="ParentId" Type="Int32" Nullable="false" />
+          <Property Name="PageFile" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="MenuPageTemplateId" Type="Int32" Nullable="false" />
+          <Property Name="HelpId" Type="Int32" Nullable="false" />
+          <Property Name="HasSubMenu" Type="Boolean" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="IsSystem" Type="Boolean" Nullable="false" />
+          <Property Name="IsLastSubmenu" Type="Boolean" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="TemplateName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="PageType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PageUrl" Type="String" MaxLength="800" FixedLength="false" Unicode="false" />
+          <Property Name="PageTarget" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Role">
+          <Key>
+            <PropertyRef Name="RoleId" />
+          </Key>
+          <Property Name="RoleId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RoleName" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="RoleMenuAccess">
+          <Key>
+            <PropertyRef Name="RoleMenuAccessId" />
+          </Key>
+          <Property Name="RoleMenuAccessId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RoleId" Type="Int32" Nullable="false" />
+          <Property Name="MenuId" Type="Int32" Nullable="false" />
+          <Property Name="CanAdd" Type="Boolean" Nullable="false" />
+          <Property Name="CanEdit" Type="Boolean" Nullable="false" />
+          <Property Name="CanDelete" Type="Boolean" Nullable="false" />
+          <Property Name="CanDownload" Type="Boolean" Nullable="false" />
+          <Property Name="MenuTitle" Type="String" MaxLength="500" FixedLength="false" Unicode="false" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="RoleName" Type="String" MaxLength="300" FixedLength="false" Unicode="false" annotation:StoreGeneratedPattern="Computed" />
+        </EntityType>
+        <EntityType Name="UserMenuAccess">
+          <Key>
+            <PropertyRef Name="UserMenuAccessId" />
+          </Key>
+          <Property Name="UserMenuAccessId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="MenuId" Type="Int32" Nullable="false" />
+          <Property Name="CanAdd" Type="Boolean" Nullable="false" />
+          <Property Name="CanEdit" Type="Boolean" Nullable="false" />
+          <Property Name="CanDelete" Type="Boolean" Nullable="false" />
+          <Property Name="CanDownload" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UserQuery">
+          <Key>
+            <PropertyRef Name="UserQueryId" />
+          </Key>
+          <Property Name="UserQueryId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="PageTemplateId" Type="Int32" Nullable="false" />
+          <Property Name="CurrentQuery" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="IsGrid" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UserRole">
+          <Key>
+            <PropertyRef Name="UserRoleId" />
+          </Key>
+          <Property Name="UserRoleId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="RoleId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="WebSiteSetting">
+          <Key>
+            <PropertyRef Name="WebSiteSettingId" />
+          </Key>
+          <Property Name="WebSiteSettingId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="WelcomeMessage" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="BannerLogo" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="HomePageLogo" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="CompanyName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="DebugLog">
+          <Key>
+            <PropertyRef Name="LogId" />
+          </Key>
+          <Property Name="LogId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Source" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="LogContent" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="LogDate" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
+        <EntityType Name="ColumnDef">
+          <Key>
+            <PropertyRef Name="ColumnDefId" />
+          </Key>
+          <Property Name="ColumnDefId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PageTemplateId" Type="Int32" Nullable="false" />
+          <Property Name="ColumnName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="OverideValue" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DisplayName" Type="String" Nullable="false" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="ChildTemplateId" Type="Int32" Nullable="false" />
+          <Property Name="LookupTable" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="LookupFilter" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="ValueField" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="TextField" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="OrderField" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ElementType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ElementWidth" Type="Int32" Nullable="false" />
+          <Property Name="ElementHeight" Type="Int32" Nullable="false" />
+          <Property Name="ElementObject" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="ElementDocReady" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="ElementFunction" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="ElementLabelLink" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="AddBlankOption" Type="Boolean" Nullable="false" />
+          <Property Name="DatePickerOption" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="NumberMin" Type="Int32" Nullable="false" />
+          <Property Name="NumberMax" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfDecimal" Type="Int32" Nullable="false" />
+          <Property Name="ShowInGrid" Type="Boolean" Nullable="false" />
+          <Property Name="GridWidth" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IsMultiSelect" Type="Boolean" Nullable="false" />
+          <Property Name="ColumnOrder" Type="Int32" Nullable="false" />
+          <Property Name="IsIdentity" Type="Boolean" Nullable="false" />
+          <Property Name="IsRequired" Type="Boolean" Nullable="false" />
+          <Property Name="IsComputed" Type="Boolean" Nullable="false" />
+          <Property Name="IsPrimaryKey" Type="Boolean" Nullable="false" />
+          <Property Name="DataLength" Type="Int32" Nullable="false" />
+          <Property Name="DefaultValue" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="DataType" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="PageTemplate" Relationship="DodoBirdModel.fk_PageTemplate_ColumnDef" FromRole="ColumnDef" ToRole="PageTemplate" />
+        </EntityType>
+        <EntityType Name="DbEntity">
+          <Key>
+            <PropertyRef Name="DbEntityId" />
+          </Key>
+          <Property Name="DbEntityId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EntityName" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="DisplayName" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="ConnectionString" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="PageTemplates" Relationship="DodoBirdModel.fk_DbEntity_PageTemplate" FromRole="DbEntity" ToRole="PageTemplate" />
+        </EntityType>
+        <EntityType Name="PageTemplate">
+          <Key>
+            <PropertyRef Name="PageTemplateId" />
+          </Key>
+          <Property Name="PageTemplateId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DbEntityId" Type="Int32" Nullable="false" />
+          <Property Name="TemplateName" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="TableName" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="PrimaryKey" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="ReportGridColumns" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="GridColumns" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="SortColumns" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="AddTabLabel" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="EditTabLabel" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Layout" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="PageType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FilterClause" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="HelpId" Type="Int32" Nullable="false" />
+          <Property Name="OnLoadScript" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="BodyScript" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="OnSaveScript" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="PageTemplateId2" Type="Int32" Nullable="false" />
+          <Property Name="RefKey2" Type="Int32" Nullable="false" />
+          <Property Name="PrimaryKey2" Type="Int32" Nullable="false" />
+          <Property Name="GridBodyHTML" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="GridScript" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="GridCSS" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="GridOnDataBound" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="CustomEditForm" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="GroupByColumns" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="GridAutoBind" Type="Boolean" Nullable="false" />
+          <Property Name="GridCommand" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="RefKey2Name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="PrimaryKey2Name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" annotation:StoreGeneratedPattern="Computed" />
+          <NavigationProperty Name="ColumnDefs" Relationship="DodoBirdModel.fk_PageTemplate_ColumnDef" FromRole="PageTemplate" ToRole="ColumnDef" />
+          <NavigationProperty Name="DbEntity" Relationship="DodoBirdModel.fk_DbEntity_PageTemplate" FromRole="PageTemplate" ToRole="DbEntity" />
+        </EntityType>
+        <Association Name="fk_PageTemplate_ColumnDef">
+          <End Type="DodoBirdModel.PageTemplate" Role="PageTemplate" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DodoBirdModel.ColumnDef" Role="ColumnDef" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PageTemplate">
+              <PropertyRef Name="PageTemplateId" />
+            </Principal>
+            <Dependent Role="ColumnDef">
+              <PropertyRef Name="PageTemplateId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_DbEntity_PageTemplate">
+          <End Type="DodoBirdModel.DbEntity" Role="DbEntity" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DodoBirdModel.PageTemplate" Role="PageTemplate" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DbEntity">
+              <PropertyRef Name="DbEntityId" />
+            </Principal>
+            <Dependent Role="PageTemplate">
+              <PropertyRef Name="DbEntityId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="AppDatabase">
+          <Key>
+            <PropertyRef Name="AppDatabaseId" />
+          </Key>
+          <Property Name="AppDatabaseId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DatabaseName" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="ConnectionString" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Grid">
+          <Key>
+            <PropertyRef Name="GridId" />
+          </Key>
+          <Property Name="GridId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AppTableId" Type="Int32" Nullable="false" />
+          <Property Name="GridName" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="GridColumns" Relationship="DodoBirdModel.fk_Grid_GridColumn" FromRole="Grid" ToRole="GridColumn" />
+        </EntityType>
+        <EntityType Name="Menu1Item">
+          <Key>
+            <PropertyRef Name="Menu1ItemId" />
+          </Key>
+          <Property Name="Menu1ItemId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MenuTitle" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="PageFile" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="TsScript" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="GridId" Type="Int32" Nullable="false" />
+          <Property Name="FormId" Type="Int32" Nullable="false" />
+          <Property Name="SortOrder" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Menu2Item" Relationship="DodoBirdModel.fk_Menu1Item_Menu2Item" FromRole="Menu1Item" ToRole="Menu2Item" />
+        </EntityType>
+        <EntityType Name="Menu2Item">
+          <Key>
+            <PropertyRef Name="Menu2ItemId" />
+          </Key>
+          <Property Name="Menu2ItemId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Menu1ItemId" Type="Int32" Nullable="false" />
+          <Property Name="MenuTitle" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="PageFile" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="TsScript" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="GridId" Type="Int32" Nullable="false" />
+          <Property Name="FormId" Type="Int32" Nullable="false" />
+          <Property Name="SortOrder" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Menu3Item" Relationship="DodoBirdModel.fk_Menu2Item_Menu3Item" FromRole="Menu2Item" ToRole="Menu3Item" />
+        </EntityType>
+        <EntityType Name="Menu3Item">
+          <Key>
+            <PropertyRef Name="Menu3ItemId" />
+          </Key>
+          <Property Name="Menu3ItemId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Menu2ItemId" Type="Int32" Nullable="false" />
+          <Property Name="MenuTitle" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="PageFile" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="TsScript" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="GridId" Type="Int32" Nullable="false" />
+          <Property Name="FormId" Type="Int32" Nullable="false" />
+          <Property Name="SortOrder" Type="Int32" Nullable="false" />
+        </EntityType>
+        <Association Name="fk_Menu1Item_Menu2Item">
+          <End Type="DodoBirdModel.Menu1Item" Role="Menu1Item" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DodoBirdModel.Menu2Item" Role="Menu2Item" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Menu1Item">
+              <PropertyRef Name="Menu1ItemId" />
+            </Principal>
+            <Dependent Role="Menu2Item">
+              <PropertyRef Name="Menu1ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_Menu2Item_Menu3Item">
+          <End Type="DodoBirdModel.Menu2Item" Role="Menu2Item" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DodoBirdModel.Menu3Item" Role="Menu3Item" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Menu2Item">
+              <PropertyRef Name="Menu2ItemId" />
+            </Principal>
+            <Dependent Role="Menu3Item">
+              <PropertyRef Name="Menu2ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="AppColumn">
+          <Key>
+            <PropertyRef Name="AppColumnId" />
+          </Key>
+          <Property Name="AppColumnId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AppTableId" Type="Int32" Nullable="false" />
+          <Property Name="ColumnName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="DisplayName" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="ElementType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ElementWidth" Type="Int32" Nullable="false" />
+          <Property Name="ElementHeight" Type="Int32" Nullable="false" />
+          <Property Name="ColumnOrder" Type="Int32" Nullable="false" />
+          <Property Name="IsIdentity" Type="Boolean" Nullable="false" />
+          <Property Name="IsRequired" Type="Boolean" Nullable="false" />
+          <Property Name="IsComputed" Type="Boolean" Nullable="false" />
+          <Property Name="IsPrimaryKey" Type="Boolean" Nullable="false" />
+          <Property Name="DataLength" Type="Int32" Nullable="false" />
+          <Property Name="DefaultValue" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="DataType" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="SystemTypeId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="AppTable" Relationship="DodoBirdModel.fk_AppTable_AppColumn" FromRole="AppColumn" ToRole="AppTable" />
+        </EntityType>
+        <EntityType Name="AppTable">
+          <Key>
+            <PropertyRef Name="AppTableId" />
+          </Key>
+          <Property Name="AppTableId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AppDatabaseId" Type="Int32" Nullable="false" />
+          <Property Name="TableName" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="PrimaryKey" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="PrimaryKeyType" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="SystemTypeId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="AppColumns" Relationship="DodoBirdModel.fk_AppTable_AppColumn" FromRole="AppTable" ToRole="AppColumn" />
+          <NavigationProperty Name="AppDatabase" Relationship="DodoBirdModel.fk_AppDatabase_AppTable" FromRole="AppTable" ToRole="AppDatabase" />
+        </EntityType>
+        <Association Name="fk_AppTable_AppColumn">
+          <End Type="DodoBirdModel.AppTable" Role="AppTable" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DodoBirdModel.AppColumn" Role="AppColumn" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AppTable">
+              <PropertyRef Name="AppTableId" />
+            </Principal>
+            <Dependent Role="AppColumn">
+              <PropertyRef Name="AppTableId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_AppDatabase_AppTable">
+          <End Type="DodoBirdModel.AppDatabase" Role="AppDatabase" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DodoBirdModel.AppTable" Role="AppTable" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AppDatabase">
+              <PropertyRef Name="AppDatabaseId" />
+            </Principal>
+            <Dependent Role="AppTable">
+              <PropertyRef Name="AppDatabaseId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_AppTable_Grid">
+          <End Type="DodoBirdModel.AppTable" Role="AppTable" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DodoBirdModel.Grid" Role="Grid" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AppTable">
+              <PropertyRef Name="AppTableId" />
+            </Principal>
+            <Dependent Role="Grid">
+              <PropertyRef Name="AppTableId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="GridColumn">
+          <Key>
+            <PropertyRef Name="GridColumnId" />
+          </Key>
+          <Property Name="GridColumnId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="GridId" Type="Int32" Nullable="false" />
+          <Property Name="AppColumnId" Type="Int32" Nullable="false" />
+          <Property Name="IsDisplayed" Type="Boolean" Nullable="false" />
+          <Property Name="SortOrder" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="AppColumn" Relationship="DodoBirdModel.fk_GridColumn_AppColumn" FromRole="GridColumn" ToRole="AppColumn" />
+        </EntityType>
+        <Association Name="fk_GridColumn_AppColumn">
+          <End Type="DodoBirdModel.AppColumn" Role="AppColumn" Multiplicity="1" />
+          <End Type="DodoBirdModel.GridColumn" Role="GridColumn" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AppColumn">
+              <PropertyRef Name="AppColumnId" />
+            </Principal>
+            <Dependent Role="GridColumn">
+              <PropertyRef Name="AppColumnId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_Grid_GridColumn">
+          <End Type="DodoBirdModel.Grid" Role="Grid" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DodoBirdModel.GridColumn" Role="GridColumn" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Grid">
+              <PropertyRef Name="GridId" />
+            </Principal>
+            <Dependent Role="GridColumn">
+              <PropertyRef Name="GridId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ViewAppTable">
+          <Key>
+            <PropertyRef Name="AppTableId" />
+            <PropertyRef Name="AppDatabaseId" />
+            <PropertyRef Name="TableName" />
+            <PropertyRef Name="PrimaryKey" />
+            <PropertyRef Name="PrimaryKeyType" />
+            <PropertyRef Name="SystemTypeId" />
+          </Key>
+          <Property Name="AppTableId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AppDatabaseId" Type="Int32" Nullable="false" />
+          <Property Name="TableName" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="PrimaryKey" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="PrimaryKeyType" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="SystemTypeId" Type="Int32" Nullable="false" />
+        </EntityType>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="DodoBirdModelStoreContainer" CdmEntityContainer="DodoBirdEntities">
+          <EntitySetMapping Name="AppUsers">
+            <EntityTypeMapping TypeName="DodoBirdModel.AppUser">
+              <MappingFragment StoreEntitySet="AppUser">
+                <ScalarProperty Name="AddDate" ColumnName="AddDate" />
+                <ScalarProperty Name="RoleMenuIds" ColumnName="RoleMenuIds" />
+                <ScalarProperty Name="RoleIds" ColumnName="RoleIds" />
+                <ScalarProperty Name="RoleNames" ColumnName="RoleNames" />
+                <ScalarProperty Name="LogonCount" ColumnName="LogonCount" />
+                <ScalarProperty Name="ProfileIsComplete" ColumnName="ProfileIsComplete" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="AdName" ColumnName="AdName" />
+                <ScalarProperty Name="PrimaryPhone" ColumnName="PrimaryPhone" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Helps">
+            <EntityTypeMapping TypeName="DodoBirdModel.Help">
+              <MappingFragment StoreEntitySet="Help">
+                <ScalarProperty Name="HasChildren" ColumnName="HasChildren" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="IsDoc" ColumnName="IsDoc" />
+                <ScalarProperty Name="HelpOrder" ColumnName="HelpOrder" />
+                <ScalarProperty Name="HelpContent" ColumnName="HelpContent" />
+                <ScalarProperty Name="HelpTitle" ColumnName="HelpTitle" />
+                <ScalarProperty Name="HelpId" ColumnName="HelpId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="HelpDocLogs">
+            <EntityTypeMapping TypeName="DodoBirdModel.HelpDocLog">
+              <MappingFragment StoreEntitySet="HelpDocLog">
+                <ScalarProperty Name="UpdateDate" ColumnName="UpdateDate" />
+                <ScalarProperty Name="HelpContent" ColumnName="HelpContent" />
+                <ScalarProperty Name="HelpDocId" ColumnName="HelpDocId" />
+                <ScalarProperty Name="HelpDocLogId" ColumnName="HelpDocLogId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Menus">
+            <EntityTypeMapping TypeName="DodoBirdModel.Menu">
+              <MappingFragment StoreEntitySet="Menu">
+                <ScalarProperty Name="PageTarget" ColumnName="PageTarget" />
+                <ScalarProperty Name="PageUrl" ColumnName="PageUrl" />
+                <ScalarProperty Name="PageType" ColumnName="PageType" />
+                <ScalarProperty Name="TemplateName" ColumnName="TemplateName" />
+                <ScalarProperty Name="IsLastSubmenu" ColumnName="IsLastSubmenu" />
+                <ScalarProperty Name="IsSystem" ColumnName="IsSystem" />
+                <ScalarProperty Name="HasSubMenu" ColumnName="HasSubMenu" />
+                <ScalarProperty Name="HelpId" ColumnName="HelpId" />
+                <ScalarProperty Name="MenuPageTemplateId" ColumnName="MenuPageTemplateId" />
+                <ScalarProperty Name="PageFile" ColumnName="PageFile" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="MenuOrder" ColumnName="MenuOrder" />
+                <ScalarProperty Name="MenuTitle" ColumnName="MenuTitle" />
+                <ScalarProperty Name="MenuId" ColumnName="MenuId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Roles">
+            <EntityTypeMapping TypeName="DodoBirdModel.Role">
+              <MappingFragment StoreEntitySet="Role">
+                <ScalarProperty Name="RoleName" ColumnName="RoleName" />
+                <ScalarProperty Name="RoleId" ColumnName="RoleId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RoleMenuAccesses">
+            <EntityTypeMapping TypeName="DodoBirdModel.RoleMenuAccess">
+              <MappingFragment StoreEntitySet="RoleMenuAccess">
+                <ScalarProperty Name="RoleName" ColumnName="RoleName" />
+                <ScalarProperty Name="MenuTitle" ColumnName="MenuTitle" />
+                <ScalarProperty Name="CanDownload" ColumnName="CanDownload" />
+                <ScalarProperty Name="CanDelete" ColumnName="CanDelete" />
+                <ScalarProperty Name="CanEdit" ColumnName="CanEdit" />
+                <ScalarProperty Name="CanAdd" ColumnName="CanAdd" />
+                <ScalarProperty Name="MenuId" ColumnName="MenuId" />
+                <ScalarProperty Name="RoleId" ColumnName="RoleId" />
+                <ScalarProperty Name="RoleMenuAccessId" ColumnName="RoleMenuAccessId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserMenuAccesses">
+            <EntityTypeMapping TypeName="DodoBirdModel.UserMenuAccess">
+              <MappingFragment StoreEntitySet="UserMenuAccess">
+                <ScalarProperty Name="CanDownload" ColumnName="CanDownload" />
+                <ScalarProperty Name="CanDelete" ColumnName="CanDelete" />
+                <ScalarProperty Name="CanEdit" ColumnName="CanEdit" />
+                <ScalarProperty Name="CanAdd" ColumnName="CanAdd" />
+                <ScalarProperty Name="MenuId" ColumnName="MenuId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="UserMenuAccessId" ColumnName="UserMenuAccessId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserQueries">
+            <EntityTypeMapping TypeName="DodoBirdModel.UserQuery">
+              <MappingFragment StoreEntitySet="UserQuery">
+                <ScalarProperty Name="IsGrid" ColumnName="IsGrid" />
+                <ScalarProperty Name="CurrentQuery" ColumnName="CurrentQuery" />
+                <ScalarProperty Name="PageTemplateId" ColumnName="PageTemplateId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="UserQueryId" ColumnName="UserQueryId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserRoles">
+            <EntityTypeMapping TypeName="DodoBirdModel.UserRole">
+              <MappingFragment StoreEntitySet="UserRole">
+                <ScalarProperty Name="RoleId" ColumnName="RoleId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="UserRoleId" ColumnName="UserRoleId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="WebSiteSettings">
+            <EntityTypeMapping TypeName="DodoBirdModel.WebSiteSetting">
+              <MappingFragment StoreEntitySet="WebSiteSetting">
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="HomePageLogo" ColumnName="HomePageLogo" />
+                <ScalarProperty Name="BannerLogo" ColumnName="BannerLogo" />
+                <ScalarProperty Name="WelcomeMessage" ColumnName="WelcomeMessage" />
+                <ScalarProperty Name="WebSiteSettingId" ColumnName="WebSiteSettingId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DebugLogs">
+            <EntityTypeMapping TypeName="DodoBirdModel.DebugLog">
+              <MappingFragment StoreEntitySet="DebugLog">
+                <ScalarProperty Name="LogDate" ColumnName="LogDate" />
+                <ScalarProperty Name="LogContent" ColumnName="LogContent" />
+                <ScalarProperty Name="Source" ColumnName="Source" />
+                <ScalarProperty Name="LogId" ColumnName="LogId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ColumnDefs">
+            <EntityTypeMapping TypeName="DodoBirdModel.ColumnDef">
+              <MappingFragment StoreEntitySet="ColumnDef">
+                <ScalarProperty Name="DataType" ColumnName="DataType" />
+                <ScalarProperty Name="DefaultValue" ColumnName="DefaultValue" />
+                <ScalarProperty Name="DataLength" ColumnName="DataLength" />
+                <ScalarProperty Name="IsPrimaryKey" ColumnName="IsPrimaryKey" />
+                <ScalarProperty Name="IsComputed" ColumnName="IsComputed" />
+                <ScalarProperty Name="IsRequired" ColumnName="IsRequired" />
+                <ScalarProperty Name="IsIdentity" ColumnName="IsIdentity" />
+                <ScalarProperty Name="ColumnOrder" ColumnName="ColumnOrder" />
+                <ScalarProperty Name="IsMultiSelect" ColumnName="IsMultiSelect" />
+                <ScalarProperty Name="GridWidth" ColumnName="GridWidth" />
+                <ScalarProperty Name="ShowInGrid" ColumnName="ShowInGrid" />
+                <ScalarProperty Name="NumberOfDecimal" ColumnName="NumberOfDecimal" />
+                <ScalarProperty Name="NumberMax" ColumnName="NumberMax" />
+                <ScalarProperty Name="NumberMin" ColumnName="NumberMin" />
+                <ScalarProperty Name="DatePickerOption" ColumnName="DatePickerOption" />
+                <ScalarProperty Name="AddBlankOption" ColumnName="AddBlankOption" />
+                <ScalarProperty Name="ElementLabelLink" ColumnName="ElementLabelLink" />
+                <ScalarProperty Name="ElementFunction" ColumnName="ElementFunction" />
+                <ScalarProperty Name="ElementDocReady" ColumnName="ElementDocReady" />
+                <ScalarProperty Name="ElementObject" ColumnName="ElementObject" />
+                <ScalarProperty Name="ElementHeight" ColumnName="ElementHeight" />
+                <ScalarProperty Name="ElementWidth" ColumnName="ElementWidth" />
+                <ScalarProperty Name="ElementType" ColumnName="ElementType" />
+                <ScalarProperty Name="OrderField" ColumnName="OrderField" />
+                <ScalarProperty Name="TextField" ColumnName="TextField" />
+                <ScalarProperty Name="ValueField" ColumnName="ValueField" />
+                <ScalarProperty Name="LookupFilter" ColumnName="LookupFilter" />
+                <ScalarProperty Name="LookupTable" ColumnName="LookupTable" />
+                <ScalarProperty Name="ChildTemplateId" ColumnName="ChildTemplateId" />
+                <ScalarProperty Name="DisplayName" ColumnName="DisplayName" />
+                <ScalarProperty Name="OverideValue" ColumnName="OverideValue" />
+                <ScalarProperty Name="ColumnName" ColumnName="ColumnName" />
+                <ScalarProperty Name="PageTemplateId" ColumnName="PageTemplateId" />
+                <ScalarProperty Name="ColumnDefId" ColumnName="ColumnDefId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DbEntities">
+            <EntityTypeMapping TypeName="DodoBirdModel.DbEntity">
+              <MappingFragment StoreEntitySet="DbEntity">
+                <ScalarProperty Name="ConnectionString" ColumnName="ConnectionString" />
+                <ScalarProperty Name="DisplayName" ColumnName="DisplayName" />
+                <ScalarProperty Name="EntityName" ColumnName="EntityName" />
+                <ScalarProperty Name="DbEntityId" ColumnName="DbEntityId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PageTemplates">
+            <EntityTypeMapping TypeName="DodoBirdModel.PageTemplate">
+              <MappingFragment StoreEntitySet="PageTemplate">
+                <ScalarProperty Name="PrimaryKey2Name" ColumnName="PrimaryKey2Name" />
+                <ScalarProperty Name="RefKey2Name" ColumnName="RefKey2Name" />
+                <ScalarProperty Name="GridCommand" ColumnName="GridCommand" />
+                <ScalarProperty Name="GridAutoBind" ColumnName="GridAutoBind" />
+                <ScalarProperty Name="GroupByColumns" ColumnName="GroupByColumns" />
+                <ScalarProperty Name="CustomEditForm" ColumnName="CustomEditForm" />
+                <ScalarProperty Name="GridOnDataBound" ColumnName="GridOnDataBound" />
+                <ScalarProperty Name="GridCSS" ColumnName="GridCSS" />
+                <ScalarProperty Name="GridScript" ColumnName="GridScript" />
+                <ScalarProperty Name="GridBodyHTML" ColumnName="GridBodyHTML" />
+                <ScalarProperty Name="PrimaryKey2" ColumnName="PrimaryKey2" />
+                <ScalarProperty Name="RefKey2" ColumnName="RefKey2" />
+                <ScalarProperty Name="PageTemplateId2" ColumnName="PageTemplateId2" />
+                <ScalarProperty Name="OnSaveScript" ColumnName="OnSaveScript" />
+                <ScalarProperty Name="BodyScript" ColumnName="BodyScript" />
+                <ScalarProperty Name="OnLoadScript" ColumnName="OnLoadScript" />
+                <ScalarProperty Name="HelpId" ColumnName="HelpId" />
+                <ScalarProperty Name="FilterClause" ColumnName="FilterClause" />
+                <ScalarProperty Name="PageType" ColumnName="PageType" />
+                <ScalarProperty Name="Layout" ColumnName="Layout" />
+                <ScalarProperty Name="EditTabLabel" ColumnName="EditTabLabel" />
+                <ScalarProperty Name="AddTabLabel" ColumnName="AddTabLabel" />
+                <ScalarProperty Name="SortColumns" ColumnName="SortColumns" />
+                <ScalarProperty Name="GridColumns" ColumnName="GridColumns" />
+                <ScalarProperty Name="ReportGridColumns" ColumnName="ReportGridColumns" />
+                <ScalarProperty Name="PrimaryKey" ColumnName="PrimaryKey" />
+                <ScalarProperty Name="TableName" ColumnName="TableName" />
+                <ScalarProperty Name="TemplateName" ColumnName="TemplateName" />
+                <ScalarProperty Name="DbEntityId" ColumnName="DbEntityId" />
+                <ScalarProperty Name="PageTemplateId" ColumnName="PageTemplateId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AppDatabases">
+            <EntityTypeMapping TypeName="DodoBirdModel.AppDatabase">
+              <MappingFragment StoreEntitySet="AppDatabase">
+                <ScalarProperty Name="ConnectionString" ColumnName="ConnectionString" />
+                <ScalarProperty Name="DatabaseName" ColumnName="DatabaseName" />
+                <ScalarProperty Name="AppDatabaseId" ColumnName="AppDatabaseId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Grids">
+            <EntityTypeMapping TypeName="DodoBirdModel.Grid">
+              <MappingFragment StoreEntitySet="Grid">
+                <ScalarProperty Name="GridName" ColumnName="GridName" />
+                <ScalarProperty Name="AppTableId" ColumnName="AppTableId" />
+                <ScalarProperty Name="GridId" ColumnName="GridId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Menu1Item">
+            <EntityTypeMapping TypeName="DodoBirdModel.Menu1Item">
+              <MappingFragment StoreEntitySet="Menu1Item">
+                <ScalarProperty Name="SortOrder" ColumnName="SortOrder" />
+                <ScalarProperty Name="FormId" ColumnName="FormId" />
+                <ScalarProperty Name="GridId" ColumnName="GridId" />
+                <ScalarProperty Name="TsScript" ColumnName="TsScript" />
+                <ScalarProperty Name="PageFile" ColumnName="PageFile" />
+                <ScalarProperty Name="MenuTitle" ColumnName="MenuTitle" />
+                <ScalarProperty Name="Menu1ItemId" ColumnName="Menu1ItemId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Menu2Item">
+            <EntityTypeMapping TypeName="DodoBirdModel.Menu2Item">
+              <MappingFragment StoreEntitySet="Menu2Item">
+                <ScalarProperty Name="SortOrder" ColumnName="SortOrder" />
+                <ScalarProperty Name="FormId" ColumnName="FormId" />
+                <ScalarProperty Name="GridId" ColumnName="GridId" />
+                <ScalarProperty Name="TsScript" ColumnName="TsScript" />
+                <ScalarProperty Name="PageFile" ColumnName="PageFile" />
+                <ScalarProperty Name="MenuTitle" ColumnName="MenuTitle" />
+                <ScalarProperty Name="Menu1ItemId" ColumnName="Menu1ItemId" />
+                <ScalarProperty Name="Menu2ItemId" ColumnName="Menu2ItemId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Menu3Item">
+            <EntityTypeMapping TypeName="DodoBirdModel.Menu3Item">
+              <MappingFragment StoreEntitySet="Menu3Item">
+                <ScalarProperty Name="SortOrder" ColumnName="SortOrder" />
+                <ScalarProperty Name="FormId" ColumnName="FormId" />
+                <ScalarProperty Name="GridId" ColumnName="GridId" />
+                <ScalarProperty Name="TsScript" ColumnName="TsScript" />
+                <ScalarProperty Name="PageFile" ColumnName="PageFile" />
+                <ScalarProperty Name="MenuTitle" ColumnName="MenuTitle" />
+                <ScalarProperty Name="Menu2ItemId" ColumnName="Menu2ItemId" />
+                <ScalarProperty Name="Menu3ItemId" ColumnName="Menu3ItemId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AppColumns">
+            <EntityTypeMapping TypeName="DodoBirdModel.AppColumn">
+              <MappingFragment StoreEntitySet="AppColumn">
+                <ScalarProperty Name="SystemTypeId" ColumnName="SystemTypeId" />
+                <ScalarProperty Name="DataType" ColumnName="DataType" />
+                <ScalarProperty Name="DefaultValue" ColumnName="DefaultValue" />
+                <ScalarProperty Name="DataLength" ColumnName="DataLength" />
+                <ScalarProperty Name="IsPrimaryKey" ColumnName="IsPrimaryKey" />
+                <ScalarProperty Name="IsComputed" ColumnName="IsComputed" />
+                <ScalarProperty Name="IsRequired" ColumnName="IsRequired" />
+                <ScalarProperty Name="IsIdentity" ColumnName="IsIdentity" />
+                <ScalarProperty Name="ColumnOrder" ColumnName="ColumnOrder" />
+                <ScalarProperty Name="ElementHeight" ColumnName="ElementHeight" />
+                <ScalarProperty Name="ElementWidth" ColumnName="ElementWidth" />
+                <ScalarProperty Name="ElementType" ColumnName="ElementType" />
+                <ScalarProperty Name="DisplayName" ColumnName="DisplayName" />
+                <ScalarProperty Name="ColumnName" ColumnName="ColumnName" />
+                <ScalarProperty Name="AppTableId" ColumnName="AppTableId" />
+                <ScalarProperty Name="AppColumnId" ColumnName="AppColumnId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AppTables">
+            <EntityTypeMapping TypeName="DodoBirdModel.AppTable">
+              <MappingFragment StoreEntitySet="AppTable">
+                <ScalarProperty Name="SystemTypeId" ColumnName="SystemTypeId" />
+                <ScalarProperty Name="PrimaryKeyType" ColumnName="PrimaryKeyType" />
+                <ScalarProperty Name="PrimaryKey" ColumnName="PrimaryKey" />
+                <ScalarProperty Name="TableName" ColumnName="TableName" />
+                <ScalarProperty Name="AppDatabaseId" ColumnName="AppDatabaseId" />
+                <ScalarProperty Name="AppTableId" ColumnName="AppTableId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GridColumns">
+            <EntityTypeMapping TypeName="DodoBirdModel.GridColumn">
+              <MappingFragment StoreEntitySet="GridColumn">
+                <ScalarProperty Name="SortOrder" ColumnName="SortOrder" />
+                <ScalarProperty Name="IsDisplayed" ColumnName="IsDisplayed" />
+                <ScalarProperty Name="AppColumnId" ColumnName="AppColumnId" />
+                <ScalarProperty Name="GridId" ColumnName="GridId" />
+                <ScalarProperty Name="GridColumnId" ColumnName="GridColumnId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ViewAppTables">
+            <EntityTypeMapping TypeName="DodoBirdModel.ViewAppTable">
+              <MappingFragment StoreEntitySet="ViewAppTable">
+                <ScalarProperty Name="SystemTypeId" ColumnName="SystemTypeId" />
+                <ScalarProperty Name="PrimaryKeyType" ColumnName="PrimaryKeyType" />
+                <ScalarProperty Name="PrimaryKey" ColumnName="PrimaryKey" />
+                <ScalarProperty Name="TableName" ColumnName="TableName" />
+                <ScalarProperty Name="AppDatabaseId" ColumnName="AppDatabaseId" />
+                <ScalarProperty Name="AppTableId" ColumnName="AppTableId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="False" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

@@ -1,0 +1,141 @@
+﻿<link href="~/Content/Site.css" rel="stylesheet" />
+<link href="~/Content/spinner.css" rel="stylesheet" />
+
+<style>
+    #MessageBox {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        border: solid 1px #ddd;
+        display: none;
+        border-radius: 7px;
+        background-color: #fff;
+        min-width:400px;
+    }
+
+    #overlay {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        display: none;
+        background-color: #ccc;
+        opacity: 0.5;
+    }
+</style>
+
+
+<script>
+
+    function SetCommandBarDOM() {
+
+        $(".command-bar-select1").click(function () {
+            $(".command-bar-select1").removeClass("command-bar-active");
+            $(this).addClass("command-bar-active");
+        });
+        $(".command-bar-select2").click(function () {
+            $(".command-bar-select2").removeClass("command-bar-active");
+            $(this).addClass("command-bar-active");
+        });
+        $(".command-bar-select3").click(function () {
+            $(".command-bar-select3").removeClass("command-bar-active");
+            $(this).addClass("command-bar-active");
+        });
+        $(".command-bar-select4").click(function () {
+            $(".command-bar-select4").removeClass("command-bar-active");
+            $(this).addClass("command-bar-active");
+        });
+        $(".command-bar-select5").click(function () {
+            $(".command-bar-select5").removeClass("command-bar-active");
+            $(this).addClass("command-bar-active");
+        });
+        $(".command-bar-select6").click(function () {
+            $(".command-bar-select6").removeClass("command-bar-active");
+            $(this).addClass("command-bar-active");
+        });
+    }
+
+
+    function MessageBox(title, msg, autoClose) {
+        $("#messageBoxTitle").html(title);
+        $("#messageBoxText").html(msg);
+        OpenMessageBox();
+
+        if (autoClose) {
+            setTimeout(function () { CloseMessageBox(); }, 1500)
+        }
+    }
+
+    function OpenMessageBox() {
+        $("#overlay").css({ "display": "block" });
+        $("#MessageBox").css({ "display": "block" });
+    }
+
+
+    function CloseMessageBox() {
+        $("#overlay").css({ "display": "none" });
+        $("#MessageBox").css({ "display": "none" });
+    }
+
+
+    function AppSpinner(tf) {
+        if (tf) {
+            $("#overlay").css({ "display": "block" });
+            $("#appSpinner").addClass("lds-spinner");
+        } else {
+            $("#overlay").css({ "display": "none" });
+            $("#appSpinner").removeClass("lds-spinner");
+        }
+    }
+
+    function SortJson(array, key) {
+        return array.sort(function (a, b) {
+            var x = a[key]; var y = b[key];
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        });
+    }
+</script>
+
+<nav id="main_nav"></nav>
+<br />
+<br />
+
+<ul id="MainTab" class="main-tab-ul"><li class='tab-item tab-active' id='tab0' onclick="PageFocus('0')">Home<span>&nbsp;</span></li></ul>
+<br />
+<ul id="MainPage"><li id='page0' class='page-content'>Home Page Content<br />Rock and Roll</li></ul>
+
+
+@*<span class="app-btn primary" onclick="AppSpinner(true)">On</span>
+<span class="app-btn primary" onclick="AppSpinner(false)">Off</span>*@
+
+
+<div id="MessageBox">
+    <div style="padding-top:5px;padding-left:10px;"><span id="messageBoxTitle">Title</span>  <span style="float:right;padding-right:10px;cursor:pointer;" onclick="CloseMessageBox()">X</span></div>
+    <hr />
+
+    <center>
+        <div style="padding:10px;"><span id="messageBoxText">Text</span></div>
+
+        <br />
+        <span class="app-btn primary" onclick="CloseMessageBox()">O K</span>
+        <br />
+        <br />
+        &nbsp;
+    </center>
+</div>
+
+
+
+<div id="overlay"></div>
+<div id="appSpinner" class=""><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+
+
+
+
+
+
+
+
+

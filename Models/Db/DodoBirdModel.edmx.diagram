@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="1cfb0a78024d44ee9854db7c8a37688b" Name="Diagram1">
+        <EntityTypeShape EntityType="DodoBirdModel.AppUser" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="DodoBirdModel.Help" Width="1.5" PointX="6.75" PointY="0.75" />
+        <EntityTypeShape EntityType="DodoBirdModel.HelpDocLog" Width="1.5" PointX="4.75" PointY="3.375" />
+        <EntityTypeShape EntityType="DodoBirdModel.Menu" Width="1.5" PointX="2.625" PointY="1.25" />
+        <EntityTypeShape EntityType="DodoBirdModel.Role" Width="1.5" PointX="8.75" PointY="0.75" />
+        <EntityTypeShape EntityType="DodoBirdModel.RoleMenuAccess" Width="1.5" PointX="2.75" PointY="6" />
+        <EntityTypeShape EntityType="DodoBirdModel.UserMenuAccess" Width="1.5" PointX="5.125" PointY="6" />
+        <EntityTypeShape EntityType="DodoBirdModel.UserQuery" Width="1.5" PointX="0.75" PointY="5.25" />
+        <EntityTypeShape EntityType="DodoBirdModel.UserRole" Width="1.5" PointX="10.75" PointY="0.75" />
+        <EntityTypeShape EntityType="DodoBirdModel.WebSiteSetting" Width="1.5" PointX="11.25" PointY="2.875" />
+        <EntityTypeShape EntityType="DodoBirdModel.DebugLog" Width="1.5" PointX="13.25" PointY="1.25" />
+        <EntityTypeShape EntityType="DodoBirdModel.ColumnDef" Width="1.5" PointX="11.875" PointY="6.25" />
+        <EntityTypeShape EntityType="DodoBirdModel.DbEntity" Width="1.5" PointX="7.375" PointY="9.125" />
+        <EntityTypeShape EntityType="DodoBirdModel.PageTemplate" Width="1.5" PointX="9.625" PointY="6.5" />
+        <AssociationConnector Association="DodoBirdModel.fk_PageTemplate_ColumnDef" />
+        <AssociationConnector Association="DodoBirdModel.fk_DbEntity_PageTemplate" />
+        <EntityTypeShape EntityType="DodoBirdModel.AppDatabase" Width="1.5" PointX="0.75" PointY="17.75" />
+        <EntityTypeShape EntityType="DodoBirdModel.Grid" Width="1.5" PointX="5.25" PointY="20.25" />
+        <EntityTypeShape EntityType="DodoBirdModel.Menu1Item" Width="1.5" PointX="14.375" PointY="5.125" />
+        <EntityTypeShape EntityType="DodoBirdModel.Menu2Item" Width="1.5" PointX="16.625" PointY="5" />
+        <EntityTypeShape EntityType="DodoBirdModel.Menu3Item" Width="1.5" PointX="18.875" PointY="5.125" />
+        <AssociationConnector Association="DodoBirdModel.fk_Menu1Item_Menu2Item" />
+        <AssociationConnector Association="DodoBirdModel.fk_Menu2Item_Menu3Item" />
+        <EntityTypeShape EntityType="DodoBirdModel.AppColumn" Width="1.5" PointX="5.25" PointY="14.375" />
+        <EntityTypeShape EntityType="DodoBirdModel.AppTable" Width="1.5" PointX="3" PointY="17.25" />
+        <AssociationConnector Association="DodoBirdModel.fk_AppTable_AppColumn" />
+        <AssociationConnector Association="DodoBirdModel.fk_AppDatabase_AppTable" />
+        <AssociationConnector Association="DodoBirdModel.fk_AppTable_Grid" />
+        <EntityTypeShape EntityType="DodoBirdModel.GridColumn" Width="1.5" PointX="7.5" PointY="17.125" />
+        <AssociationConnector Association="DodoBirdModel.fk_GridColumn_AppColumn" />
+        <AssociationConnector Association="DodoBirdModel.fk_Grid_GridColumn" />
+        <EntityTypeShape EntityType="DodoBirdModel.ViewAppTable" Width="1.5" PointX="0.75" PointY="9.75" />
+        </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
