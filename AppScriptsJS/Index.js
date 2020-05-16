@@ -99,4 +99,63 @@ function CloseTab(level_MenuId) {
     $("#tab" + level_MenuId).remove();
     $("#page" + level_MenuId).remove();
 }
+function SetCommandBarDOM() {
+    $(".command-bar-select1").click(function () {
+        $(".command-bar-select1").removeClass("command-bar-active");
+        $(this).addClass("command-bar-active");
+    });
+    $(".command-bar-select2").click(function () {
+        $(".command-bar-select2").removeClass("command-bar-active");
+        $(this).addClass("command-bar-active");
+    });
+    $(".command-bar-select3").click(function () {
+        $(".command-bar-select3").removeClass("command-bar-active");
+        $(this).addClass("command-bar-active");
+    });
+    $(".command-bar-select4").click(function () {
+        $(".command-bar-select4").removeClass("command-bar-active");
+        $(this).addClass("command-bar-active");
+    });
+    $(".command-bar-select5").click(function () {
+        $(".command-bar-select5").removeClass("command-bar-active");
+        $(this).addClass("command-bar-active");
+    });
+    $(".command-bar-select6").click(function () {
+        $(".command-bar-select6").removeClass("command-bar-active");
+        $(this).addClass("command-bar-active");
+    });
+}
+function SortJson(array, key) {
+    return array.sort(function (a, b) {
+        var x = a[key];
+        var y = b[key];
+        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+    });
+}
+function MessageBox(title, msg, autoClose) {
+    $("#messageBoxTitle").html(title);
+    $("#messageBoxText").html(msg);
+    OpenMessageBox();
+    if (autoClose) {
+        setTimeout(function () { CloseMessageBox(); }, 1500);
+    }
+}
+function OpenMessageBox() {
+    $("#overlay").css({ "display": "block" });
+    $("#MessageBox").css({ "display": "block" });
+}
+function CloseMessageBox() {
+    $("#overlay").css({ "display": "none" });
+    $("#MessageBox").css({ "display": "none" });
+}
+function AppSpinner(tf) {
+    if (tf) {
+        $("#overlay").css({ "display": "block" });
+        $("#appSpinner").addClass("lds-spinner");
+    }
+    else {
+        $("#overlay").css({ "display": "none" });
+        $("#appSpinner").removeClass("lds-spinner");
+    }
+}
 //# sourceMappingURL=Index.js.map
