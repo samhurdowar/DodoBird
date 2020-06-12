@@ -1,8 +1,9 @@
 ﻿/// <reference path="../Scripts/typings/jquery/jquery.d.ts" />
 
-let Menu1Items: { Menu1ItemId: number, MenuTitle: string, PageFile: string, TsScript: string, GridId: number, FormId: number, SortOrder: number }[] = [];
-let Menu2Items: { Menu2ItemId: number, MenuTitle: string, PageFile: string, TsScript: string, GridId: number, FormId: number, SortOrder: number }[] = [];
-let Menu3Items: { Menu3ItemId: number, MenuTitle: string, PageFile: string, TsScript: string, GridId: number, FormId: number, SortOrder: number }[] = [];
+let Menu1Items: { Menu1ItemId: number, MenuTitle: string, PageFile: string, TargetId: number, TargetType: string, SortOrder: number }[] = [];
+let Menu2Items: { Menu2ItemId: number, MenuTitle: string, PageFile: string, TargetId: number, TargetType: string, SortOrder: number }[] = [];
+let Menu3Items: { Menu3ItemId: number, MenuTitle: string, PageFile: string, TargetId: number, TargetType: string, SortOrder: number }[] = [];
+
 
 let PageNavigations: { MenuLevelId: string, MenuTitle: string, GridId: number, CurrentPage: number, NumOfPages: number, RecordCount: number, PrimaryKey: string, OrderByColumn: string, SortDirection: string }[] = [];
 var CloseTabFirst = false; var DisableFocus = false;
@@ -41,21 +42,21 @@ function MenuClick(level: number, id: number, isRefresh: boolean) {
     var evalString = "Menu" + level + "Items.filter(it => it.Menu" + level + "ItemId == id)";
     let m = eval(evalString);
 
-    // route menu
-    if (m[0].GridId > 0) {
-        SetPageNavigation(level_MenuId, m[0].MenuTitle, m[0].GridId);
+    // route menu =>  AddTab(level_MenuId: string, menuTitle: string, content: string) 
+    if (m[0].TargetId > 0 && m[0].TargetType == "grid") {
+        SetPageNavigation(level_MenuId, m[0].MenuTitle, m[0].TargetId);
         GetGrid(level_MenuId, true);
-    } else if (m[0].FormId > 0) {
-        var content = "Content for Page " + m[0].MenuTitle + " - " + level_MenuId;
-        AddTab(level_MenuId, m[0].MenuTitle, content);
-    } else if (m[0].PageFile.length > 0) {
+    } else if (1 < 0) {
+        //var content = "Content for Page " + m[0].MenuTitle + " - " + level_MenuId;
+        //AddTab(level_MenuId, m[0].MenuTitle, content);
+    } else if (m[0].PageFile.length > 0 && m[0].TargetType == "page") {
         $.ajax({
             url: "./Home/GetPage",
             data: { pageFile: m[0].PageFile },
             type: "POST",
             dataType: "text",
             success: function (response) {
-                AddTab(level_MenuId, m[0].MenuTitle, response.replace("[level_MenuId]", level_MenuId));
+                AddTab(level_MenuId, m[0].MenuTitle, response.replace("[level_MenuId]"));
             }
         });
     } else if (m[0].TsScript != null && m[0].TsScript.length > 0) {
@@ -73,7 +74,7 @@ function SetPageNavigation(level_MenuId: string, menuTitle: string, gridId: numb
 function AddTab(level_MenuId: string, menuTitle: string, content: string) {
     if (!IsRefresh) {
         $("#MainTab").append("<li id='tab" + level_MenuId + "' class='tab-item' onclick=\"PageFocus('" + level_MenuId + "')\">" + menuTitle + "<span class='main-tab-refresh-close fa fa-times' onclick=\"CloseTab('" + level_MenuId + "')\"> </span> <span class='main-tab-refresh-close fa fa-redo' onclick=\"RefreshPage('" + level_MenuId + "')\"> </span></li>");
-        $("#MainPage").append("<li id='page" + level_MenuId + "' class='page-content'>" + content + "</li>");
+        $("#MainPageContent").append("<li id='page" + level_MenuId + "' class='page-content'>" + content + "</li>");
     } else {
         $("#page" + level_MenuId).html(content);
     }
@@ -150,6 +151,17 @@ function SortJson(array, key) {
     });
 }
 
+
+function OpenModalWindow(windowId) {
+    $("#overlay").css({ "display": "block" });
+    $("#" + windowId).css({ "display": "block" });
+}
+
+
+function CloseModalWindow(windowId) {
+    $("#overlay").css({ "display": "none" });
+    $("#" + windowId).css({ "display": "none" });
+}
 
 function MessageBox(title, msg, autoClose) {
     $("#messageBoxTitle").html(title);

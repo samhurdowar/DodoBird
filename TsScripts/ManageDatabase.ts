@@ -229,3 +229,16 @@ function SortGridColumn(gridId, gridColumnId, isDisplayed, newOrder) {
         }
     });
 }
+
+function SaveDatabase() {
+
+    if (ValidateForm("FormDatabase")) {
+        return;
+    }
+
+    var json = ToJsonString("FormDatabase");
+    console.log("json=" + json);
+    //alert("Submit form");
+
+}
+

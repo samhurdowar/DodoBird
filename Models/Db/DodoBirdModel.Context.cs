@@ -25,28 +25,11 @@ namespace DodoBird.Models.Db
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<AppUser> AppUsers { get; set; }
-        public virtual DbSet<Help> Helps { get; set; }
-        public virtual DbSet<HelpDocLog> HelpDocLogs { get; set; }
-        public virtual DbSet<Menu> Menus { get; set; }
-        public virtual DbSet<Role> Roles { get; set; }
-        public virtual DbSet<RoleMenuAccess> RoleMenuAccesses { get; set; }
-        public virtual DbSet<UserMenuAccess> UserMenuAccesses { get; set; }
-        public virtual DbSet<UserQuery> UserQueries { get; set; }
-        public virtual DbSet<UserRole> UserRoles { get; set; }
-        public virtual DbSet<WebSiteSetting> WebSiteSettings { get; set; }
-        public virtual DbSet<DebugLog> DebugLogs { get; set; }
-        public virtual DbSet<ColumnDef> ColumnDefs { get; set; }
-        public virtual DbSet<DbEntity> DbEntities { get; set; }
-        public virtual DbSet<PageTemplate> PageTemplates { get; set; }
-        public virtual DbSet<AppDatabase> AppDatabases { get; set; }
-        public virtual DbSet<Grid> Grids { get; set; }
         public virtual DbSet<Menu1Item> Menu1Item { get; set; }
         public virtual DbSet<Menu2Item> Menu2Item { get; set; }
         public virtual DbSet<Menu3Item> Menu3Item { get; set; }
-        public virtual DbSet<AppColumn> AppColumns { get; set; }
-        public virtual DbSet<AppTable> AppTables { get; set; }
-        public virtual DbSet<GridColumn> GridColumns { get; set; }
-        public virtual DbSet<ViewAppTable> ViewAppTables { get; set; }
+        public virtual DbSet<AppDatabase> AppDatabases { get; set; }
+        public virtual DbSet<AppUser> AppUsers { get; set; }
+        public virtual DbSet<Client> Clients { get; set; }
     }
 }

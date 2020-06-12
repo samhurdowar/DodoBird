@@ -14,20 +14,15 @@ namespace DodoBird.Models.Db
     
     public partial class AppUser
     {
-        public int UserId { get; set; }
-        public bool IsActive { get; set; }
+        public int AppUserId { get; set; }
+        public int ClientId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string FullName { get; set; }
         public string Email { get; set; }
         public string PrimaryPhone { get; set; }
-        public string AdName { get; set; }
+        public string Username { get; set; }
         public string Password { get; set; }
-        public bool ProfileIsComplete { get; set; }
-        public int LogonCount { get; set; }
-        public string RoleNames { get; set; }
-        public string RoleIds { get; set; }
-        public string RoleMenuIds { get; set; }
-        public System.DateTime AddDate { get; set; }
+        public System.DateTime DateAdd { get; set; }
     }
 }

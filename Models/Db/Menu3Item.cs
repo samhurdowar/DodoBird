@@ -18,9 +18,8 @@ namespace DodoBird.Models.Db
         public int Menu2ItemId { get; set; }
         public string MenuTitle { get; set; }
         public string PageFile { get; set; }
-        public string TsScript { get; set; }
-        public int GridId { get; set; }
-        public int FormId { get; set; }
+        public int TargetId { get; set; }
+        public string TargetType { get; set; }
         public int SortOrder { get; set; }
     }
 }

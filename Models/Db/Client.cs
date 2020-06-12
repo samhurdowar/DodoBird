@@ -12,23 +12,19 @@ namespace DodoBird.Models.Db
     using System;
     using System.Collections.Generic;
     
-    public partial class AppTable
+    public partial class Client
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public AppTable()
+        public Client()
         {
-            this.AppColumns = new HashSet<AppColumn>();
+            this.AppDatabases = new HashSet<AppDatabase>();
         }
     
-        public int AppTableId { get; set; }
-        public int AppDatabaseId { get; set; }
-        public string TableName { get; set; }
-        public string PrimaryKey { get; set; }
-        public string PrimaryKeyType { get; set; }
-        public int SystemTypeId { get; set; }
+        public int ClientId { get; set; }
+        public string ClientName { get; set; }
+        public System.DateTime DateAdd { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AppColumn> AppColumns { get; set; }
-        public virtual AppDatabase AppDatabase { get; set; }
+        public virtual ICollection<AppDatabase> AppDatabases { get; set; }
     }
 }

@@ -21,11 +21,11 @@ namespace DodoBird.Models.Db
         }
     
         public int Menu1ItemId { get; set; }
+        public int ClientId { get; set; }
         public string MenuTitle { get; set; }
         public string PageFile { get; set; }
-        public string TsScript { get; set; }
-        public int GridId { get; set; }
-        public int FormId { get; set; }
+        public int TargetId { get; set; }
+        public string TargetType { get; set; }
         public int SortOrder { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

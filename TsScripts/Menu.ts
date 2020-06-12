@@ -15,7 +15,7 @@ function GetMenuList() {
 
                 Menu1Items.push(row);
 
-                obj.push("<li onclick='MenuClick(1, " + row.Menu1ItemId + ", false)'>");  // level one
+                obj.push("<li onclick='MenuClick(1, " + row.Menu1ItemId + ", false)'>");  // level one  MenuClick(level: number, id: number, isRefresh: boolean)
                 obj.push(row.MenuTitle);
                 if (row.Menu2Item.length > 0) {
                     obj.push("<ul>");

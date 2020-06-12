@@ -34,23 +34,23 @@ function MenuClick(level, id, isRefresh) {
     // get menu object
     var evalString = "Menu" + level + "Items.filter(it => it.Menu" + level + "ItemId == id)";
     var m = eval(evalString);
-    // route menu
-    if (m[0].GridId > 0) {
-        SetPageNavigation(level_MenuId, m[0].MenuTitle, m[0].GridId);
+    // route menu =>  AddTab(level_MenuId: string, menuTitle: string, content: string) 
+    if (m[0].TargetId > 0 && m[0].TargetType == "grid") {
+        SetPageNavigation(level_MenuId, m[0].MenuTitle, m[0].TargetId);
         GetGrid(level_MenuId, true);
     }
-    else if (m[0].FormId > 0) {
-        var content = "Content for Page " + m[0].MenuTitle + " - " + level_MenuId;
-        AddTab(level_MenuId, m[0].MenuTitle, content);
+    else if (1 < 0) {
+        //var content = "Content for Page " + m[0].MenuTitle + " - " + level_MenuId;
+        //AddTab(level_MenuId, m[0].MenuTitle, content);
     }
-    else if (m[0].PageFile.length > 0) {
+    else if (m[0].PageFile.length > 0 && m[0].TargetType == "page") {
         $.ajax({
             url: "./Home/GetPage",
             data: { pageFile: m[0].PageFile },
             type: "POST",
             dataType: "text",
             success: function (response) {
-                AddTab(level_MenuId, m[0].MenuTitle, response.replace("[level_MenuId]", level_MenuId));
+                AddTab(level_MenuId, m[0].MenuTitle, response.replace("[level_MenuId]"));
             }
         });
     }
@@ -67,7 +67,7 @@ function SetPageNavigation(level_MenuId, menuTitle, gridId) {
 function AddTab(level_MenuId, menuTitle, content) {
     if (!IsRefresh) {
         $("#MainTab").append("<li id='tab" + level_MenuId + "' class='tab-item' onclick=\"PageFocus('" + level_MenuId + "')\">" + menuTitle + "<span class='main-tab-refresh-close fa fa-times' onclick=\"CloseTab('" + level_MenuId + "')\"> </span> <span class='main-tab-refresh-close fa fa-redo' onclick=\"RefreshPage('" + level_MenuId + "')\"> </span></li>");
-        $("#MainPage").append("<li id='page" + level_MenuId + "' class='page-content'>" + content + "</li>");
+        $("#MainPageContent").append("<li id='page" + level_MenuId + "' class='page-content'>" + content + "</li>");
     }
     else {
         $("#page" + level_MenuId).html(content);
@@ -131,6 +131,14 @@ function SortJson(array, key) {
         var y = b[key];
         return ((x < y) ? -1 : ((x > y) ? 1 : 0));
     });
+}
+function OpenModalWindow(windowId) {
+    $("#overlay").css({ "display": "block" });
+    $("#" + windowId).css({ "display": "block" });
+}
+function CloseModalWindow(windowId) {
+    $("#overlay").css({ "display": "none" });
+    $("#" + windowId).css({ "display": "none" });
 }
 function MessageBox(title, msg, autoClose) {
     $("#messageBoxTitle").html(title);

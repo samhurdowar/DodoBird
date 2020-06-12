@@ -228,64 +228,18 @@
     <Compile Include="Controllers\DatabaseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MenuController.cs" />
-    <Compile Include="Controllers\GridController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\App\CommonModels.cs" />
     <Compile Include="Models\App\SysColumn.cs" />
-    <Compile Include="Models\Db\AppColumn.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\Db\AppDatabase.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Db\AppTable.cs">
       <DependentUpon>DodoBirdModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Db\AppUser.cs">
       <DependentUpon>DodoBirdModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Db\ColumnDef.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Db\DbEntity.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Db\DebugLog.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Db\Grid.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Db\GridColumn.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Db\Help.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Db\HelpDocLog.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Db\Menu.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Db\Menu1Item.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Db\Menu2Item.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Db\Menu3Item.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Db\PageTemplate.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Db\Role.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Db\RoleMenuAccess.cs">
+    <Compile Include="Models\Db\Client.cs">
       <DependentUpon>DodoBirdModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Db\DodoBirdModel.Context.cs">
@@ -303,6 +257,15 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DodoBirdModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\Db\Menu1Item.cs">
+      <DependentUpon>DodoBirdModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Db\Menu2Item.cs">
+      <DependentUpon>DodoBirdModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Db\Menu3Item.cs">
+      <DependentUpon>DodoBirdModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Db\TargetModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -318,21 +281,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>TargetModel.edmx</DependentUpon>
     </Compile>
-    <Compile Include="Models\Db\UserMenuAccess.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Db\UserQuery.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Db\UserRole.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Db\ViewAppTable.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Db\WebSiteSetting.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -347,6 +295,8 @@
     <Content Include="AppScriptsJS\ManageDatabase.js" />
     <Content Include="AppScriptsJS\Menu.js" />
     <Content Include="App_Data\Workboard.sql" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\font-awesome.css" />
     <Content Include="Content\fontawesome\css\all.css" />
     <Content Include="Content\fontawesome\css\all.min.css" />
     <Content Include="Content\fontawesome\css\brands.css" />
@@ -1898,6 +1848,7 @@
     <Content Include="Content\fontawesome\webfonts\fa-brands-400.svg" />
     <Content Include="Content\fontawesome\webfonts\fa-regular-400.svg" />
     <Content Include="Content\fontawesome\webfonts\fa-solid-900.svg" />
+    <Content Include="Content\jquery-ui.min.css" />
     <Content Include="Content\Site.css" />
     <Content Include="Content\spinner.css" />
     <Content Include="favicon.ico" />
@@ -2047,6 +1998,7 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
+    <TypeScriptCompile Include="TsScripts\ClientForm.ts" />
     <TypeScriptCompile Include="TsScripts\Grid.ts" />
     <TypeScriptCompile Include="TsScripts\Menu.ts" />
     <TypeScriptCompile Include="TsScripts\Index.ts" />

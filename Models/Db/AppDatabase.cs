@@ -15,7 +15,10 @@ namespace DodoBird.Models.Db
     public partial class AppDatabase
     {
         public int AppDatabaseId { get; set; }
+        public int ClientId { get; set; }
         public string DatabaseName { get; set; }
         public string ConnectionString { get; set; }
+    
+        public virtual Client Client { get; set; }
     }
 }

@@ -5,8 +5,8 @@
         <tr>
             <td class="command-bar" style="width:10%;">
                 Databases
-                <span>[x]</span>
-                <span>[+]</span>
+                <span onclick="DeleteDatabase()">[x]</span>
+                <span onclick="OpenModalWindow('WindowDatabase')">[+]</span>
             </td>
             <td class="command-bar" style="width:10%;">
                 Tables
@@ -98,6 +98,54 @@
 
 </center>
 
+
+<div id="WindowDatabase"  class="modal-window">
+    <div style="padding-top:5px;padding-left:10px;"><span>Add Database</span>  <span style="float:right;padding-right:10px;cursor:pointer;" onclick="CloseModalWindow('WindowDatabase')">X</span></div>
+    <hr />
+
+    <form id="FormDatabase">
+        <center>
+            <table>
+                <tr>
+                    <td>Database Name</td>
+                    <td><input type="text" id="DatabaseName" class="input-required" /></td>
+                </tr>
+                <tr>
+                    <td>Connection String</td>
+                    <td><input type="text" id="ConnectionString" class="input-required" /></td>
+                </tr>
+                <tr>
+                    <td>Radio</td>
+                    <td><input type="radio" name="Radios1" class="input-required" value="Yes">Yes  <br /> <input type="radio" name="Radios1" class="input-required" value="No">No      </td>
+                </tr>
+
+                <tr>
+                    <td>Checkboxes</td>
+                    <td><input type="checkbox" name="Checkboxes1" class="input-required" value="1">1  <br /><input type="checkbox" name="Checkboxes1" class="input-required" value="2">2   <br /><input type="checkbox" name="Checkboxes1" class="input-required" value="3">3   </td>
+                </tr>
+
+
+                <tr>
+                    <td>text</td>
+                    <td><textarea id="TextareaObject" class="input-required"></textarea></td>
+                </tr>
+
+                <tr>
+                    <td>Dropdown</td>
+                    <td><select id="SelectObject" class="input-required"><option value=""> </option><option value="drop1">Drop One</option><option value="drop2">Drop Two</option><option value="drop3">Drop Three</option></select></td>
+                </tr>
+
+            </table>
+
+            <br />
+            <span class="app-btn primary" onclick="SaveDatabase()">Save</span>
+            <span class="app-btn primary" onclick="CloseModalWindow('WindowDatabase')">Cancel</span>
+            <br />
+            <br />
+            &nbsp;
+        </center>
+    </form>
+</div>
 
 <script>
 
