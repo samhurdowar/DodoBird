@@ -6,6 +6,7 @@
             <td class="command-bar" style="width:10%;">
                 Databases
                 <span onclick="DeleteDatabase()">[x]</span>
+                <span onclick="OpenModalWindow('WindowDatabase')">[/]</span>
                 <span onclick="OpenModalWindow('WindowDatabase')">[+]</span>
             </td>
             <td class="command-bar" style="width:10%;">
@@ -104,6 +105,7 @@
     <hr />
 
     <form id="FormDatabase">
+        <input type="hidden" id="AppDatabaseId" />
         <center>
             <table>
                 <tr>

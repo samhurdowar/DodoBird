@@ -237,8 +237,16 @@ function SaveDatabase() {
     }
 
     var json = ToJsonString("FormDatabase");
-    console.log("json=" + json);
-    //alert("Submit form");
+    //console.log("json=" + json);
+
+    $.ajax({
+        url: "./Database/SortGridColumn",
+        data: { json: json },
+        dataType: "text",
+        success: function (response) {
+
+        }
+    });
 
 }
 

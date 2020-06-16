@@ -20,7 +20,6 @@ function ValidateForm(formName) {
             elementValue = y.value;
         }
 
-
         try {
 
             if (elementType == "checkbox" && !o[id]) {
@@ -73,7 +72,6 @@ function ValidateForm(formName) {
 
     return returnStatus;
 }
-
 
 function ToJsonString(formName) {
     var elementType = "";
