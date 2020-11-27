@@ -1,0 +1,87 @@
+<div class="command-bar-container">
+    <span id="cmd_Save_EditTest" class="command-disabled-span"><span class="command-icon fas fa-save">&nbsp;</span> Save</span>
+</div>
+
+
+<form id="EditTest">
+    <input type="text" id="TestId" />
+    <input type="text" id="DodoBirdKey" value="" />
+
+    <table>
+        <tr>
+            <td>TestTextbox</td>
+            <td><input type="text" id="TestTextbox" name="TestTextbox" /></td>
+        </tr>
+
+
+
+        <tr>
+            <td>Single Select</td>
+            <td><select id="TestSelect" name="TestSelect"><option value=""></option><option value="Option1">Option1</option><option value="Option2">Option2</option><option value="Option3">Option3</option></select></td>
+        </tr>
+        <tr>
+            <td>Checkbox</td>
+            <td><input type="checkbox" id="TestCheckbox" name="TestCheckbox" value="true" /></td>
+        </tr>
+        <tr>
+            <td>Checkboxes</td>
+            <td>
+                <input type="checkbox" name="TestCheckboxes" value="Check1" class="Checkboxes_TestCheckboxes" />Checkbox 1
+                <input type="checkbox" name="TestCheckboxes" value="Check2" class="Checkboxes_TestCheckboxes" />Checkbox 2
+                <input type="checkbox" name="TestCheckboxes" value="Check3" class="Checkboxes_TestCheckboxes" />Checkbox 3
+                <input type="checkbox" name="TestCheckboxes" value="Check4" class="Checkboxes_TestCheckboxes" />Checkbox 4
+            </td>
+        </tr>
+        <tr>
+            <td>Radios</td>
+            <td>
+            <input type='radio' name='TestRadios' value='Yes'> Yes    
+            <input type='radio' name='TestRadios' value='No' /> No     
+            <input type='radio' name='TestRadios' value='Maybe' /> Maybe
+            </td>
+        </tr>
+    </table>
+
+
+    <table>
+        <tr><td>Available Fields</td><td>Fields in Grid</td></tr>
+
+        <tr>
+            <td valign="top">
+                <div id="availableColumns">
+
+                </div>
+            </td>
+            <td valign="top">
+                <div id="gridColumns">
+
+                </div>
+
+            </td>
+        </tr>
+    </table>
+
+</form>
+<script>
+
+
+
+    $(document).ready(function () {
+        data = { "TestId": 1, "DodoBirdKey": "0|Grid", "GridFilter": "GridFilter value", "GridSort": "GridSort value", "TestSelect": "Option2", "TestCheckbox": true, "TestCheckboxes": "Check1,Check3", "TestRadios": "Maybe" };
+
+        BindForm("EditTest", data);
+
+    });
+
+
+
+
+
+    function Save_EditGrid() {
+        var json = ToJsonString("EditTest");
+        console.log(json);
+
+
+        DisableButton("cmd_Save_EditTest");
+    }
+</script>

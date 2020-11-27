@@ -5,17 +5,7 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="1cfb0a78024d44ee9854db7c8a37688b" Name="Diagram1">
-        <EntityTypeShape EntityType="DodoBirdModel.Menu1Item" Width="1.5" PointX="0.75" PointY="1" />
-        <EntityTypeShape EntityType="DodoBirdModel.Menu2Item" Width="1.5" PointX="3" PointY="1" />
-        <EntityTypeShape EntityType="DodoBirdModel.Menu3Item" Width="1.5" PointX="5.25" PointY="1" />
-        <AssociationConnector Association="DodoBirdModel.fk_Menu2Item_Menu1Item" />
-        <AssociationConnector Association="DodoBirdModel.fk_Menu3Item_Menu2Item" />
-        <EntityTypeShape EntityType="DodoBirdModel.AppDatabase" Width="1.5" PointX="3" PointY="5.125" />
-        <EntityTypeShape EntityType="DodoBirdModel.AppUser" Width="1.5" PointX="3" PointY="7.875" />
-        <EntityTypeShape EntityType="DodoBirdModel.Client" Width="1.5" PointX="0.75" PointY="7" />
-        <AssociationConnector Association="DodoBirdModel.fk_AppDatabase_Client" />
-        <AssociationConnector Association="DodoBirdModel.fk_AppUser_Client" />
-      </Diagram>
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

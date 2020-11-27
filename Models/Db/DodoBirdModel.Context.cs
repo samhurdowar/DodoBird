@@ -25,11 +25,5 @@ namespace DodoBird.Models.Db
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Menu1Item> Menu1Item { get; set; }
-        public virtual DbSet<Menu2Item> Menu2Item { get; set; }
-        public virtual DbSet<Menu3Item> Menu3Item { get; set; }
-        public virtual DbSet<AppDatabase> AppDatabases { get; set; }
-        public virtual DbSet<AppUser> AppUsers { get; set; }
-        public virtual DbSet<Client> Clients { get; set; }
     }
 }

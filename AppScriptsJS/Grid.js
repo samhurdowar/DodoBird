@@ -90,7 +90,7 @@ function GenerateGridTable(level_MenuId, newTab, records) {
     var content = obj.join("");
     if (newTab) {
         var content_ = "<div id='grid" + level_MenuId + "' style='margin-bottom:20px;'> " + content + "</div>";
-        AddTab(level_MenuId, menuTitle, content_);
+        //xxxAddTab(level_MenuId, menuTitle, content_);
     }
     else {
         $("#grid" + level_MenuId).html(content);

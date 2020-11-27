@@ -1,0 +1,210 @@
+
+<style>
+    .menu-item {
+        min-width: 200px;
+        white-space: nowrap;
+        padding: 0.5em;
+    }
+
+    #RootMenus0 li {
+        /*        border: 1px solid #ccc;*/
+        width: 300px;
+        cursor: move;
+    }
+
+    #RootMenus0 ul {
+        list-style: none;
+    }
+
+    .menu-add-delete {
+        display: none;
+        color: #808080;
+        left: 400px;
+        float: right;
+        margin-right: 10px;
+        cursor: pointer;
+    }
+
+    .menu-item-command:hover {
+        color: #f8aaaa;
+    }
+
+
+    .menu-item:hover {
+        background-color: gainsboro;
+    }
+
+    .parent-menu-item:hover {
+        background-color: gainsboro;
+    }
+
+    .parent-menu-item {
+        padding-bottom: 5px;
+        margin-left: 7px;
+    }
+
+    .menu-item-edit {
+        cursor: pointer;
+    }
+
+        .menu-item-edit:hover {
+            color: #ff6a00;
+        }
+
+    .menu-item-active {
+        background-color: gainsboro;
+        padding-right: 7px;
+        padding-top: 7px;
+        padding-bottom: 7px;
+    }
+</style>
+
+<table  style="width:98%;">
+    <tr>
+        <td style="width:30%;"><ul id='RootMenus0'></ul></td>
+
+        <td style="width:70%;" valign="top">
+
+
+            <div class="command-bar-container">
+                <span id="cmd_Save_EditMenu" class="command-disabled-span"><span class="command-icon fas fa-save">&nbsp;</span> Save</span>
+            </div>
+
+
+
+            <form id="EditMenu" action="/" method="post">
+                <input type="text" id="DodoBirdKey" value="" />
+                <input type="text" id="MenuId" />
+                <input type="text" id="TargetId" />
+                <table>
+                    <tr>
+                        <td>Menu Title</td>
+                        <td><input type="text" name="MenuTitle" id="MenuTitle" value="" /></td>
+                    </tr>
+
+                    <tr>
+                        <td valign="top">Target Type</td>
+                        <td valign="top">
+
+                            <ul style="list-style: none;">
+
+                                <li><input type='radio' name='TargetType' value=''> None</li>
+                                <li><input type='radio' name='TargetType' value='grid' /> Grid    <span id="span_grid" class="targetType-class" style="display:none;position:relative; left:25px;"><span class="command-icon fas fa-arrow-right">&nbsp;</span>  <select name="GridId" id="GridId"></select></span></li>
+                                <li><input type='radio' name='TargetType' value='form' /> Form    <span id="span_form" class="targetType-class" style="display: none; position: relative; left: 25px;"><span class="command-icon fas fa-arrow-right">&nbsp;</span>  <select name="FormId" id="FormId"></select></span></li>
+                                <li>
+                                    <input type='radio' name='TargetType' value='page' /> Custom Page
+                                    <span id="span_page" class="targetType-class" style="display: none; position: relative; left: 25px;">
+                                        <span class="command-icon fas fa-arrow-right">&nbsp;</span>
+                                        <input type="text" name="PageFile" id="PageFile" value="" />
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <font style="color:#808080;font-style:italic;">i.e. ~/Views/Home/FileName.cshtml</font>
+                                    </span>
+                                </li>
+                            </ul>
+
+                        </td>
+                    </tr>
+
+
+
+                </table>
+
+            </form>
+
+
+        </td>
+    </tr>
+</table>
+
+
+
+
+<script>
+    $(document).ready(function () {
+        GetAdminMenuList("RootMenus0");
+
+        GetMenuOptions();
+
+
+        var groupName = "input:radio[name=\"TargetType\"]";
+        $(groupName).click(function () {
+            var radioVal = $(this).val()
+            $(".targetType-class").hide();
+            $("#span_" + radioVal).show();
+        });
+
+
+    });
+
+
+
+    function GetMenuOptions() {
+        $.ajax({
+            url: "./Menu/GetMenuOptions",
+            dataType: "json",
+            success: function (data) {
+                GetSelect("GridId", data.Grids);
+                GetSelect("FormId", data.Forms);
+
+                // manually enable change event for GridId and FormId because they are not part of the table schema
+                $("#EditMenu #GridId").change(function () {
+                    EnableButton("cmd_Save_EditMenu");
+                });
+                $("#EditMenu #FormId").change(function () {
+                    EnableButton("cmd_Save_EditMenu");
+                });
+
+
+            }
+        });
+    }
+
+    function Save_EditMenu() {
+
+        // preprocess form  TargetId
+        var targetType = $("#EditMenu input[name='TargetType']:checked").val();
+        if (targetType == "grid") {
+            $("#EditMenu #TargetId").val($("#EditMenu #GridId").val());
+            $("#EditMenu #PageFile").val("");
+        } else if (targetType == "form") {
+            $("#EditMenu #TargetId").val($("#EditMenu #FormId").val());
+            $("#EditMenu #PageFile").val("");
+        } else if (targetType == "page") {
+            $("#EditMenu #TargetId").val(0);
+
+            if ($("#EditMenu #PageFile").val() == "") {
+                MessageBox("Warning", "Page file required", true);
+                return;
+            }
+        } else {
+            $("#EditMenu #TargetId").val(0);
+            $("#EditMenu #PageFile").val("");
+        }
+
+        var json = ToJsonString("EditMenu");
+        console.log(json);
+
+        Save_EditMenu_(json);
+
+        
+    }
+
+    function Save_EditMenu_(json) {
+        DisableButton("cmd_Save_EditMenu");
+        AppSpinner(true);
+        $.ajax({
+            url: "./Data/SaveFormData",
+            data: { json: json},
+            dataType: "text",
+            success: function (response) {
+                MessageBox("Information", response,false);
+            },
+            complete: function () {
+                AppSpinner(false);
+            }
+        });
+    }
+
+
+</script>
+

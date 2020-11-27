@@ -9,7 +9,6 @@ using DodoBird.Models.Db;
 
 namespace DodoBird.Controllers
 {
-	[OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
 	public class HomeController : Controller
 	{
         public ActionResult Index()

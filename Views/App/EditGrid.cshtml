@@ -1,0 +1,51 @@
+<div class="command-bar-container">
+    <span id="cmd_Save_EditGrid" class="command-disabled-span"><span class="command-icon fas fa-save">&nbsp;</span> Save</span>
+</div>
+
+
+<form id="EditGrid">
+    <input type="text" id="GridId" />
+    <input type="text" id="DodoBirdKey" value="" />
+
+    <table>
+        <tr>
+            <td>Filter Clause</td>
+            <td><input type="text" id="GridFilter" name="GridFilter" /></td>
+        </tr>
+        <tr>
+            <td>ORDER BY</td>
+            <td><input type="text" id="GridSort" name="GridSort" /></td>
+        </tr>
+
+    </table>
+
+
+    <table>
+        <tr><td>Available Fields</td><td>Fields in Grid</td></tr>
+
+        <tr>
+            <td valign="top">
+                <div id="availableColumns">
+
+                </div>
+            </td>
+            <td valign="top">
+                <div id="gridColumns">
+
+                </div>
+
+            </td>
+        </tr>
+    </table>
+
+</form>
+
+<script>
+    function Save_EditGrid() {
+        var json = ToJsonString("EditGrid");
+        console.log(json);
+
+
+        DisableButton("cmd_Save_EditGrid");
+    }
+</script>

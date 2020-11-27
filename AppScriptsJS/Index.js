@@ -1,61 +1,47 @@
 /// <reference path="../Scripts/typings/jquery/jquery.d.ts" />
-var Menu1Items = [];
-var Menu2Items = [];
-var Menu3Items = [];
+var Menus;
 var PageNavigations = [];
 var CloseTabFirst = false;
 var DisableFocus = false;
-var IsRefresh = false;
 $(document).ready(function () {
     GetMenuList();
 });
-function RefreshPage(level_MenuId) {
-    var ray = level_MenuId.split("_");
-    var level = Number(ray[0]);
-    var menuId = Number(ray[1]);
-    MenuClick(level, menuId, true);
-}
-function MenuClick(level, id, isRefresh) {
-    IsRefresh = isRefresh;
-    var level_MenuId = level.toString() + "_" + id.toString();
-    // set focus if tab already exists
-    var tabExist = false;
-    if (!IsRefresh) {
-        $(".tab-item").each(function () {
-            var tabId = $(this).attr("id");
-            if (tabId == "tab" + level_MenuId) {
-                PageFocus(level_MenuId);
-                tabExist = true;
-            }
-        });
-    }
-    if (tabExist)
-        return;
+function MenuClick(menuId) {
+    AppSpinner(true);
+    var isRefresh = false;
+    var tabName = "tab" + menuId.toString();
+    // refresh, set focus if tab already exists
+    $(".tab-item").each(function () {
+        var thisTabName = $(this).attr("id");
+        if (tabName == thisTabName) {
+            isRefresh = true;
+        }
+    });
     // get menu object
-    var evalString = "Menu" + level + "Items.filter(it => it.Menu" + level + "ItemId == id)";
-    var m = eval(evalString);
+    var menu_ = Menus.filter(function (w) { return w.MenuId == menuId; });
+    var menu = menu_[0];
     // route menu =>  AddTab(level_MenuId: string, menuTitle: string, content: string) 
-    if (m[0].TargetId > 0 && m[0].TargetType == "grid") {
-        SetPageNavigation(level_MenuId, m[0].MenuTitle, m[0].TargetId);
-        GetGrid(level_MenuId, true);
+    if (menu.TargetId > 0 && menu.TargetType == "grid") {
+        SetPageNavigation(menu.MenuId, menu.MenuTitle, menu.TargetId);
+        GetGrid(menu.TargetId, true);
     }
     else if (1 < 0) {
         //var content = "Content for Page " + m[0].MenuTitle + " - " + level_MenuId;
         //AddTab(level_MenuId, m[0].MenuTitle, content);
     }
-    else if (m[0].PageFile.length > 0 && m[0].TargetType == "page") {
+    else if (menu.PageFile.length > 0 && menu.TargetType == "page") {
         $.ajax({
             url: "./Home/GetPage",
-            data: { pageFile: m[0].PageFile },
+            data: { pageFile: menu.PageFile },
             type: "POST",
             dataType: "text",
             success: function (response) {
-                AddTab(level_MenuId, m[0].MenuTitle, response.replace("[level_MenuId]"));
+                AddTab(menu.MenuId, menu.MenuTitle, isRefresh, response.replace("[xxx]", "xxx"));
+            },
+            complete: function (response) {
+                AppSpinner(false);
             }
         });
-    }
-    else if (m[0].TsScript != null && m[0].TsScript.length > 0) {
-        eval(m[0].TsScript.replace("()", "(level_MenuId, m[0].MenuTitle)"));
     }
 }
 function SetPageNavigation(level_MenuId, menuTitle, gridId) {
@@ -64,40 +50,40 @@ function SetPageNavigation(level_MenuId, menuTitle, gridId) {
         PageNavigations.push({ MenuLevelId: level_MenuId, MenuTitle: menuTitle, GridId: gridId, CurrentPage: 1, NumOfPages: 0, RecordCount: 0, PrimaryKey: "", OrderByColumn: "", SortDirection: "ASC" });
     }
 }
-function AddTab(level_MenuId, menuTitle, content) {
-    if (!IsRefresh) {
-        $("#MainTab").append("<li id='tab" + level_MenuId + "' class='tab-item' onclick=\"PageFocus('" + level_MenuId + "')\">" + menuTitle + "<span class='main-tab-refresh-close fa fa-times' onclick=\"CloseTab('" + level_MenuId + "')\"> </span> <span class='main-tab-refresh-close fa fa-redo' onclick=\"RefreshPage('" + level_MenuId + "')\"> </span></li>");
-        $("#MainPageContent").append("<li id='page" + level_MenuId + "' class='page-content'>" + content + "</li>");
+function AddTab(menuId, menuTitle, isRefresh, content) {
+    if (!isRefresh) {
+        $("#MainTab").append("<li id='tab" + menuId + "' class='tab-item' onclick=\"PageFocus('" + menuId + "')\">" + menuTitle + "<span class='main-tab-close fa fa-times' onclick=\"CloseTab('" + menuId + "')\"> </span> </li>");
+        $("#MainPageContent").append("<li id='page" + menuId + "' class='page-content'>" + content + "</li>");
     }
     else {
-        $("#page" + level_MenuId).html(content);
+        $("#page" + menuId).html(content);
     }
-    PageFocus(level_MenuId);
+    PageFocus(menuId);
 }
-function PageFocus(level_MenuId) {
+function PageFocus(menuId) {
     if (DisableFocus) {
         DisableFocus = false;
         return;
     }
-    console.log("PageFocus=" + level_MenuId);
+    console.log("PageFocus menuId=" + menuId);
     $(".tab-item").removeClass("tab-active").removeClass("main-tab-li-hover");
     $(".tab-item").addClass("main-tab-li-hover");
-    $("#tab" + level_MenuId).removeClass("main-tab-li-hover").addClass("tab-active");
+    $("#tab" + menuId).removeClass("main-tab-li-hover").addClass("tab-active");
     $(".page-content").hide();
-    $("#page" + level_MenuId).show();
+    $("#page" + menuId).show();
     if (CloseTabFirst) {
         DisableFocus = true;
         CloseTabFirst = false;
     }
 }
-function CloseTab(level_MenuId) {
+function CloseTab(menuId) {
     // set focus to previous tab
-    var previousMenuLevelId = $("#tab" + level_MenuId).prev().attr("id").replace("tab", "");
+    var previousMenuLevelId = Number($("#tab" + menuId).prev().attr("id").replace("tab", ""));
     CloseTabFirst = true;
     PageFocus(previousMenuLevelId);
     // remove tab
-    $("#tab" + level_MenuId).remove();
-    $("#page" + level_MenuId).remove();
+    $("#tab" + menuId).remove();
+    $("#page" + menuId).remove();
 }
 function SetCommandBarDOM() {
     $(".command-bar-select1").click(function () {
@@ -165,5 +151,14 @@ function AppSpinner(tf) {
         $("#overlay").css({ "display": "none" });
         $("#appSpinner").removeClass("lds-spinner");
     }
+}
+function GetSelect(targetId, data) {
+    var obj = [];
+    for (var i in data) {
+        var row = data[i];
+        obj.push("<option value=\"" + row.OptionValue + "\">" + row.OptionText + "</option>");
+    }
+    var str = obj.join("");
+    $("#" + targetId).html(str);
 }
 //# sourceMappingURL=Index.js.map

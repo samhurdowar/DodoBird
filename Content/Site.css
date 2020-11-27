@@ -1,6 +1,8 @@
 ﻿
 /*  table  */
-
+table tr td {
+    padding: 7px;
+}
 
 
 .input-required-highlight {
@@ -93,7 +95,7 @@
     border-right: 1px solid #bbb;
 }
 
-.main-tab-refresh-close {
+.main-tab-close {
     padding: 3px;
     cursor:pointer;
     font-size: 1.3em;
@@ -101,7 +103,7 @@
     float: right;
 }
 
-    .main-tab-refresh-close:hover {
+    .main-tab-close:hover {
         background-color: #faeeaa;
     }
 
@@ -134,7 +136,7 @@
 .width200 {
     width: 200px;
 }
-.width250 {
+input[type=text] {
     width: 250px;
 }
 .width300 {
@@ -145,6 +147,32 @@
 }
 .width400 {
     width:400px;
+}
+/* form command buttons */
+
+.command-bar-container {
+    border-bottom: 1px solid #ccc;
+    width: 100%;
+    margin-bottom:20px;
+}
+
+.command-active-span {
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 3px;
+    text-align: center;
+}
+
+    .command-active-span:hover {
+        background-color: #007cc0;
+        color: white;
+    }
+
+.command-disabled-span {
+    color: #ccc;
+    padding: 5px;
+    border-radius: 3px;
+    text-align: center;
 }
 
 
@@ -169,6 +197,7 @@
 .command-bar-active {
     background: #f9733d;
 }
+
 
 .command-bar-select1 {
     cursor: pointer;

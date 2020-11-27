@@ -1,0 +1,136 @@
+
+<style>
+
+    #sortable1 > li {
+        width: 200px;
+        cursor: move;
+        border: solid 1px #ccc;
+    }
+
+    #sortable2 > li {
+        width: 200px;
+        cursor: move;
+        border: solid 1px #ccc;
+    }
+
+
+
+</style>
+
+<center>
+    <table style="width:98%;">
+
+        <tr>
+            <td class="command-bar" style="width:10%;">
+                Databases
+                <span onclick="DeleteDatabase()">[x]</span>
+                <span onclick="AddDatabase()">[+]</span>
+            </td>
+            <td class="command-bar" style="width:10%;">
+                Tables
+                <span>[x]</span>
+                <span>[+]</span>
+            </td>
+            <td class="command-bar" style="width:10%;">
+                Data Objects
+            </td>
+            <td class="command-bar" style="width:70%;">
+                Properties
+            </td>
+
+        </tr>
+
+        <tr valign="top">
+            <td class="" style="border:solid 1px #ccc;width:10%;">
+                <div id="divAppDatabases"></div>
+            </td>
+            <td class="" style="border:solid 1px #ccc;width:10%;">
+                <div id="divAppTables"></div>
+            </td>
+            <td class="" style="border:solid 1px #ccc;width:10%;">
+                <table>
+                    <tr>
+                        <td class="width200 command-bar">
+                            Fields
+                            <span>[x]</span>
+                            <span>[+]</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-bottom:20px;">
+                            <div id="divColumns"></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="width200 command-bar">
+                            Grids
+                            <span>[x]</span>
+                            <span>[+]</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-bottom:20px;">
+                            <div id="divGrids"></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="width200 command-bar">
+                            Forms
+                            <span>[x]</span>
+                            <span>[+]</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-bottom:20px;">
+                            <div id="divForms"></div>
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td class="width200 command-bar">
+                            Search Forms
+                            <span>[x]</span>
+                            <span>[+]</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-bottom:20px;">
+                            <div id="divSearchForms"></div>
+                        </td>
+                    </tr>
+
+                </table>
+
+            </td>
+            <td style="width:70%;">
+                <div id="divProperties">
+                </div>
+                
+            </td>
+
+        </tr>
+
+    </table>
+
+</center>
+
+
+<div id="WindowDatabase"  class="modal-window">
+    <div style="padding-top:5px;padding-left:10px;"><span>Add Database</span>  <span style="float:right;padding-right:10px;cursor:pointer;" onclick="CloseModalWindow('WindowDatabase')">X</span></div>
+    <hr />
+
+
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        GetDatabaseList();
+
+    });
+
+
+</script>

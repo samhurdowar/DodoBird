@@ -6,66 +6,156 @@
         padding: 0.5em;
     }
 
-
-    #sortable > div {
-        float: left;
+    #RootMenus li {
+        /*        border: 1px solid #ccc;*/
+        width: 300px;
+        cursor: move;
     }
+
+    #RootMenus ul {
+        list-style: none;
+    }
+
+    .menu-add-delete {
+        display: none;
+        color: #808080;
+        left: 400px;
+        float: right;
+        margin-right: 10px;
+        cursor: pointer;
+    }
+
+    .menu-item-command:hover {
+        color: #f8aaaa;
+    }
+
+
+    .menu-item:hover {
+        background-color: gainsboro;
+    }
+
+    .parent-menu-item:hover {
+        background-color: gainsboro;
+    }
+
+    .parent-menu-item {
+        padding-bottom: 5px;
+        margin-left: 7px;
+    }
+
+    .menu-item-edit {
+        cursor: pointer;
+    }
+
+        .menu-item-edit:hover {
+            color: #ff6a00;
+        }
 </style>
 
 
 
 
+<div class="menu-container">
+    <div id="#adminMenu">
 
-
-<div class="demo">
-    <div id="sortable">
-        <div id="draggable1" class="menu-item">
-            Administration
-            <ul id="sortable1" class="connectedSortable">
-                <li>AdminSub Menu I</li>
-                <li>AdminSub Menu II</li>
-                <li>AdminSub Menu III</li>
-                <li>AdminSub Menu IV</li>
-                <li>AdminSub Menu V</li>
-            </ul>
-        </div>
-        <div id="draggable2" class="menu-item">Contact Us</div>
-        <div id="draggable3" class="menu-item">FAQs</div>
-        <div id="draggable4" class="menu-item">Menu Item 4</div>
-        <div id="draggable5" class="menu-item">
-            Menu Item 5
-            <ul id="sortable2" class="connectedSortable">
-                <li>Sub Menu I</li>
-                <li>Sub Menu II</li>
-                <li>
-                    Sub Menu III
-                    <ul id="sortable3" class="connectedSortable">
-                        <li>Sub Menu One</li>
-                        <li>Sub Menu Two</li>
-                        <li>Sub Menu Three</li>
-
-                    </ul>
-                </li>
-                <li>Sub Menu IV</li>
-                <li>Sub Menu V</li>
-            </ul>
-
-        </div>
     </div>
 </div>
 
+
 <script>
+    $(document).ready(function () {
+        //GetAdminMenuList();
 
-$("#sortable").sortable({
-    revert: true
-});
 
-$("#sortable1, #sortable2").sortable({
-    connectWith: ".connectedSortable"
-});
+        RefreshMenuDOM();
 
-$("#sortable3").sortable({
+    });
 
-});
 
+    function RefreshMenuDOM() {
+        $("#RootMenus, #Children1_1, #Children7_1, #Children7_2").sortable({
+
+            stop: function (event, ui) {
+                var id = $(ui.item).attr("id");
+                var newOrder = ui.item.index() + 1;
+
+                // get parent item to refresh
+                var obj = $(this).closest("li.refresh-item");
+                var refreshId = obj.attr("id");
+
+                console.log("    id=" + id + "    newOrder=" + newOrder + "    refreshId=" + refreshId);
+
+                //SortGridColumn(gridId, id, columnIndex, ToColumnIndex, newOrder);
+            }
+        });
+
+        // show add and delete
+        $(".parent-menu-item").mouseover(function () {
+            $(this).closest('div').find(".menu-add-delete:first").show();
+        });
+        $(".parent-menu-item").mouseout(function () {
+            $(this).closest('div').find(".menu-add-delete:first").hide();
+        });
+
+        $(".menu-item").mouseover(function () {
+            $(this).closest('li').find(".menu-add-delete:first").show();
+        });
+        $(".menu-item").mouseout(function () {
+            $(this).closest('li').find(".menu-add-delete:first").hide();
+        });
+
+
+        // edit menu item
+        $(".menu-item-edit").click(function () {
+            var menuId = $(this).attr("menuId");
+
+            // get parent item to refresh
+            var obj = $(this).closest("li.refresh-item");
+            var refreshId = obj.attr("id");
+
+            console.log("    edit menuId=" + menuId + "    refreshId=" + refreshId);
+        });
+    }
 </script>
+
+<span class='menu-item-command fas fa-caret-right'>&nbsp;</span>
+<ul id='RootMenus'>
+
+    <li id='MenuId1' class='refresh-item'>
+        <div class='parent-menu-item'><span menuId='1' class='menu-item-edit'>Menu Item 1</span>   <span class='menu-add-delete'> <span class='menu-item-command fas fa-plus'>&nbsp;</span> <span class='menu-item-command fas fa-trash'>&nbsp;</span></span></div>
+        <ul id='Children1_1'>
+            <li id='MenuId2' class='menu-item'><span menuId='2' class='menu-item-edit'>Sub Menu 2 </span>   <span class='menu-add-delete'> <span class='menu-item-command fas fa-plus'>&nbsp;</span> <span class='menu-item-command fas fa-trash'>&nbsp;</span></span></li>
+            <li id='MenuId3' class='menu-item'><span menuId='3' class='menu-item-edit'>Sub Menu 3</span>   <span class='menu-add-delete'> <span class='menu-item-command fas fa-plus'>&nbsp;</span> <span class='menu-item-command fas fa-trash'>&nbsp;</span></span></li>
+            <li id='MenuId4' class='menu-item'><span menuId='4' class='menu-item-edit'>Sub Menu 4</span>  <span class='menu-add-delete'> <span class='menu-item-command fas fa-plus'>&nbsp;</span> <span class='menu-item-command fas fa-trash'>&nbsp;</span></span></li>
+        </ul>
+    </li>
+    <li id='MenuId5' class='refresh-item menu-item'>
+        <span menuId='5' class='menu-item-edit'>Menu Item 2</span>  <span class='menu-add-delete'> <span class='menu-item-command fas fa-plus'>&nbsp;</span> <span class='menu-item-command fas fa-trash'>&nbsp;</span></span>
+    </li>
+
+    <li id='MenuId6' class='refresh-item menu-item'>
+        <span menuId='6' class='menu-item-edit'>Menu Item 3</span>   <span class='menu-add-delete'> <span class='menu-item-command fas fa-plus'>&nbsp;</span> <span class='menu-item-command fas fa-trash'>&nbsp;</span></span>
+    </li>
+    <li id='MenuId7' class='refresh-item'>
+        <div class='parent-menu-item'>
+            <span menuId='7' class='menu-item-edit'>Menu Item 4</span>   <span class='menu-add-delete'> <span class='menu-item-command fas fa-plus'>&nbsp;</span> <span class='menu-item-command fas fa-trash'>&nbsp;</span></span>
+        </div>
+        <ul id='Children7_1'>
+            <li id='MenuId8' class='menu-item'><span menuId='8' class='menu-item-edit'>Sub Menu I</span>  <span class='menu-add-delete'> <span class='menu-item-command fas fa-plus'>&nbsp;</span> <span class='menu-item-command fas fa-trash'>&nbsp;</span></span></li>
+            <li id='MenuId9' class='menu-item'><span menuId='9' class='menu-item-edit'>Sub Menu II</span>  <span class='menu-add-delete'> <span class='menu-item-command fas fa-plus'>&nbsp;</span> <span class='menu-item-command fas fa-trash'>&nbsp;</span></span></li>
+            <li id='MenuId10'>
+                <div class='parent-menu-item'>
+                    <span menuId='10' class='menu-item-edit'>Sub Menu III</span> <span class='menu-add-delete'> <span class='menu-item-command fas fa-plus'>&nbsp;</span> <span class='menu-item-command fas fa-trash'>&nbsp;</span></span>
+                </div>
+
+                <ul id='Children7_2'>
+                    <li id='MenuId11' class='menu-item'><span menuId='11' class='menu-item-edit'>Sub Menu One</span>    <span class='menu-add-delete'> <span class='menu-item-command fas fa-plus'>&nbsp;</span> <span class='menu-item-command fas fa-trash'>&nbsp;</span></span></li>
+                    <li id='MenuId12' class='menu-item'><span menuId='12' class='menu-item-edit'>Sub Menu Two</span>    <span class='menu-add-delete'> <span class='menu-item-command fas fa-plus'>&nbsp;</span> <span class='menu-item-command fas fa-trash'>&nbsp;</span></span></li>
+                    <li id='MenuId13' class='menu-item'><span menuId='13' class='menu-item-edit'>Sub Menu Three</span>  <span class='menu-add-delete'> <span class='menu-item-command fas fa-plus'>&nbsp;</span> <span class='menu-item-command fas fa-trash'>&nbsp;</span></span></li>
+
+                </ul>
+            </li>
+        </ul>
+
+    </li>
+</ul>

@@ -19,8 +19,8 @@
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
-    <IISExpressAnonymousAuthentication>disabled</IISExpressAnonymousAuthentication>
-    <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
+    <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
+    <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode />
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
@@ -227,21 +227,15 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\DatabaseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\DataController.cs" />
     <Compile Include="Controllers\MenuController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\DataModels.cs" />
+    <Compile Include="Models\DodoBirdModels.cs" />
     <Compile Include="Models\App\CommonModels.cs" />
     <Compile Include="Models\App\SysColumn.cs" />
-    <Compile Include="Models\Db\AppDatabase.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Db\AppUser.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Db\Client.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\Db\DodoBirdModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -257,36 +251,14 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DodoBirdModel.edmx</DependentUpon>
     </Compile>
-    <Compile Include="Models\Db\Menu1Item.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Db\Menu2Item.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Db\Menu3Item.cs">
-      <DependentUpon>DodoBirdModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Db\TargetModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>TargetModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Db\TargetModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>TargetModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Db\TargetModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>TargetModel.edmx</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Services\DataService.cs" />
+    <Compile Include="Services\HelperService.cs" />
     <Compile Include="Services\SessionService.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -294,6 +266,7 @@
     <Content Include="AppScriptsJS\Index.js" />
     <Content Include="AppScriptsJS\ManageDatabase.js" />
     <Content Include="AppScriptsJS\Menu.js" />
+    <Content Include="App_Data\Prospects20201118.txt" />
     <Content Include="App_Data\Workboard.sql" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\font-awesome.css" />
@@ -1864,13 +1837,6 @@
     <Content Include="Models\Db\DodoBirdModel.edmx.diagram">
       <DependentUpon>DodoBirdModel.edmx</DependentUpon>
     </Content>
-    <EntityDeploy Include="Models\Db\TargetModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>TargetModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\Db\TargetModel.edmx.diagram">
-      <DependentUpon>TargetModel.edmx</DependentUpon>
-    </Content>
     <Content Include="Content\fontawesome\less\brands.less" />
     <Content Include="Content\fontawesome\less\fontawesome.less" />
     <Content Include="Content\fontawesome\less\regular.less" />
@@ -1945,28 +1911,23 @@
       <DependentUpon>DodoBirdModel.edmx</DependentUpon>
       <LastGenOutput>DodoBirdModel.cs</LastGenOutput>
     </Content>
-    <Content Include="Models\Db\TargetModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>TargetModel.edmx</DependentUpon>
-      <LastGenOutput>TargetModel.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\Db\TargetModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>TargetModel.edmx</DependentUpon>
-      <LastGenOutput>TargetModel.cs</LastGenOutput>
-    </Content>
     <None Include="Scripts\jquery-3.5.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.5.1.js" />
     <Content Include="Scripts\jquery-3.5.1.min.js" />
     <Content Include="Scripts\jquery-3.5.1.slim.js" />
     <Content Include="Scripts\jquery-3.5.1.slim.min.js" />
     <Content Include="Scripts\Workboard.sql" />
-    <Content Include="Views\Home\ManageDatabase.cshtml" />
-    <Content Include="Views\Home\ManageMenu.cshtml" />
+    <Content Include="Views\App\ManageDatabase.cshtml" />
     <Content Include="Scripts\jquery-3.5.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.5.1.min.map" />
     <Content Include="Scripts\moment.min.js.map" />
     <Content Include="Scripts\moment-with-locales.min.js.map" />
+    <Content Include="Views\App\Test.cshtml" />
+    <Content Include="Views\App\EditColumn.cshtml" />
+    <Content Include="Views\App\EditDatabase.cshtml" />
+    <Content Include="Views\App\EditGrid.cshtml" />
+    <Content Include="Views\App\EditTable.cshtml" />
+    <Content Include="Views\App\EditMenu.cshtml" />
     <None Include="Views\Home\Test.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

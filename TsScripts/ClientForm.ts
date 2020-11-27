@@ -134,3 +134,108 @@ function ToJsonString(formName) {
     return json;
 }
 
+function BindForm(formName, data) {
+
+    var elementType = "";
+    var dataValue = "";
+
+
+    // get data properties
+    var keys = "|";
+    for (var key in data) {
+        keys += key + "|";
+    }
+
+    $("#" + formName + " :input").each(function () {
+        try {
+            
+            dataValue = "";
+
+            var id = $(this).attr("name");
+            if (!id) {
+                id = $(this).attr("id");
+                elementType = (<HTMLInputElement>document.getElementById(id)).type;
+            } else {
+                var x = document.getElementsByName(id);
+                var y = <HTMLInputElement>x[0];
+                elementType = y.type;
+            }
+            //console.log("BindData id=" + id + "  elementType=" + elementType + "    dataValue=" + data[id]);
+
+
+            if (keys.indexOf("|" + id + "|") > -1) {
+                dataValue = (data[id] != null) ? data[id] : "";
+
+                console.log("BindData id=" + id + "  elementType=" + elementType + "    dataValue=" + dataValue);
+
+                if (elementType == "text") {
+                    $(this).val(dataValue);
+
+                    $(this).keydown(function () {
+                        EnableButton("cmd_Save_" + formName);
+                    });
+                } else if (elementType == "checkbox") {
+                    if (dataValue == "true" || dataValue == "TRUE" || dataValue == "1") {
+                        $(this).prop('checked', true);
+                    } else {
+                        $(this).prop('checked', false);
+                    }
+
+                    $(this).click(function () {
+                        EnableButton("cmd_Save_" + formName);
+                    });
+                } else if (elementType == "radio") {
+
+                    var groupName = "input:radio[name=\"" + id + "\"]";
+                    $(groupName).each(function () {
+                        var radioVal = $(this).val()
+                        //console.log("radioVal=" + radioVal);
+                        if (radioVal == dataValue) {
+                            $(this).prop('checked', true);
+                        }
+                    });
+
+                    $(this).click(function () {
+                        EnableButton("cmd_Save_" + formName);
+                    });
+                } else if (elementType == "select-one") {
+                    $(this).val(dataValue);
+
+                    $(this).change(function () {
+                        //console.log("EnableButton select-one");
+                        EnableButton("cmd_Save_" + formName);
+                    });
+                }
+
+            }
+
+
+
+
+        } catch (e) {
+            console.log("BindForm error=" + e);
+        }
+    });
+}
+
+
+function EnableButton(id) {
+    //console.log("EnableButton id=" + id);
+    try {
+        $("#" + id).unbind("click");
+    } catch (e) { }
+
+    $("#" + id).click(function () {
+        var cmd = id.replace("cmd_", "") + "()";
+        eval(cmd);
+    });
+
+    $("#" + id).removeClass("command-disabled-span").addClass("command-active-span");
+}
+
+function DisableButton(id) {
+    try {
+        $("#" + id).unbind("click");
+    } catch (e) { }
+    $("#" + id).removeClass("command-active-span").addClass("command-disabled-span");
+}

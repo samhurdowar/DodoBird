@@ -1,0 +1,27 @@
+
+<div class="command-bar-container">
+    <span id="cmd_Save_EditTable" class="command-disabled-span"><span class="command-icon fas fa-save">&nbsp;</span> Save</span>
+</div>
+
+
+
+<form id="EditTable" action="/" method="post">
+
+    <table>
+        <tr>
+            <td>Table Name</td>
+            <td><input type="text" name="TableName" id="TableName" value="" /></td>
+        </tr>
+    </table>
+
+</form>
+
+
+<script>
+    function Save_EditTable() {
+        alert("Hello");
+
+
+        DisableButton("cmd_Save_EditTable");
+    }
+</script>

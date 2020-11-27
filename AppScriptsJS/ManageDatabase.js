@@ -1,24 +1,3 @@
-//function ManageDatabase(level_MenuId: string, menuTitle: string) {
-//    $.ajax({
-//        url: "./Home/GetPage",
-//        data: { pageFile: "~/Views/Home/ManageDatabase.cshtml" },
-//        type: "POST",
-//        dataType: "text",
-//        success: function (response) {
-//            response = response.replace("xxx", "You are the greatest");
-//            AddTab(level_MenuId, menuTitle, response);
-//        }
-//    });
-//}
-function GetAppTable() {
-    $.ajax({
-        url: "./Entity/GetAppTable",
-        type: "GET",
-        dataType: "json",
-        success: function (data) {
-        }
-    });
-}
 function GetDatabaseList() {
     $.ajax({
         url: "./Database/GetDatabaseList",
@@ -40,145 +19,200 @@ function GetDatabaseList() {
     });
 }
 function SelectDatabase(appDatabaseId) {
-    $.ajax({
-        url: "./Database/GetTableList",
-        data: { appDatabaseId: appDatabaseId, includeColumns: false },
-        dataType: "json",
-        success: function (records) {
-            var obj = [];
-            obj.push("<table style='width:100%;'>");
-            // record rows - tables
-            for (var i = 0; i < records.length; i++) {
-                var row = records[i];
-                obj.push("<tr onclick='SelectTable(" + row.AppTableId + ")'>");
-                obj.push("<td class='command-bar-select2'>" + row.TableName + "</td>");
-                obj.push("</tr>");
+    AppSpinner(true);
+    setTimeout(function () {
+        $.ajax({
+            url: "./Database/GetTableList",
+            data: { appDatabaseId: appDatabaseId },
+            dataType: "json",
+            success: function (records) {
+                var obj = [];
+                obj.push("<table style='width:100%;'>");
+                // record rows - tables
+                for (var i = 0; i < records.length; i++) {
+                    var row = records[i];
+                    obj.push("<tr onclick=\"SelectTable(" + appDatabaseId + ",'" + row.TableName + "')\">");
+                    obj.push("<td class='command-bar-select2'>" + row.TableName + "</td>");
+                    obj.push("</tr>");
+                }
+                obj.push("</table>");
+                $("#divAppTables").html(obj.join(""));
+                SetCommandBarDOM();
+                // clear divAppColumns
+                $("#divAppColumns").html("");
+            },
+            complete: function () {
+                AppSpinner(false);
             }
-            obj.push("</table>");
-            $("#divAppTables").html(obj.join(""));
-            SetCommandBarDOM();
-            // clear divAppColumns
-            $("#divAppColumns").html("");
-        }
-    });
+        });
+    }, 500);
 }
-function SelectTable(appTableId) {
-    $.ajax({
-        url: "./Database/GetTableOjects",
-        data: { appTableId: appTableId },
-        dataType: "json",
-        success: function (data) {
-            // AppColumns
-            var appColumns = data.AppColumns;
-            var objAppColumns = [];
-            objAppColumns.push("<table style='width:100%;'>");
-            for (var i = 0; i < appColumns.length; i++) {
-                var row = appColumns[i];
-                objAppColumns.push("<tr id='AppColumnId" + row.AppColumnId + "' onclick='SelectColumn(this)'>");
-                objAppColumns.push("<td class='command-bar-select3'>" + row.ColumnName + "</td>");
-                objAppColumns.push("</tr>");
+var Columns;
+function SelectTable(appDatabaseId, tableName) {
+    AppSpinner(true);
+    setTimeout(function () {
+        $.ajax({
+            url: "./Database/GetTableOjects",
+            data: { appDatabaseId: appDatabaseId, tableName: tableName },
+            dataType: "json",
+            success: function (data) {
+                // EditTable
+                $.ajax({
+                    url: "./Home/GetPage",
+                    data: { pageFile: "~/Views/App/EditTable.cshtml" },
+                    type: "POST",
+                    dataType: "text",
+                    success: function (response) {
+                        $("#divProperties").html(response);
+                        BindForm("EditTable", data.TableSchema);
+                    }
+                });
+                // TableSchema.Columns
+                var columns = data.TableSchema.Columns;
+                Columns = data.TableSchema.Columns;
+                var objColumns = [];
+                objColumns.push("<table style='width:100%;'>");
+                for (var i = 0; i < columns.length; i++) {
+                    var row = columns[i];
+                    objColumns.push("<tr id='ColumnName" + row.ColumnName + "' appDatabaseId='" + appDatabaseId + "' tableName='" + tableName + "' columnName='" + row.ColumnName + "' onclick='SelectColumn(this)'>");
+                    objColumns.push("<td class='command-bar-select3'>" + row.ColumnName + "</td>");
+                    objColumns.push("</tr>");
+                }
+                objColumns.push("</table>");
+                $("#divColumns").html(objColumns.join(""));
+                // Grids
+                var grids = data.Grids;
+                var objGrids = [];
+                objGrids.push("<table style='width:100%;'>");
+                for (var i = 0; i < grids.length; i++) {
+                    var row = grids[i];
+                    objGrids.push("<tr onclick='SelectGrid(" + row.GridId + ")'>");
+                    objGrids.push("<td class='command-bar-select3'>" + row.GridName + "</td>");
+                    objGrids.push("</tr>");
+                }
+                objGrids.push("</table>");
+                $("#divGrids").html(objGrids.join(""));
+                // Forms
+                var forms = data.Forms;
+                var objForms = [];
+                objForms.push("<table style='width:100%;'>");
+                for (var i = 0; i < forms.length; i++) {
+                    var row = forms[i];
+                    objForms.push("<tr onclick='SelectForm(" + row.FormId + ")'>");
+                    objForms.push("<td class='command-bar-select3'>" + row.FormName + "</td>");
+                    objForms.push("</tr>");
+                }
+                objForms.push("</table>");
+                $("#divForms").html(objForms.join(""));
+                SetCommandBarDOM();
+            },
+            complete: function () {
+                AppSpinner(false);
             }
-            objAppColumns.push("</table>");
-            $("#divAppColumns").html(objAppColumns.join(""));
-            // Grids
-            var grids = data.Grids;
-            var objGrids = [];
-            objGrids.push("<table style='width:100%;'>");
-            for (var i = 0; i < grids.length; i++) {
-                var row = grids[i];
-                objGrids.push("<tr onclick='SelectGrid(" + row.GridId + ")'>");
-                objGrids.push("<td class='command-bar-select3'>" + row.GridName + "</td>");
-                objGrids.push("</tr>");
-            }
-            objGrids.push("</table>");
-            $("#divGrids").html(objGrids.join(""));
-            SetCommandBarDOM();
-        }
-    });
+        });
+    }, 500);
 }
-var to_isDisplayed = "";
+function SelectColumn(t) {
+    AppSpinner(true);
+    setTimeout(function () {
+        $.ajax({
+            url: "./Home/GetPage",
+            data: { pageFile: "~/Views/App/EditColumn.cshtml" },
+            type: "POST",
+            dataType: "text",
+            success: function (response) {
+                $("#divProperties").html(response);
+                var columnName = $(t).attr("columnName");
+                var columnData = Columns.filter(function (f) { return f.ColumnName == columnName; });
+                BindForm("EditColumn", columnData[0]);
+            },
+            complete: function () {
+                AppSpinner(false);
+            }
+        });
+    }, 500);
+}
 function SelectGrid(gridId) {
+    AppSpinner(true);
+    setTimeout(function () {
+        $.ajax({
+            url: "./Home/GetPage",
+            data: { pageFile: "~/Views/App/EditGrid.cshtml" },
+            type: "POST",
+            dataType: "text",
+            success: function (response) {
+                $("#divProperties").html(response);
+                GetGridSchema(gridId);
+            },
+            complete: function () {
+                AppSpinner(false);
+            }
+        });
+    }, 500);
+}
+var ToColumnIndex = "";
+function GetGridSchema(gridId) {
     $.ajax({
-        url: "./Database/GetGridColumnList",
+        url: "./Database/GetGridSchema",
         data: { gridId: gridId },
         dataType: "json",
-        success: function (records) {
-            var gridColumns = records;
-            // GridColumns
-            var objAvail = [];
-            var objDisplayed = [];
-            // available columns for grid
-            var availColumns = gridColumns.filter(function (f) { return !f.IsDisplayed; }).sort(function (s) { return s.DisplayName; });
-            objAvail.push("<ul id='availColumn' isDisplayed='0' class='connectedSortable'>");
-            for (var i = 0; i < availColumns.length; i++) {
-                var row = availColumns[i];
-                objAvail.push("<li id='GridColumnId" + row.GridColumnId + "' isDisplayed='0' style='cursor:pointer;'>");
-                objAvail.push("<span>" + row.AppColumn.DisplayName + "</span>");
-                objAvail.push("</li>");
+        success: function (data) {
+            BindForm("EditGrid", data);
+            // set AvailableColumns
+            var obj1 = [];
+            obj1.push("<ul id='sortableGrid1' columnIndex='0' class='connectedSortable'>");
+            for (var i = 0; i < data.AvailableColumns.length; i++) {
+                var row = data.AvailableColumns[i];
+                obj1.push("<li id='GridColumn_" + row.ColumnName + "' columnIndex='0'>" + row.ColumnName + "</li>");
             }
-            objAvail.push("</ul>");
-            // columns displayed
-            var displayColumns = gridColumns.filter(function (f) { return f.IsDisplayed; });
-            displayColumns = SortJson(displayColumns, "SortOrder");
-            objDisplayed.push("<ul id='displayColumn' isDisplayed='1' class='connectedSortable'>");
-            for (var i = 0; i < displayColumns.length; i++) {
-                var row = displayColumns[i];
-                objDisplayed.push("<li id='GridColumnId" + row.GridColumnId + "' isDisplayed='1' style='cursor:pointer;'>");
-                objDisplayed.push("<span>" + row.AppColumn.DisplayName + "</span>");
-                objDisplayed.push("</li>");
+            obj1.push("</ul>");
+            $("#availableColumns").html(obj1.join(""));
+            // set gridColumns
+            var obj2 = [];
+            obj2.push("<ul id='sortableGrid2' columnIndex='1' class='connectedSortable'>");
+            for (var i = 0; i < data.GridColumns.length; i++) {
+                var row = data.GridColumns[i];
+                obj2.push("<li id='GridColumn_" + row.ColumnName + "' columnIndex='1'>" + row.ColumnName + "</li>");
             }
-            objDisplayed.push("</ul>");
-            // table render
-            var obj = [];
-            obj.push("<table>");
-            obj.push("<tr>");
-            obj.push("<td style='background: #ccc;width:300px;'>Available Fields</td>");
-            obj.push("<td style='background: #ccc;width:300px;'>Display in Grid</td>");
-            obj.push("</tr>");
-            obj.push("<tr valign='top'>");
-            obj.push("<td style='border:1px solid #ccc;width:300px;'>" + objAvail.join("") + "</td>");
-            obj.push("<td style='border:1px solid #ccc;width:300px;'>" + objDisplayed.join("") + "</td>");
-            obj.push("</tr>");
-            obj.push("</table >");
-            $("#divProperties").html(obj.join(""));
-            // sortable
-            $("#availColumn, #displayColumn").sortable({
+            obj2.push("</ul>");
+            $("#gridColumns").html(obj2.join(""));
+            $("#sortableGrid1, #sortableGrid2").sortable({
                 connectWith: ".connectedSortable",
                 start: function (event, ui) {
                     ui.item.startPos = ui.item.index();
                     ui.placeholder.height(ui.item.height());
                 },
                 stop: function (event, ui) {
-                    var gridColumnId = $(ui.item).attr("id").replace("GridColumnId", "");
-                    var from_isDisplayed = $(ui.item).attr("isDisplayed");
+                    var id = $(ui.item).attr("id").replace("GridColumn_", "");
                     var newOrder = ui.item.index() + 1;
-                    if (to_isDisplayed == "")
-                        to_isDisplayed = from_isDisplayed;
-                    console.log("gridColumnId=" + gridColumnId + "    from_isDisplayed=" + from_isDisplayed + "    to_isDisplayed=" + to_isDisplayed + "    newOrder=" + newOrder);
-                    SortGridColumn(gridId, gridColumnId, to_isDisplayed, newOrder);
-                    if (from_isDisplayed != to_isDisplayed) {
-                        $(ui.item).attr("isDisplayed", to_isDisplayed);
-                    }
-                    to_isDisplayed = "";
+                    var columnIndex = $(ui.item).attr("columnIndex");
+                    if (ToColumnIndex == "")
+                        ToColumnIndex = columnIndex;
+                    console.log("gridId=" + gridId + "    ColumnName=" + id + "    FromColumnIndex=" + columnIndex + "    ToColumnIndex=" + ToColumnIndex + "    newOrder=" + newOrder);
+                    SortGridColumn(gridId, id, columnIndex, ToColumnIndex, newOrder);
                 },
                 receive: function (event, ui) {
                     try {
-                        to_isDisplayed = $(event.target).attr("isDisplayed");
+                        ToColumnIndex = $(event.target).attr("columnIndex");
                     }
                     catch (e) {
-                        to_isDisplayed = "";
+                        ToColumnIndex = "";
                     }
                 }
             });
+        },
+        complete: function () {
+            AppSpinner(false);
         }
     });
 }
-function SortGridColumn(gridId, gridColumnId, isDisplayed, newOrder) {
+function SortGridColumn(gridId, columnName, fromIndex, toIndex, newOrder) {
     $.ajax({
         url: "./Database/SortGridColumn",
-        data: { gridId: gridId, gridColumnId: gridColumnId, isDisplayed: isDisplayed, newOrder: newOrder },
+        data: { gridId: gridId, columnName: columnName, fromIndex: fromIndex, toIndex: toIndex, newOrder: newOrder },
         dataType: "text",
         success: function (response) {
+            GetGridSchema(gridId);
         }
     });
 }

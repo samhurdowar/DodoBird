@@ -20,4 +20,7 @@ namespace DodoBird.Models.App
         public string OrderByColumn { get; set; }
         public string SortDirection { get; set; }
     }
+
+
+
 }
