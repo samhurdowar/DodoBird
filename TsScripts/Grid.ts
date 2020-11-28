@@ -62,7 +62,7 @@ function GenerateGridTable(menuId: number, newTab: boolean, records) {
     for (var i = 0; i < records.length; i++) {
 
         var row = records[i];
-        obj.push("<tr class='tr-all tr-row-pointer' id='row" + row[primaryKey] + "'>");
+        obj.push("<tr class='tr-all tr-row-pointer'>");  //xxx  id='row" + row[primaryKey] + "'
         for (var column in row) {
             obj.push("<td>" + row[column] + "</td>");
         }
@@ -113,7 +113,7 @@ function GenerateGridTable(menuId: number, newTab: boolean, records) {
 
     if (newTab) {
         var content_ = "<div id='grid" + menuId + "' style='margin-bottom:20px;'> " + content + "</div>";
-        //xxxAddTab(level_MenuId, menuTitle, content_);
+        AddTab(menuId, menuTitle, false, content_);
     } else {
         $("#grid" + menuId).html(content);
     }

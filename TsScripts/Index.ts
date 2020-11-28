@@ -32,8 +32,8 @@ function MenuClick(menuId: number) {
     if (menu.TargetId > 0 && menu.TargetType == "grid") {
         var gridId = menu.TargetId;
         SetPageNavigation(menu.MenuId, menu.MenuTitle, gridId);
-        GetGrid(gridId, true);
-        AppSpinner(false);
+        GetGrid(menu.MenuId, true);
+        
     } else if (1 < 0) {
         //var content = "Content for Page " + m[0].MenuTitle + " - " + level_MenuId;
         //AddTab(level_MenuId, m[0].MenuTitle, content);
@@ -52,6 +52,8 @@ function MenuClick(menuId: number) {
 
         });
     }
+
+    AppSpinner(false);
 }
 
 function SetPageNavigation(menuId: number, menuTitle: string, gridId: number) {

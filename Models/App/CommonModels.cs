@@ -10,7 +10,7 @@ namespace DodoBird.Models.App
 
     public class PageNavigation
     {
-        public string MenuLevelId { get; set; }
+        public int MenuId { get; set; }
         public string MenuTitle { get; set; }
         public int GridId { get; set; }
         public int CurrentPage { get; set; }

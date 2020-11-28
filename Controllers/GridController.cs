@@ -8,6 +8,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
+using DodoBird.Services;
 
 namespace DodoBird.Controllers
 {
@@ -18,55 +19,72 @@ namespace DodoBird.Controllers
         {
             using (DodoBirdEntities Db = new DodoBirdEntities())
             {
-                var grid = Db.Grids.Find(pageNavigation.GridId);
-                var appTable = Db.AppTables.Find(grid.AppTableId);
+                var gridSchema = DataService.GetGridSchema(pageNavigation.GridId);
+                var tableSchema = DataService.GetTableSchema(gridSchema.AppDatabaseId, gridSchema.TableName);
 
-                using (TargetEntities targetDb = new TargetEntities())
+                Db.Database.Connection.ConnectionString = SessionService.GetConnectionString(gridSchema.AppDatabaseId);
+
+                StringBuilder sb = new StringBuilder();
+                StringBuilder sbRecords = new StringBuilder();
+                // add primary key columns
+                foreach (var key in tableSchema.PrimaryKeys)
                 {
-                    targetDb.Database.Connection.ConnectionString = appTable.AppDatabase.ConnectionString;
-
-                    StringBuilder sb = new StringBuilder();
-
-                    var primaryKey = appTable.PrimaryKey;
-                    var primaryKeyType = appTable.PrimaryKeyType;
-
-                    sb.Append(primaryKey);
-
-                    if (pageNavigation.SortDirection == null || pageNavigation.SortDirection.Length == 0) pageNavigation.SortDirection = "ASC";
-                    foreach (var column in grid.GridColumns.Where(w => w.AppColumn.ColumnName != primaryKey && !w.AppColumn.IsPrimaryKey && !"|CompanyID|DateCreated|LastUpdated|UpdatedBy|".Contains(w.AppColumn.ColumnName) && w.IsDisplayed).OrderBy(o => o.SortOrder))
-                    {
-                        if (pageNavigation.OrderByColumn == null || pageNavigation.OrderByColumn.Length == 0) pageNavigation.OrderByColumn = column.AppColumn.ColumnName;
-                        sb.Append("," + column.AppColumn.ColumnName);
-                    }
-
-
-                    // get page of records in json format
-                    var numOfRecordsOnPage = 15;
-                    var offSet = " OFFSET " + ((pageNavigation.CurrentPage - 1) * numOfRecordsOnPage) + " ROWS ";
-                    var fetch = " FETCH NEXT " + numOfRecordsOnPage + " ROWS ONLY ";
-
-                    var exe = "SELECT " + sb.ToString() + " FROM " + appTable.TableName + " ORDER BY " + pageNavigation.OrderByColumn + " " + pageNavigation.SortDirection + " " + offSet + fetch + " FOR JSON AUTO, INCLUDE_NULL_VALUES";
-
-                    var recs = targetDb.Database.SqlQuery<string>(exe).ToList();  //, new SqlParameter("@CompanyId", companyId)
-                    sb.Clear();
-                    foreach (var rec in recs)
-                    {
-                        sb.Append(rec);
-                    }
-
-                    var exeCount = "SELECT COUNT(1) FROM " + appTable.TableName;
-                    var recordCount = targetDb.Database.SqlQuery<int>(exeCount).FirstOrDefault();
-
-                    var numOfPages = 0;
-                    if (recordCount > 0)
-                    {
-                        double totalPage_ = Convert.ToDouble(recordCount) / Convert.ToDouble(numOfRecordsOnPage);
-                        numOfPages = (int)Math.Ceiling(totalPage_);
-                    }
-
-                    return "{ \"PrimaryKey\" : \"" + primaryKey + "\", \"RecordCount\" : " + recordCount + ", \"NumOfPages\" : " + numOfPages + ", \"OrderByColumn\" : \"" + pageNavigation.OrderByColumn + "\", \"SortDirection\" : \"" + pageNavigation.SortDirection + "\", \"Records\" : " + sb.ToString() + " }";
-
+                    sb.Append(key.ColumnName + ",");
                 }
+                
+                // set sort and direction 
+                if (pageNavigation.SortDirection == null || pageNavigation.SortDirection.Length == 0) pageNavigation.SortDirection = "ASC";
+
+
+                // select columns in grid
+                var gridColumns = gridSchema.GridColumns;
+                var tableColumns = tableSchema.Columns;
+
+                var columns = from a in gridColumns
+                              join b in tableColumns.Where(w => !w.IsPrimaryKey) on a.ColumnName equals b.ColumnName
+                              orderby a.ColumnOrder
+                              select b;
+                foreach (var column in columns)
+                {
+                    if (pageNavigation.OrderByColumn == null || pageNavigation.OrderByColumn.Length == 0) pageNavigation.OrderByColumn = column.ColumnName;  // default sort
+
+                    sb.Append(column.ColumnName + ",");
+                }
+
+
+                // set select statement get page of records in json format
+                var numOfRecordsOnPage = 15;
+                var offSet = " OFFSET " + ((pageNavigation.CurrentPage - 1) * numOfRecordsOnPage) + " ROWS ";
+                var fetch = " FETCH NEXT " + numOfRecordsOnPage + " ROWS ONLY ";
+
+                var selectColumns = sb.ToString();
+                selectColumns = selectColumns.Substring(0, selectColumns.Length - 1);
+                var exe = "SELECT " + selectColumns + " FROM " + tableSchema.TableName + " ORDER BY " + pageNavigation.OrderByColumn + " " + pageNavigation.SortDirection + " " + offSet + fetch + " FOR JSON AUTO, INCLUDE_NULL_VALUES";
+
+
+
+                // loop for records
+                var recs = Db.Database.SqlQuery<string>(exe).ToList();  //, new SqlParameter("@CompanyId", companyId)
+                foreach (var rec in recs)
+                {
+                    sbRecords.Append(rec);
+                }
+
+
+                // get total count
+                var exeCount = "SELECT COUNT(1) FROM " + tableSchema.TableName;
+                var recordCount = Db.Database.SqlQuery<int>(exeCount).FirstOrDefault();
+
+                var numOfPages = 0;
+                if (recordCount > 0)
+                {
+                    double totalPage_ = Convert.ToDouble(recordCount) / Convert.ToDouble(numOfRecordsOnPage);
+                    numOfPages = (int)Math.Ceiling(totalPage_);
+                }
+
+                return "{ \"PrimaryKey\" : \"xxx\", \"RecordCount\" : " + recordCount + ", \"NumOfPages\" : " + numOfPages + ", \"OrderByColumn\" : \"" + pageNavigation.OrderByColumn + "\", \"SortDirection\" : \"" + pageNavigation.SortDirection + "\", \"Records\" : " + sbRecords.ToString() + " }";
+
+                
 
             }
         }
