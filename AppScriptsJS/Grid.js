@@ -1,6 +1,6 @@
 //return "{ \"PrimaryKey\" : \"" + primaryKey + "\", \"RecordCount\" : " + recordCount + ", \"NumOfPages\" : " + numOfPages + ", \"OrderByColumn\" : \"" + pageNavigation.OrderByColumn + "\", \"SortDirection\" : \"" + pageNavigation.SortDirection + "\", \"Records\" : " + sb.ToString() + " }";
-function GetGrid(level_MenuId, newTab) {
-    var pageNavigation = PageNavigations.filter(function (it) { return it.MenuLevelId == level_MenuId; });
+function GetGrid(menuId, newTab) {
+    var pageNavigation = PageNavigations.filter(function (it) { return it.MenuId == menuId; });
     $.ajax({
         url: "./Grid/GetGrid",
         data: pageNavigation[0],
@@ -8,7 +8,7 @@ function GetGrid(level_MenuId, newTab) {
         dataType: "json",
         success: function (data) {
             // update pageNavigation
-            var i = PageNavigations.findIndex(function (obj) { return obj.MenuLevelId == level_MenuId; });
+            var i = PageNavigations.findIndex(function (obj) { return obj.MenuId == menuId; });
             if (i > -1) {
                 PageNavigations[i].PrimaryKey = data.PrimaryKey;
                 PageNavigations[i].RecordCount = data.RecordCount;
@@ -16,12 +16,12 @@ function GetGrid(level_MenuId, newTab) {
                 PageNavigations[i].OrderByColumn = data.OrderByColumn;
                 PageNavigations[i].SortDirection = data.SortDirection;
             }
-            GenerateGridTable(level_MenuId, newTab, data.Records);
+            GenerateGridTable(menuId, newTab, data.Records);
         }
     });
 }
-function GenerateGridTable(level_MenuId, newTab, records) {
-    var pageIndex = PageNavigations.findIndex(function (w) { return w.MenuLevelId == level_MenuId; });
+function GenerateGridTable(menuId, newTab, records) {
+    var pageIndex = PageNavigations.findIndex(function (w) { return w.MenuId == menuId; });
     var primaryKey = PageNavigations[pageIndex].PrimaryKey;
     var menuTitle = PageNavigations[pageIndex].MenuTitle;
     var orderByColumn = PageNavigations[pageIndex].OrderByColumn;
@@ -58,7 +58,7 @@ function GenerateGridTable(level_MenuId, newTab, records) {
     obj.push("</table>");
     // page nav
     var pageDropdown = [];
-    pageDropdown.push("<select id='pageDropdown" + level_MenuId + "' onChange=\"NavigatePage('" + level_MenuId + "',-111)\">");
+    pageDropdown.push("<select id='pageDropdown" + menuId + "' onChange=\"NavigatePage('" + menuId + "',-111)\">");
     for (var p = 1; p <= PageNavigations[pageIndex].NumOfPages; p++) {
         pageDropdown.push("<option value='" + p + "'>" + p + "</option>");
     }
@@ -75,11 +75,11 @@ function GenerateGridTable(level_MenuId, newTab, records) {
     obj.push("        <table style='width:93%;'>");
     obj.push("            <tr>");
     obj.push("                <td>");
-    obj.push("                    <span class='hover-me nav-arrows fa fa-angle-double-left' style='cursor:pointer;' onclick=\"NavigatePage('" + level_MenuId + "',-100000)\"> </span>");
-    obj.push("                    <span class='hover-me nav-arrows fa fa-angle-left' style='cursor:pointer;' onclick=\"NavigatePage('" + level_MenuId + "',-1)\"> </span>");
+    obj.push("                    <span class='hover-me nav-arrows fa fa-angle-double-left' style='cursor:pointer;' onclick=\"NavigatePage('" + menuId + "',-100000)\"> </span>");
+    obj.push("                    <span class='hover-me nav-arrows fa fa-angle-left' style='cursor:pointer;' onclick=\"NavigatePage('" + menuId + "',-1)\"> </span>");
     obj.push("                    <span id='navPages'>" + pageDropdown.join("") + "</span>");
-    obj.push("                    <span class='hover-me nav-arrows fa fa-angle-right' style='cursor:pointer;' onclick=\"NavigatePage('" + level_MenuId + "',1)\"> </span>");
-    obj.push("                    <span class='hover-me nav-arrows fa fa-angle-double-right' style='cursor:pointer;' onclick=\"NavigatePage('" + level_MenuId + "',100000)\"> </span>");
+    obj.push("                    <span class='hover-me nav-arrows fa fa-angle-right' style='cursor:pointer;' onclick=\"NavigatePage('" + menuId + "',1)\"> </span>");
+    obj.push("                    <span class='hover-me nav-arrows fa fa-angle-double-right' style='cursor:pointer;' onclick=\"NavigatePage('" + menuId + "',100000)\"> </span>");
     obj.push("                </td> ");
     obj.push("                <td align='right'>" + recCountInfo + "</td>");
     obj.push("            </tr>");
@@ -89,21 +89,21 @@ function GenerateGridTable(level_MenuId, newTab, records) {
     obj.push();
     var content = obj.join("");
     if (newTab) {
-        var content_ = "<div id='grid" + level_MenuId + "' style='margin-bottom:20px;'> " + content + "</div>";
+        var content_ = "<div id='grid" + menuId + "' style='margin-bottom:20px;'> " + content + "</div>";
         //xxxAddTab(level_MenuId, menuTitle, content_);
     }
     else {
-        $("#grid" + level_MenuId).html(content);
+        $("#grid" + menuId).html(content);
     }
     // set pageDropdown
-    $("#pageDropdown" + level_MenuId).val(PageNavigations[pageIndex].CurrentPage);
+    $("#pageDropdown" + menuId).val(PageNavigations[pageIndex].CurrentPage);
 }
-function NavigatePage(level_MenuId, pageIndex) {
+function NavigatePage(menuId, pageIndex) {
     // update pageNavigation
-    var i = PageNavigations.findIndex(function (obj) { return obj.MenuLevelId == level_MenuId; });
+    var i = PageNavigations.findIndex(function (obj) { return obj.MenuId == menuId; });
     var currentPage = 0;
     if (pageIndex == -111) {
-        currentPage = Number($("#pageDropdown" + level_MenuId).val());
+        currentPage = Number($("#pageDropdown" + menuId).val());
     }
     else {
         currentPage = PageNavigations[i].CurrentPage + pageIndex;
@@ -115,7 +115,7 @@ function NavigatePage(level_MenuId, pageIndex) {
         }
     }
     PageNavigations[i].CurrentPage = currentPage;
-    GetGrid(level_MenuId, false);
+    GetGrid(menuId, false);
 }
 //function ChangeSortDirection() {
 //    if (SortDirection == "ASC") {

@@ -172,7 +172,6 @@ namespace DodoBird.Services
             }
         }
 
-
         public static string SaveFormData(int appDatabaseId, string tableName, dynamic jsonObj)
         {
             try
@@ -187,7 +186,7 @@ namespace DodoBird.Services
 
 
                     string wherePrimaryKey = "";
-
+                    string recordValue = "";
                     List<SqlParameter> insertParams = new List<SqlParameter>();
                     List<SqlParameter> updateParams = new List<SqlParameter>();
 
@@ -227,13 +226,15 @@ namespace DodoBird.Services
 
                         if (jsonObj[column.ColumnName] != null)
                         {
+                            recordValue = jsonObj[column.ColumnName].ToString();
+
                             sbInsert.Append(column.ColumnName + ",");
                             sbValue.Append("@" + column.ColumnName + ",");
-                            insertParams.Add(new SqlParameter("@" + column.ColumnName, jsonObj[column.ColumnName]));
+                            insertParams.Add(new SqlParameter("@" + column.ColumnName, recordValue));
 
 
                             sbUpdate.Append(column.ColumnName + " = @" + column.ColumnName + ",");
-                            updateParams.Add(new SqlParameter("@" + column.ColumnName, jsonObj[column.ColumnName]));
+                            updateParams.Add(new SqlParameter("@" + column.ColumnName, recordValue));
                         }
                     }
 
@@ -241,21 +242,23 @@ namespace DodoBird.Services
                     if (wherePrimaryKey.Length > 0)  // update
                     {
                         var sql = sbUpdate.ToString().Substring(0, sbUpdate.ToString().Length - 1) + " WHERE " + wherePrimaryKey.Substring(0, wherePrimaryKey.Length - 4);
-                        object[] obj = updateParams.ToArray();
-                        Db.Database.ExecuteSqlCommand(sql, obj);
+                        SqlParameter[] sqlParameters = updateParams.ToArray();
+                        Db.Database.ExecuteSqlCommand(sql, sqlParameters);
                     }
                     else
                     {
+                        SqlParameter[] sqlParameters = insertParams.ToArray();
+
                         var sql = sbInsert.ToString().Substring(0, sbInsert.ToString().Length - 1) + ") " + sbValue.ToString().Substring(0, sbValue.ToString().Length - 1) + "); SELECT CAST(@@IDENTITY AS varchar(250));";
                         if (newGuid_.Length > 0) // is guid
                         {
                             sql = sbInsert.ToString().Substring(0, sbInsert.ToString().Length - 1) + ") " + sbValue.ToString().Substring(0, sbValue.ToString().Length - 1) + ");";
                             recordId = newGuid.ToString();
-                            Db.Database.ExecuteSqlCommand(sql, insertParams);
+                            Db.Database.ExecuteSqlCommand(sql, sqlParameters);
                         }
                         else
                         {
-                            recordId = Db.Database.SqlQuery<string>(sql, insertParams).FirstOrDefault();
+                            recordId = Db.Database.SqlQuery<string>(sql, sqlParameters).FirstOrDefault();
                         }
                         Db.SaveChanges();
 

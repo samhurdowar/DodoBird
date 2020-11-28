@@ -6,13 +6,13 @@
         padding: 0.5em;
     }
 
-    #RootMenus0 li {
+    #RootMenus li {
         /*        border: 1px solid #ccc;*/
-        width: 300px;
+        width: 250px;
         cursor: move;
     }
 
-    #RootMenus0 ul {
+    #RootMenus ul {
         list-style: none;
     }
 
@@ -61,56 +61,54 @@
 
 <table  style="width:98%;">
     <tr>
-        <td style="width:30%;"><ul id='RootMenus0'></ul></td>
+        <td style="width:25%;"><ul id='RootMenus'></ul></td>
 
-        <td style="width:70%;" valign="top">
+        <td style="width:75%; border-left:1px solid #808080;" valign="top">
 
+            <div id="editMenuBox" style="display:none;margin-left:30px;">
 
-            <div class="command-bar-container">
-                <span id="cmd_Save_EditMenu" class="command-disabled-span"><span class="command-icon fas fa-save">&nbsp;</span> Save</span>
+                <div class="command-bar-container">
+                    <span id="cmd_Save_EditMenu" class="command-disabled-span"><span class="command-icon fas fa-save">&nbsp;</span> Save</span>
+                </div>
+
+                <form id="EditMenu" action="/" method="post">
+                    <input type="text" id="DodoBirdKey" value="" />
+                    <input type="text" id="MenuId" />
+                    <input type="text" id="TargetId" />
+                    <table>
+                        <tr>
+                            <td>Menu Title</td>
+                            <td><input type="text" name="MenuTitle" id="MenuTitle" value="" /></td>
+                        </tr>
+
+                        <tr>
+                            <td valign="top">Target Type</td>
+                            <td valign="top">
+
+                                <ul style="list-style: none;">
+
+                                    <li><input type='radio' name='TargetType' value=''> None</li>
+                                    <li><input type='radio' name='TargetType' value='grid' /> Grid    <span id="span_grid" class="targetType-class" style="display:none;position:relative; left:25px;"><span class="command-icon fas fa-arrow-right">&nbsp;</span>  <select name="GridId" id="GridId"></select></span></li>
+                                    <li><input type='radio' name='TargetType' value='form' /> Form    <span id="span_form" class="targetType-class" style="display: none; position: relative; left: 25px;"><span class="command-icon fas fa-arrow-right">&nbsp;</span>  <select name="FormId" id="FormId"></select></span></li>
+                                    <li>
+                                        <input type='radio' name='TargetType' value='page' /> Custom Page
+                                        <span id="span_page" class="targetType-class" style="display: none; position: relative; left: 25px;">
+                                            <span class="command-icon fas fa-arrow-right">&nbsp;</span>
+                                            <input type="text" name="PageFile" id="PageFile" value="" />
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <font style="color:#808080;font-style:italic;">i.e. ~/Views/Home/FileName.cshtml</font>
+                                        </span>
+                                    </li>
+                                </ul>
+
+                            </td>
+                        </tr>
+
+                    </table>
+
+                </form>
+
             </div>
-
-
-
-            <form id="EditMenu" action="/" method="post">
-                <input type="text" id="DodoBirdKey" value="" />
-                <input type="text" id="MenuId" />
-                <input type="text" id="TargetId" />
-                <table>
-                    <tr>
-                        <td>Menu Title</td>
-                        <td><input type="text" name="MenuTitle" id="MenuTitle" value="" /></td>
-                    </tr>
-
-                    <tr>
-                        <td valign="top">Target Type</td>
-                        <td valign="top">
-
-                            <ul style="list-style: none;">
-
-                                <li><input type='radio' name='TargetType' value=''> None</li>
-                                <li><input type='radio' name='TargetType' value='grid' /> Grid    <span id="span_grid" class="targetType-class" style="display:none;position:relative; left:25px;"><span class="command-icon fas fa-arrow-right">&nbsp;</span>  <select name="GridId" id="GridId"></select></span></li>
-                                <li><input type='radio' name='TargetType' value='form' /> Form    <span id="span_form" class="targetType-class" style="display: none; position: relative; left: 25px;"><span class="command-icon fas fa-arrow-right">&nbsp;</span>  <select name="FormId" id="FormId"></select></span></li>
-                                <li>
-                                    <input type='radio' name='TargetType' value='page' /> Custom Page
-                                    <span id="span_page" class="targetType-class" style="display: none; position: relative; left: 25px;">
-                                        <span class="command-icon fas fa-arrow-right">&nbsp;</span>
-                                        <input type="text" name="PageFile" id="PageFile" value="" />
-                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        <font style="color:#808080;font-style:italic;">i.e. ~/Views/Home/FileName.cshtml</font>
-                                    </span>
-                                </li>
-                            </ul>
-
-                        </td>
-                    </tr>
-
-
-
-                </table>
-
-            </form>
-
 
         </td>
     </tr>
@@ -121,10 +119,9 @@
 
 <script>
     $(document).ready(function () {
-        GetAdminMenuList("RootMenus0");
+        GetAdminMenuList();
 
         GetMenuOptions();
-
 
         var groupName = "input:radio[name=\"TargetType\"]";
         $(groupName).click(function () {
@@ -132,11 +129,7 @@
             $(".targetType-class").hide();
             $("#span_" + radioVal).show();
         });
-
-
     });
-
-
 
     function GetMenuOptions() {
         $.ajax({
@@ -153,8 +146,6 @@
                 $("#EditMenu #FormId").change(function () {
                     EnableButton("cmd_Save_EditMenu");
                 });
-
-
             }
         });
     }
@@ -185,8 +176,6 @@
         console.log(json);
 
         Save_EditMenu_(json);
-
-        
     }
 
     function Save_EditMenu_(json) {
@@ -197,14 +186,14 @@
             data: { json: json},
             dataType: "text",
             success: function (response) {
-                MessageBox("Information", response,false);
+                GetAdminMenuList();
+                //MessageBox("Information", response, false);
             },
             complete: function () {
                 AppSpinner(false);
             }
         });
     }
-
 
 </script>
 

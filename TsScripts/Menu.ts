@@ -1,26 +1,25 @@
 ﻿
 var SortableMenuItems = "";
 var ObjMenu = [];
+var RefreshItem = "RootMenus";
 var HighlightedItem = "";
 
-function GetAdminMenuList(refreshId) {
+function GetAdminMenuList() {
     $.ajax({
         url: "./Menu/GetAdminMenuList",
         dataType: "json",
         success: function (data) {
 
-            SortableMenuItems = "RootMenus0";
+            SortableMenuItems = "RootMenus";
 
             ObjMenu.length = 0;
 
             // get main menus
-
-            var refreshMenuId = refreshId.replace("RootMenus", "").replace("MenuId", "");
             let mainMenus;
-            if (refreshMenuId == 0) {
+            if (RefreshItem == "RootMenus") {
                 mainMenus = data.filter(it => it.ParentId == 0);
             } else {
-                mainMenus = data.filter(it => it.MenuId == refreshMenuId);
+                mainMenus = data.filter(it => it.MenuId == RefreshItem.replace("MenuId", ""));
             }
 
             mainMenus = SortJson(mainMenus, "SortOrder");
@@ -45,7 +44,7 @@ function GetAdminMenuList(refreshId) {
             }
 
             var str = ObjMenu.join("");
-            $("#" + refreshId).html(str);
+            $("#" + RefreshItem).html(str);
 
             RefreshMenuDOM();
 
@@ -93,13 +92,13 @@ function RefreshMenuDOM() {
                 var menuId = $(ui.item).attr("id").replace("MenuId","");
                 var newOrder = ui.item.index() + 1;
 
-                // get parent item to refresh
+                // get parent item to refresh 
                 var obj = $(this).closest("li.refresh-item");
-                var refreshId = (obj.attr("id") == undefined) ? "RootMenus0" : obj.attr("id");
+                RefreshItem = (obj.attr("id") == undefined) ? "RootMenus" : obj.attr("id");
 
-                console.log("SortMenu    menuId=" + menuId + "    newOrder=" + newOrder + "    refreshId=" + refreshId);
+                console.log("SortMenu    menuId=" + menuId + "    newOrder=" + newOrder + "    refreshItem=" + RefreshItem);
 
-                SortMenu(menuId, newOrder, refreshId);
+                SortMenu(menuId, newOrder);
             }
         });
     }
@@ -127,17 +126,17 @@ function RefreshMenuDOM() {
 
         // get parent item to refresh
         var obj = $(this).closest("li.refresh-item");
-        var refreshId = obj.attr("id");
+        RefreshItem = obj.attr("id");
 
-
-        console.log("SelectMenu menuId=" + menuId + "    refreshId=" + refreshId);
+        
+        console.log("SelectMenu menuId=" + menuId + "    RefreshItem=" + RefreshItem);
 
         // set highlight item
         var highlight = $(this).attr("highlight");
         HighlightedItem = highlight;
 
         HighlightMenuItem();
-        SelectMenu(menuId, refreshId);
+        SelectMenu(menuId);
     });
 }
 
@@ -150,22 +149,21 @@ function HighlightMenuItem() {
 }
 
 
-function SortMenu(menuId, newOrder, refreshId) {
+function SortMenu(menuId, newOrder) {
 
     $.ajax({
         url: "./Menu/SortMenu",
         data: { menuId: menuId, newOrder: newOrder},
         dataType: "text",
         success: function (data) {
-            GetAdminMenuList(refreshId);
-            
+            GetAdminMenuList();
         }
     });
 }
 
 
 
-function SelectMenu(menuId, refreshId) {
+function SelectMenu(menuId) {
     $.ajax({
         url: "./Menu/GetMenuItem",
         data: { menuId: menuId },
@@ -178,6 +176,9 @@ function SelectMenu(menuId, refreshId) {
             // set display of TargetType options
             $(".targetType-class").hide();
             $("#span_" + data[0].TargetType).show();
+
+            $("#editMenuBox").show();
+            
         }
     });
 }

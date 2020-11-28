@@ -1,7 +1,7 @@
 ﻿/// <reference path="../Scripts/typings/jquery/jquery.d.ts" />
 
 var Menus; 
-let PageNavigations: { MenuLevelId: string, MenuTitle: string, GridId: number, CurrentPage: number, NumOfPages: number, RecordCount: number, PrimaryKey: string, OrderByColumn: string, SortDirection: string }[] = [];
+let PageNavigations: { MenuId: number, MenuTitle: string, GridId: number, CurrentPage: number, NumOfPages: number, RecordCount: number, PrimaryKey: string, OrderByColumn: string, SortDirection: string }[] = [];
 var CloseTabFirst = false; var DisableFocus = false;
 
 $(document).ready(function () {
@@ -30,8 +30,10 @@ function MenuClick(menuId: number) {
 
     // route menu =>  AddTab(level_MenuId: string, menuTitle: string, content: string) 
     if (menu.TargetId > 0 && menu.TargetType == "grid") {
-        SetPageNavigation(menu.MenuId, menu.MenuTitle, menu.TargetId);
-        GetGrid(menu.TargetId, true);
+        var gridId = menu.TargetId;
+        SetPageNavigation(menu.MenuId, menu.MenuTitle, gridId);
+        GetGrid(gridId, true);
+        AppSpinner(false);
     } else if (1 < 0) {
         //var content = "Content for Page " + m[0].MenuTitle + " - " + level_MenuId;
         //AddTab(level_MenuId, m[0].MenuTitle, content);
@@ -52,10 +54,10 @@ function MenuClick(menuId: number) {
     }
 }
 
-function SetPageNavigation(level_MenuId: string, menuTitle: string, gridId: number) {
-    var objIndex = PageNavigations.findIndex(obj => obj.MenuLevelId == level_MenuId);
+function SetPageNavigation(menuId: number, menuTitle: string, gridId: number) {
+    var objIndex = PageNavigations.findIndex(obj => obj.MenuId == menuId);
     if (objIndex == -1) {
-        PageNavigations.push({ MenuLevelId: level_MenuId, MenuTitle: menuTitle, GridId: gridId, CurrentPage: 1, NumOfPages: 0, RecordCount: 0, PrimaryKey: "", OrderByColumn: "", SortDirection: "ASC" });
+        PageNavigations.push({ MenuId: menuId, MenuTitle: menuTitle, GridId: gridId, CurrentPage: 1, NumOfPages: 0, RecordCount: 0, PrimaryKey: "", OrderByColumn: "", SortDirection: "ASC" });
     }
 }
 

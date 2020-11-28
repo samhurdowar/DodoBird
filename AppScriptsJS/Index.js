@@ -22,8 +22,10 @@ function MenuClick(menuId) {
     var menu = menu_[0];
     // route menu =>  AddTab(level_MenuId: string, menuTitle: string, content: string) 
     if (menu.TargetId > 0 && menu.TargetType == "grid") {
-        SetPageNavigation(menu.MenuId, menu.MenuTitle, menu.TargetId);
-        GetGrid(menu.TargetId, true);
+        var gridId = menu.TargetId;
+        SetPageNavigation(menu.MenuId, menu.MenuTitle, gridId);
+        GetGrid(gridId, true);
+        AppSpinner(false);
     }
     else if (1 < 0) {
         //var content = "Content for Page " + m[0].MenuTitle + " - " + level_MenuId;
@@ -44,10 +46,10 @@ function MenuClick(menuId) {
         });
     }
 }
-function SetPageNavigation(level_MenuId, menuTitle, gridId) {
-    var objIndex = PageNavigations.findIndex(function (obj) { return obj.MenuLevelId == level_MenuId; });
+function SetPageNavigation(menuId, menuTitle, gridId) {
+    var objIndex = PageNavigations.findIndex(function (obj) { return obj.MenuId == menuId; });
     if (objIndex == -1) {
-        PageNavigations.push({ MenuLevelId: level_MenuId, MenuTitle: menuTitle, GridId: gridId, CurrentPage: 1, NumOfPages: 0, RecordCount: 0, PrimaryKey: "", OrderByColumn: "", SortDirection: "ASC" });
+        PageNavigations.push({ MenuId: menuId, MenuTitle: menuTitle, GridId: gridId, CurrentPage: 1, NumOfPages: 0, RecordCount: 0, PrimaryKey: "", OrderByColumn: "", SortDirection: "ASC" });
     }
 }
 function AddTab(menuId, menuTitle, isRefresh, content) {
