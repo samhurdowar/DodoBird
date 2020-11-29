@@ -59,7 +59,7 @@
     }
 </style>
 
-<table  style="width:98%;">
+<table style="width:98%;">
     <tr>
         <td style="width:25%;"><ul id='RootMenus'></ul></td>
 
@@ -72,9 +72,11 @@
                 </div>
 
                 <form id="EditMenu" action="/" method="post">
-                    <input type="text" id="DodoBirdKey" value="" />
-                    <input type="text" id="MenuId" />
-                    <input type="text" id="TargetId" />
+                    FormId: <input type="text" id="FormId" value="1" /><br />
+                    MenuId: <input type="text" id="MenuId" /><br />
+                    ParentId: <input type="text" id="ParentId" /><br />
+                    TargetId: <input type="text" id="TargetId" /><br />
+                    <br /><br />
                     <table>
                         <tr>
                             <td>Menu Title</td>
@@ -88,8 +90,8 @@
                                 <ul style="list-style: none;">
 
                                     <li><input type='radio' name='TargetType' value=''> None</li>
-                                    <li><input type='radio' name='TargetType' value='grid' /> Grid    <span id="span_grid" class="targetType-class" style="display:none;position:relative; left:25px;"><span class="command-icon fas fa-arrow-right">&nbsp;</span>  <select name="GridId" id="GridId"></select></span></li>
-                                    <li><input type='radio' name='TargetType' value='form' /> Form    <span id="span_form" class="targetType-class" style="display: none; position: relative; left: 25px;"><span class="command-icon fas fa-arrow-right">&nbsp;</span>  <select name="FormId" id="FormId"></select></span></li>
+                                    <li><input type='radio' name='TargetType' value='grid' /> Grid    <span id="span_grid" class="targetType-class" style="display:none;position:relative; left:25px;"><span class="command-icon fas fa-arrow-right">&nbsp;</span>  <select name="TargetGridId" id="TargetGridId"></select></span></li>
+                                    <li><input type='radio' name='TargetType' value='form' /> Form    <span id="span_form" class="targetType-class" style="display: none; position: relative; left: 25px;"><span class="command-icon fas fa-arrow-right">&nbsp;</span>  <select name="TargetFormId" id="TargetFormId"></select></span></li>
                                     <li>
                                         <input type='radio' name='TargetType' value='page' /> Custom Page
                                         <span id="span_page" class="targetType-class" style="display: none; position: relative; left: 25px;">
@@ -114,9 +116,6 @@
     </tr>
 </table>
 
-
-
-
 <script>
     $(document).ready(function () {
         GetAdminMenuList();
@@ -136,14 +135,14 @@
             url: "./Menu/GetMenuOptions",
             dataType: "json",
             success: function (data) {
-                GetSelect("GridId", data.Grids);
-                GetSelect("FormId", data.Forms);
+                GetSelect("TargetGridId", data.Grids);
+                GetSelect("TargetFormId", data.Forms);
 
-                // manually enable change event for GridId and FormId because they are not part of the table schema
-                $("#EditMenu #GridId").change(function () {
+                // manually enable change event for TargetGridId and TargetFormId because they are not part of the table schema
+                $("#EditMenu #TargetGridId").change(function () {
                     EnableButton("cmd_Save_EditMenu");
                 });
-                $("#EditMenu #FormId").change(function () {
+                $("#EditMenu #TargetFormId").change(function () {
                     EnableButton("cmd_Save_EditMenu");
                 });
             }
@@ -155,10 +154,10 @@
         // preprocess form  TargetId
         var targetType = $("#EditMenu input[name='TargetType']:checked").val();
         if (targetType == "grid") {
-            $("#EditMenu #TargetId").val($("#EditMenu #GridId").val());
+            $("#EditMenu #TargetId").val($("#EditMenu #TargetGridId").val());
             $("#EditMenu #PageFile").val("");
         } else if (targetType == "form") {
-            $("#EditMenu #TargetId").val($("#EditMenu #FormId").val());
+            $("#EditMenu #TargetId").val($("#EditMenu #TargetFormId").val());
             $("#EditMenu #PageFile").val("");
         } else if (targetType == "page") {
             $("#EditMenu #TargetId").val(0);
@@ -173,7 +172,6 @@
         }
 
         var json = ToJsonString("EditMenu");
-        console.log(json);
 
         Save_EditMenu_(json);
     }
@@ -181,12 +179,26 @@
     function Save_EditMenu_(json) {
         DisableButton("cmd_Save_EditMenu");
         AppSpinner(true);
+
         $.ajax({
             url: "./Data/SaveFormData",
-            data: { json: json},
+            data: { json: json },
             dataType: "text",
-            success: function (response) {
+            success: function (menuId) {
+
+                HighlightedItem = "MenuId" + menuId;
+
                 GetAdminMenuList();
+
+                // update menu displayed
+                if ($("#displayMenuId" + menuId).length) {
+                    $("#displayMenuId" + menuId).html($("#EditMenu #MenuTitle").val());
+                }
+
+                // update Menus array
+                UpdateArray("Menus", "MenuId", menuId, "MenuTitle", $("#EditMenu #MenuTitle").val());
+
+
                 //MessageBox("Information", response, false);
             },
             complete: function () {

@@ -2,6 +2,7 @@ var SortableMenuItems = "";
 var ObjMenu = [];
 var RefreshItem = "RootMenus";
 var HighlightedItem = "";
+var ParentId = "0";
 function GetAdminMenuList() {
     $.ajax({
         url: "./Menu/GetAdminMenuList",
@@ -97,12 +98,25 @@ function RefreshMenuDOM() {
         // get parent item to refresh
         var obj = $(this).closest("li.refresh-item");
         RefreshItem = obj.attr("id");
-        console.log("SelectMenu menuId=" + menuId + "    RefreshItem=" + RefreshItem);
+        //console.log("SelectMenu menuId=" + menuId + "    RefreshItem=" + RefreshItem);
         // set highlight item
         var highlight = $(this).attr("highlight");
         HighlightedItem = highlight;
         HighlightMenuItem();
         SelectMenu(menuId);
+    });
+    // add menu item
+    $(".menu-add-delete").click(function () {
+        // get parent menuId
+        var obj = $(this).closest("li");
+        var parentId = obj.attr("id").replace("MenuId", "");
+        ParentId = parentId;
+        // set highlight item
+        var highlight = $(this).attr("highlight");
+        HighlightedItem = highlight;
+        HighlightMenuItem();
+        SelectMenu(0);
+        console.log("add to menuId=" + parentId);
     });
 }
 function HighlightMenuItem() {
@@ -121,16 +135,31 @@ function SortMenu(menuId, newOrder) {
     });
 }
 function SelectMenu(menuId) {
+    $("#EditMenu #MenuId").val(menuId);
+    var json = ToJsonString("EditMenu");
     $.ajax({
-        url: "./Menu/GetMenuItem",
-        data: { menuId: menuId },
+        url: "./Data/GetFormData",
+        data: { json: json },
         type: "POST",
         dataType: "json",
         success: function (data) {
             BindForm("EditMenu", data[0]);
+            // set grid and form target type dropdowns
+            var targetType = $("#EditMenu input[name='TargetType']:checked").val();
+            if (targetType == "grid") {
+                $("#EditMenu #TargetGridId").val(data[0].TargetId);
+            }
+            else if (targetType == "form") {
+                $("#EditMenu #TargetFormId").val(data[0].TargetId);
+            }
             // set display of TargetType options
             $(".targetType-class").hide();
             $("#span_" + data[0].TargetType).show();
+            // set ParentId if new
+            if (data[0].IsNewRecord == "True") {
+                $("#EditMenu #ParentId").val(ParentId);
+                $("#EditMenu #MenuId").val(menuId);
+            }
             $("#editMenuBox").show();
         }
     });
@@ -151,13 +180,13 @@ function GetMenuList() {
                 var subMenus = data.filter(function (w) { return w.ParentId == row.MenuId; });
                 if (subMenus.length > 0) {
                     ObjMenu.push("<li onclick='MenuClick(" + row.MenuId + ")'>");
-                    ObjMenu.push(row.MenuTitle);
+                    ObjMenu.push("<span id='displayMenuId" + row.MenuId + "'>" + row.MenuTitle + "</span>");
                     GetSubMenuList(subMenus, data);
                     ObjMenu.push("</li>");
                 }
                 else {
                     ObjMenu.push("<li onclick='MenuClick(" + row.MenuId + ")'>");
-                    ObjMenu.push(row.MenuTitle);
+                    ObjMenu.push("<span id='displayMenuId" + row.MenuId + "'>" + row.MenuTitle + "</span>");
                     ObjMenu.push("</li>");
                 }
             }
@@ -176,13 +205,13 @@ function GetSubMenuList(subMenus, data) {
         subMenus_ = SortJson(subMenus_, "SortOrder");
         if (subMenus_.length > 0) {
             ObjMenu.push("<li onclick='MenuClick(" + row.MenuId + ")'>");
-            ObjMenu.push(row.MenuTitle + "&nbsp;&nbsp;<span class='menu-item-command fas fa-caret-right'>&nbsp;</span>");
+            ObjMenu.push("<span id='displayMenuId" + row.MenuId + "'>" + row.MenuTitle + "</span>&nbsp;&nbsp;<span class='menu-item-command fas fa-caret-right'>&nbsp;</span>");
             GetSubMenuList(subMenus_, data);
             ObjMenu.push("</li>");
         }
         else {
             ObjMenu.push("<li onclick='MenuClick(" + row.MenuId + ")'>");
-            ObjMenu.push(row.MenuTitle);
+            ObjMenu.push("<span id='displayMenuId" + row.MenuId + "'>" + row.MenuTitle + "</span>");
             ObjMenu.push("</li>");
         }
     }

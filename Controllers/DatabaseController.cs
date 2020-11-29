@@ -16,7 +16,7 @@ namespace DodoBird.Controllers
     {
         public string GetDatabaseList()
         {
-            var json = HelperService.GetJsonData("SELECT * FROM AppDatabase");
+            var json = HelperService.GetJsonData(0, "SELECT * FROM AppDatabase");
             return json;
         }
 
@@ -24,7 +24,7 @@ namespace DodoBird.Controllers
         {
             var sql = @"SELECT DISTINCT TABLE_SCHEMA AS TableSchema, TABLE_NAME AS TableName FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE ";
 
-            var json = HelperService.GetJsonData(sql, appDatabaseId);
+            var json = HelperService.GetJsonData(appDatabaseId, sql);
             return json;
         }
 
@@ -42,12 +42,12 @@ namespace DodoBird.Controllers
 
             // get grids
             var sql = @"SELECT * FROM Grid WHERE AppDatabaseId = @AppDatabaseId AND TableName = @TableName";
-            var jsonGrids = HelperService.GetJsonData(sql, 0, new[] { new SqlParameter("@AppDatabaseId", appDatabaseId), new SqlParameter("@TableName", tableName) });
+            var jsonGrids = HelperService.GetJsonData(0, sql, new[] { new SqlParameter("@AppDatabaseId", appDatabaseId), new SqlParameter("@TableName", tableName) });
 
 
             // get forms
             sql = @"SELECT * FROM Form WHERE AppDatabaseId = @AppDatabaseId AND TableName = @TableName";
-            var jsonForms = HelperService.GetJsonData(sql, 0, new[] { new SqlParameter("@AppDatabaseId", appDatabaseId), new SqlParameter("@TableName", tableName) });
+            var jsonForms = HelperService.GetJsonData(0, sql, new[] { new SqlParameter("@AppDatabaseId", appDatabaseId), new SqlParameter("@TableName", tableName) });
 
             return "{ \"TableSchema\" : " + jsonTableSchema + ", \"Grids\" : " + jsonGrids + ", \"Forms\" : " + jsonForms + " } ";
 

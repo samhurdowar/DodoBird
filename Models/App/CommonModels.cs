@@ -21,6 +21,4 @@ namespace DodoBird.Models.App
         public string SortDirection { get; set; }
     }
 
-
-
 }

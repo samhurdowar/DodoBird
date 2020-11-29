@@ -41,6 +41,7 @@ namespace DodoBird.Services
                 // get columns   
                 sql = @"
                     SELECT c.name AS ColumnName, ISNULL(c.column_id,0) AS ColumnOrder, CAST(ISNULL(c.max_length,0) AS int) AS DataLength,
+                    REPLACE(REPLACE(REPLACE(ISNULL(object_definition(c.default_object_id),''), '(', ''), ')', ''), '''', '')   AS DefaultValue,
                     CAST(0 AS Bit) AS IsPrimaryKey,
                     CAST(ISNULL(CASE c.is_identity WHEN 1 THEN 1 ELSE 0 END, 0) AS Bit) AS IsIdentity,
                     CAST(ISNULL(CASE c.is_nullable WHEN 1 THEN 0 ELSE 1 END, 0) AS Bit) AS IsRequired,
@@ -54,11 +55,13 @@ namespace DodoBird.Services
 
                 var columns = Db.Database.SqlQuery<Column>(sql, new SqlParameter("@TableName", tableName)).ToList();
 
+
+                // merge with primarykeys to mark IsPrimaryKey
                 var columns_ = from a in columns
                            join b in keys on a.ColumnName equals b.ColumnName
                            into aa
                            from bb in aa.DefaultIfEmpty()
-                           select new Column { ColumnName = a.ColumnName, DataLength = a.DataLength, IsPrimaryKey = (bb == null) ? false : true, IsIdentity = a.IsIdentity, IsRequired = a.IsRequired, IsComputed = a.IsComputed, DataType = a.DataType };
+                           select new Column { ColumnName = a.ColumnName, DataLength = a.DataLength, IsPrimaryKey = (bb == null) ? false : true, IsIdentity = a.IsIdentity, IsRequired = a.IsRequired, IsComputed = a.IsComputed, DataType = a.DataType, DefaultValue = a.DefaultValue };
 
                 foreach (var column in columns_)
                 {
@@ -81,7 +84,7 @@ namespace DodoBird.Services
 
                 // get grid columns 
                 sql = @"SELECT ColumnName, ColumnOrder FROM GridColumn WHERE GridId = @GridId ORDER BY ColumnOrder";
-                var gridColumns = Db.Database.SqlQuery<GridColumn>(sql, new SqlParameter("@GridId", gridId)).ToList();
+                var gridColumns = Db.Database.SqlQuery<Column>(sql, new SqlParameter("@GridId", gridId)).ToList();
                 if (gridColumns.Count > 0)
                 {
                     gridSchema.GridColumns.AddRange(gridColumns);
@@ -91,7 +94,7 @@ namespace DodoBird.Services
 
                 // get available columns 
                 TableSchema tableSchema = DataService.GetTableSchema(gridSchema.AppDatabaseId, gridSchema.TableName);
-                var availableColumns = tableSchema.Columns.Where(w => !gridColumns_.Contains(w.ColumnName)).Select( s => new AvailableColumn { ColumnName = s.ColumnName }).OrderBy(o => o.ColumnName).ToList();
+                var availableColumns = tableSchema.Columns.Where(w => !gridColumns_.Contains(w.ColumnName)).Select( s => new Column { ColumnName = s.ColumnName }).OrderBy(o => o.ColumnName).ToList();
                 if (availableColumns.Count > 0)
                 {
                     gridSchema.AvailableColumns.AddRange(availableColumns);
@@ -101,6 +104,41 @@ namespace DodoBird.Services
 
             }
         }
+
+
+
+        public static FormSchema GetFormSchema(int formId)
+        {
+            using (DodoBirdEntities Db = new DodoBirdEntities())
+            {
+                Db.Database.Connection.ConnectionString = SessionService.DodoBirdConnectionString;
+
+                var sql = @"SELECT * FROM Form WHERE FormId = @FormId";
+                var formSchema = Db.Database.SqlQuery<FormSchema>(sql, new SqlParameter("@FormId", formId)).FirstOrDefault();
+
+                // get grid columns 
+                sql = @"SELECT ColumnName, ColumnOrder FROM FormColumn WHERE FormId = @FormId ORDER BY ColumnOrder";
+                var formColumns = Db.Database.SqlQuery<Column>(sql, new SqlParameter("@FormId", formId)).ToList();
+                if (formColumns.Count > 0)
+                {
+                    formSchema.FormColumns.AddRange(formColumns);
+                }
+                sql = @"SELECT ColumnName FROM FormColumn WHERE FormId = @FormId ORDER BY ColumnOrder";
+                var formColumns_ = Db.Database.SqlQuery<string>(sql, new SqlParameter("@FormId", formId)).ToList();
+
+                // get available columns 
+                TableSchema tableSchema = DataService.GetTableSchema(formSchema.AppDatabaseId, formSchema.TableName);
+                var availableColumns = tableSchema.Columns.Where(w => !formColumns_.Contains(w.ColumnName)).Select(s => new Column { ColumnName = s.ColumnName }).OrderBy(o => o.ColumnName).ToList();
+                if (availableColumns.Count > 0)
+                {
+                    formSchema.AvailableColumns.AddRange(availableColumns);
+                }
+
+                return formSchema;
+
+            }
+        }
+
 
         public static void SetDefaultGridAndForm(int appDatabaseId, string tableName)
         {
@@ -172,10 +210,13 @@ namespace DodoBird.Services
             }
         }
 
-        public static string SaveFormData(int appDatabaseId, string tableName, dynamic jsonObj)
+        public static string SaveFormData(int appDatabaseId, string tableName, string json)
         {
             try
             {
+
+                dynamic jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject(json);
+
                 var tableSchema = GetTableSchema(appDatabaseId, tableName);
 
 

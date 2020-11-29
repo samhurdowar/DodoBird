@@ -14,25 +14,16 @@ namespace DodoBird.Controllers
 	public class MenuController : Controller
 	{
 
-
-        public string GetMenuItem(int menuId)
-        {
-            var json = HelperService.GetJsonData("SELECT * FROM Menu WHERE MenuId = @MenuId", 0, new[] { new SqlParameter("@MenuId", menuId) });
-
-            json = HelperService.InjectDodoBirdKey(0, "Menu", json);  
-            return json;
-        }
-
         public string GetAdminMenuList()
         {
-            var json = HelperService.GetJsonData("SELECT * FROM Menu");
+            var json = HelperService.GetJsonData(1, "SELECT * FROM Menu");
             return json;
         }
 
 
         public string GetMenuList()
         {
-            var json = HelperService.GetJsonData("SELECT * FROM Menu");
+            var json = HelperService.GetJsonData(1, "SELECT * FROM Menu");
             return json;
         }
 
@@ -55,8 +46,8 @@ namespace DodoBird.Controllers
 
         public string GetMenuOptions()
         {
-            var jsonGrids = HelperService.GetJsonData("SELECT GridId AS OptionValue, TableName  + ' - ' + GridName AS OptionText FROM Grid ORDER BY TableName, GridName");
-            var jsonForms = HelperService.GetJsonData("SELECT FormId AS OptionValue, TableName  + ' - ' + FormName AS OptionText FROM Form ORDER BY TableName, FormName");
+            var jsonGrids = HelperService.GetJsonData(0, "SELECT GridId AS OptionValue, TableName  + ' - ' + GridName AS OptionText FROM Grid ORDER BY TableName, GridName");
+            var jsonForms = HelperService.GetJsonData(0, "SELECT FormId AS OptionValue, TableName  + ' - ' + FormName AS OptionText FROM Form ORDER BY TableName, FormName");
 
             return "{ \"Grids\" : " + jsonGrids + ", \"Forms\" : " + jsonForms + " } ";
         }

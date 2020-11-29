@@ -1,13 +1,22 @@
-﻿
+﻿let PageNavigations: { MenuId: number, MenuTitle: string, GridId: number, CurrentPage: number, NumOfPages: number, RecordCount: number, PrimaryKey: string, OrderByColumn: string, SortDirection: string }[] = [];
 
 
 //return "{ \"PrimaryKey\" : \"" + primaryKey + "\", \"RecordCount\" : " + recordCount + ", \"NumOfPages\" : " + numOfPages + ", \"OrderByColumn\" : \"" + pageNavigation.OrderByColumn + "\", \"SortDirection\" : \"" + pageNavigation.SortDirection + "\", \"Records\" : " + sb.ToString() + " }";
+
+
+function SetPageNavigation(menuId: number, menuTitle: string, gridId: number) {
+    var objIndex = PageNavigations.findIndex(obj => obj.MenuId == menuId);
+    if (objIndex == -1) {
+        PageNavigations.push({ MenuId: menuId, MenuTitle: menuTitle, GridId: gridId, CurrentPage: 1, NumOfPages: 0, RecordCount: 0, PrimaryKey: "", OrderByColumn: "", SortDirection: "ASC" });
+    }
+}
+
 function GetGrid(menuId: number, newTab: boolean) {
-    let pageNavigation = PageNavigations.filter(it => it.MenuId == menuId);
+    let pageNavigation = PageNavigations.find(it => it.MenuId == menuId);
 
     $.ajax({
         url: "./Grid/GetGrid",
-        data: pageNavigation[0],
+        data: pageNavigation,
         type: "POST",
         dataType: "json",
         success: function (data) {
@@ -23,13 +32,18 @@ function GetGrid(menuId: number, newTab: boolean) {
             }
 
             GenerateGridTable(menuId, newTab, data.Records);
+        },
+        complete: function () {
+            AppSpinner(false);
         }
     });
 }
 
 
 function GenerateGridTable(menuId: number, newTab: boolean, records) {
+    
     var pageIndex = PageNavigations.findIndex(w => w.MenuId == menuId);
+    var gridId = PageNavigations[pageIndex].GridId;
     var primaryKey = PageNavigations[pageIndex].PrimaryKey;
     var menuTitle = PageNavigations[pageIndex].MenuTitle;
     var orderByColumn = PageNavigations[pageIndex].OrderByColumn;
@@ -72,7 +86,7 @@ function GenerateGridTable(menuId: number, newTab: boolean, records) {
     obj.push("</table>");
 
 
-    // page nav
+    // page navigation
     var pageDropdown = [];
     pageDropdown.push("<select id='pageDropdown" + menuId + "' onChange=\"NavigatePage('" + menuId + "',-111)\">");
     for (var p = 1; p <= PageNavigations[pageIndex].NumOfPages; p++) {
@@ -111,11 +125,11 @@ function GenerateGridTable(menuId: number, newTab: boolean, records) {
 
     var content = obj.join("");
 
-    if (newTab) {
-        var content_ = "<div id='grid" + menuId + "' style='margin-bottom:20px;'> " + content + "</div>";
+    if (newTab) {  // first time. open new tab
+        var content_ = "<div id='grid" + menuId + "_" + gridId + "' style='margin-bottom:20px;'> " + content + "</div>";
         AddTab(menuId, menuTitle, false, content_);
     } else {
-        $("#grid" + menuId).html(content);
+        $("#grid" + menuId + "_" + gridId).html(content);
     }
     
     // set pageDropdown

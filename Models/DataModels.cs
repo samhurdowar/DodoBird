@@ -27,9 +27,9 @@ namespace DodoBird.Models
         public bool IsIdentity { get; set; }
         public bool IsRequired { get; set; }
         public bool IsComputed { get; set; }
+        public string DefaultValue { get; set; }
+        public int ColumnOrder { get; set; }
     }
-
-
 
 
     public class GridSchema
@@ -40,23 +40,24 @@ namespace DodoBird.Models
         public string GridName { get; set; }
         public string GridFilter { get; set; }
         public string GridSort { get; set; }
-        public List<AvailableColumn> AvailableColumns = new List<AvailableColumn>();
-        public List<GridColumn> GridColumns = new List<GridColumn>();
-
+        public List<Column> AvailableColumns = new List<Column>();
+        public List<Column> GridColumns = new List<Column>();
     }
 
-    public class AvailableColumn
+
+
+    public class FormSchema
     {
-        public string ColumnName { get; set; }
+        public int FormId { get; set; }
+        public int AppDatabaseId { get; set; }
+        public string TableName { get; set; }
+        public string FormName { get; set; }
+        public string TargetType { get; set; }
+        public string PageFile { get; set; }
+        public List<Column> AvailableColumns = new List<Column>();
+        public List<Column> FormColumns = new List<Column>();
+
     }
-
-    public class GridColumn
-    {
-        public string ColumnName { get; set; }
-        public int ColumnOrder { get; set; }
-    }
-
-
 
 }
 

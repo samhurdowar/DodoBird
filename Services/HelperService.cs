@@ -11,7 +11,7 @@ namespace DodoBird.Services
     public static class HelperService
     {
 
-        public static string GetJsonData(string sql, int appDatabaseId = 0, SqlParameter[] sqlParameters = null )
+        public static string GetJsonData(int appDatabaseId, string sql, SqlParameter[] sqlParameters = null )
         {
             using (DodoBirdEntities Db = new DodoBirdEntities())
             {
@@ -46,10 +46,10 @@ namespace DodoBird.Services
             }
         }
 
-        public static string InjectDodoBirdKey(int appDatabaseId, string tableName, string json)
+        public static string InjectDodoKey(int appDatabaseId, string tableName, string json)
         {
             string json_ = json;
-            string injectKey = "[{ \"DodoBirdKey\": \"" + appDatabaseId + "|" + tableName + "\", \"";
+            string injectKey = "[{ \"AppDatabaseId\": \"" + appDatabaseId + "" + tableName + "\", \"";
             json_ = json_.Replace("[{\"", injectKey);
 
             return json_;
