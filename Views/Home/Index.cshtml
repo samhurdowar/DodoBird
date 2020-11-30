@@ -27,6 +27,25 @@
 
 
 
+<div id="ConfirmBox" class="modal-window">
+    <div style="padding-top:5px;padding-left:10px;"><span id="confirmBoxTitle">Title</span>  <span style="float:right;padding-right:10px;cursor:pointer;" onclick="CloseConfirmBox()">X</span></div>
+    <hr />
+
+    <center>
+        <div style="padding:10px;"><span id="confirmBoxText">Text</span></div>
+
+        <br />
+        <span class="app-btn primary" onclick="ConfirmMessageYes()"> Yes </span>
+        &nbsp;&nbsp;
+        <span class="app-btn primary" onclick="ConfirmMessageNo()"> No </span>
+        <br />
+        <br />
+        &nbsp;
+    </center>
+</div>
+
+
+
 <div id="overlay"></div>
 <div id="appSpinner" class=""><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 

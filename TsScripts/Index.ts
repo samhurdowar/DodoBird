@@ -2,7 +2,7 @@
 
 var Menus; 
 var CloseTabFirst = false; var DisableFocus = false;
-
+var ConfirmBoxFunction = "";
 $(document).ready(function () {
     GetMenuList();
 });
@@ -51,9 +51,6 @@ function MenuClick(menuId: number) {
                         });
                     }
                     
-                },
-                complete: function () {
-                    AppSpinner(false);
                 }
             });
 
@@ -67,7 +64,7 @@ function MenuClick(menuId: number) {
                     AddTab(menu.MenuId, menu.MenuTitle, isRefresh, response);
                 },
                 complete: function () {
-                    AppSpinner(false);
+                    
                 }
             });
         }
@@ -86,6 +83,7 @@ function AddTab(menuId: number, menuTitle: string, isRefresh: boolean, content: 
     }
 
     PageFocus(menuId);
+    AppSpinner(false);
 }
 
 function PageFocus(menuId: number) {
@@ -167,6 +165,33 @@ function OpenModalWindow(windowId) {
 function CloseModalWindow(windowId) {
     $("#overlay").css({ "display": "none" });
     $("#" + windowId).css({ "display": "none" });
+}
+
+
+function ConfirmBox(title, msg, confirmBoxFunction) {
+    $("#confirmBoxTitle").html(title);
+    $("#confirmBoxText").html(msg);
+    ConfirmBoxFunction = confirmBoxFunction;
+    OpenConfirmBox();
+}
+
+function ConfirmMessageYes() {
+    eval(ConfirmBoxFunction);
+    CloseConfirmBox();
+}
+
+function ConfirmMessageNo() {
+    CloseConfirmBox();
+}
+
+function OpenConfirmBox() {
+    $("#overlay").css({ "display": "block" });
+    $("#ConfirmBox").css({ "display": "block" });
+}
+
+function CloseConfirmBox() {
+    $("#overlay").css({ "display": "none" });
+    $("#ConfirmBox").css({ "display": "none" });
 }
 
 function MessageBox(title, msg, autoClose) {

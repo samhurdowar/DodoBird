@@ -46,6 +46,50 @@ namespace DodoBird.Services
             }
         }
 
+
+
+
+        public static string ExecuteSql(int appDatabaseId, string sql, SqlParameter[] sqlParameters = null)
+        {
+            try
+            {
+                using (DodoBirdEntities Db = new DodoBirdEntities())
+                {
+                    if (appDatabaseId > 0)
+                    {
+                        Db.Database.Connection.ConnectionString = SessionService.GetConnectionString(appDatabaseId);
+                    }
+                    else
+                    {
+                        Db.Database.Connection.ConnectionString = SessionService.DodoBirdConnectionString;
+                    }
+
+
+
+                    if (sqlParameters != null)
+                    {
+                        Db.Database.ExecuteSqlCommand(sql, sqlParameters);
+
+                    }
+                    else
+                    {
+                        Db.Database.ExecuteSqlCommand(sql);
+                    }
+
+                    return "SUCCESS";
+                }
+            }
+            catch (Exception ex)
+            {
+
+                return ex.Message;
+            }
+
+
+        }
+
+
+
         public static string InjectDodoKey(int appDatabaseId, string tableName, string json)
         {
             string json_ = json;

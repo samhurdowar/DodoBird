@@ -61,14 +61,16 @@
 
 <table style="width:98%;">
     <tr>
-        <td style="width:25%;"><ul id='RootMenus'></ul></td>
+        <td style="width:35%;"><ul id='RootMenus'></ul></td>
 
-        <td style="width:75%; border-left:1px solid #808080;" valign="top">
+        <td style="width:65%; border-left:1px solid #808080;" valign="top">
 
             <div id="editMenuBox" style="display:none;margin-left:30px;">
 
                 <div class="command-bar-container">
                     <span id="cmd_Save_EditMenu" class="command-disabled-span"><span class="command-icon fas fa-save">&nbsp;</span> Save</span>
+
+                    <span id="cmd_Delete_EditMenu" class="command-disabled-span"><span class="command-icon fas fa-trash-alt">&nbsp;</span> Delete</span>
                 </div>
 
                 <form id="EditMenu" action="/" method="post">
@@ -186,26 +188,72 @@
             dataType: "text",
             success: function (menuId) {
 
-                HighlightedItem = "MenuId" + menuId;
-
                 GetAdminMenuList();
 
-                // update menu displayed
-                if ($("#displayMenuId" + menuId).length) {
-                    $("#displayMenuId" + menuId).html($("#EditMenu #MenuTitle").val());
-                }
+                // update menu 
+                GetMenuList();
+
+                // highlight
+                setTimeout(function () {
+                    $(".highlight").removeClass("menu-item-active");
+
+                    if ($("#MenuId" + menuId).hasClass("highlight")) {
+                        $("#MenuId" + menuId).addClass("menu-item-active");
+                    } else {
+                        $("#MenuId" + menuId + " div").addClass("menu-item-active");
+                    }
+
+                    AppSpinner(false);
+                }, 1000);
+
 
                 // update Menus array
-                UpdateArray("Menus", "MenuId", menuId, "MenuTitle", $("#EditMenu #MenuTitle").val());
+                //UpdateArray("Menus", "MenuId", menuId, "MenuTitle", $("#EditMenu #MenuTitle").val());
 
 
                 //MessageBox("Information", response, false);
+            },
+            complete: function () {
+            }
+        });
+    }
+
+
+    function Delete_EditMenu() {
+        var menu = Menus.find(w => w.MenuId == $("#EditMenu #MenuId").val());
+
+        ConfirmBox("Warning", "Delete " + menu.MenuTitle + "?", "DeleteMenu_(" + menu.MenuId + ");")
+
+    }
+
+
+    function DeleteMenu_(menuId) {
+        var json = "{ \"FormId\" : \"1\", \"MenuId\" : \"" + menuId + "\" }";
+
+        AppSpinner(true);
+        $.ajax({
+            url: "./Data/DeleteData",
+            data: { json: json },
+            dataType: "text",
+            success: function (response) {
+                if (response == "SUCCESS") {
+                    GetAdminMenuList();
+
+                    // update menu 
+                    GetMenuList();
+                } else {
+                    MessageBox("Error", response, false);
+                }
+
+
+                if (menuId == $("#EditMenu #MenuId").val()) {
+                    $("#editMenuBox").hide();
+                }
             },
             complete: function () {
                 AppSpinner(false);
             }
         });
     }
-
 </script>
 

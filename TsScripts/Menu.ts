@@ -32,28 +32,46 @@ function GetAdminMenuList() {
                 if (subMenus.length > 0) {
 
                     ObjMenu.push("<li id='MenuId" + row.MenuId + "' class='refresh-item'>");
-                    ObjMenu.push("<div id='Highlight" + row.MenuId + "' class='parent-menu-item'><span highlight='Highlight" + row.MenuId + "' menuId='" + row.MenuId + "' class='menu-item-edit'>" + row.MenuTitle + "</span> <span class='menu-add-delete'> <span class='menu-item-command fas fa-plus'>&nbsp;</span> <span class='menu-item-command fas fa-trash'>&nbsp;</span></span></div>");
+                    ObjMenu.push("<div class='highlight parent-menu-item'>");
+                    ObjMenu.push("<span menuId='" + row.MenuId + "' class='menu-item-edit'>" + row.MenuId + "-" + row.MenuTitle + "</span>");
+                    ObjMenu.push("<span class='menu-add-delete'>");
+                    ObjMenu.push("      <span class='menu-item-add menu-item-command fas fa-plus'> &nbsp; </span>");
+                    ObjMenu.push("      <span deleteId='" + row.MenuId + "' class='menu-item-delete menu-item-command fas fa-trash'>&nbsp;</span>");
+                    ObjMenu.push("</span>");
+                    ObjMenu.push("</div>");
 
                     GetAdminSubMenuList(row.MenuId, subMenus, data);
 
                     ObjMenu.push("</li>");
                 } else {
-                    ObjMenu.push("<li id='MenuId" + row.MenuId + "' class='refresh-item menu-item'>");
-                    ObjMenu.push("<span highlight='MenuId" + row.MenuId + "' menuId='" + row.MenuId + "' class='menu-item-edit'>" + row.MenuTitle + "</span>  <span class='menu-add-delete'> <span class='menu-item-command fas fa-plus'>&nbsp;</span> <span class='menu-item-command fas fa-trash'>&nbsp;</span></span>");
+                    ObjMenu.push("<li id='MenuId" + row.MenuId + "' class='highlight refresh-item menu-item'>");
+                    ObjMenu.push("<span menuId='" + row.MenuId + "' class='menu-item-edit'>" + row.MenuId + "-" + row.MenuTitle + "</span>");
+                    ObjMenu.push("<span class='menu-add-delete'>");
+                    ObjMenu.push("      <span class='menu-item-add menu-item-command fas fa-plus'> &nbsp; </span>");
+                    ObjMenu.push("      <span deleteId='" + row.MenuId + "' class='menu-item-delete menu-item-command fas fa-trash'>&nbsp;</span>");
+                    ObjMenu.push("</span>");
                     ObjMenu.push("</li>");
                 }
             }
 
-            var str = ObjMenu.join("");
+            var r = Math.floor(Math.random() * 1001);
+            var str = ObjMenu.join("") + "<span id='AmAlive" + r + "'></span>";
             $("#" + RefreshItem).html(str);
 
-            RefreshMenuDOM();
-
-            HighlightMenuItem();
+            RefreshDOM("RefreshMenuDOM()", "AmAlive" + r);
         }
     });
 }
 
+
+function RefreshDOM(functionToFire, amAlive) {
+    var myVar = setInterval(function () {
+        if ($("#" + amAlive).length) {
+            eval(functionToFire);
+            clearInterval(myVar);
+        }
+    }, 500);
+}
 
 function GetAdminSubMenuList(menuId, subMenus, data) {
     SortableMenuItems += ",Children" + menuId;
@@ -68,15 +86,25 @@ function GetAdminSubMenuList(menuId, subMenus, data) {
         subMenus_ = SortJson(subMenus_, "SortOrder");
         if (subMenus_.length > 0) {
             ObjMenu.push("<li id='MenuId" + row.MenuId + "'>");
-            ObjMenu.push("<div id='Highlight" + row.MenuId + "' class='parent-menu-item'>");
-            ObjMenu.push("<span highlight='Highlight" + row.MenuId + "' menuId='" + row.MenuId + "' class='menu-item-edit'>" + row.MenuTitle + "</span> <span class='menu-add-delete'> <span class='menu-item-command fas fa-plus'>&nbsp;</span> <span class='menu-item-command fas fa-trash'>&nbsp;</span></span>");
+            ObjMenu.push("<div class='highlight parent-menu-item'>");
+            ObjMenu.push("<span menuId='" + row.MenuId + "' class='menu-item-edit'>" + row.MenuId + "-" + row.MenuTitle + "</span>");
+            ObjMenu.push("<span class='menu-add-delete'>");
+            ObjMenu.push("      <span class='menu-item-add menu-item-command fas fa-plus'> &nbsp; </span>");
+            ObjMenu.push("      <span deleteId='" + row.MenuId + "' class='menu-item-delete menu-item-command fas fa-trash'>&nbsp;</span>");
+            ObjMenu.push("</span> ");
             ObjMenu.push("</div>");
 
             GetAdminSubMenuList(row.MenuId, subMenus_, data);
 
             ObjMenu.push("</li>");
         } else {
-            ObjMenu.push("<li id='MenuId" + row.MenuId + "' class='menu-item'><span highlight='MenuId" + row.MenuId + "' menuId='" + row.MenuId + "' class='menu-item-edit'>" + row.MenuTitle + "</span>  <span class='menu-add-delete'> <span class='menu-item-command fas fa-plus'>&nbsp;</span> <span class='menu-item-command fas fa-trash'>&nbsp;</span></span></li>");
+            ObjMenu.push("<li id='MenuId" + row.MenuId + "' class='highlight menu-item'>");
+            ObjMenu.push("<span menuId='" + row.MenuId + "' class='menu-item-edit'> " + row.MenuId + "-" + row.MenuTitle + " </span>");
+            ObjMenu.push("<span class='menu-add-delete'>");
+            ObjMenu.push("      <span class='menu-item-add menu-item-command fas fa-plus'> &nbsp; </span>");
+            ObjMenu.push("      <span deleteId='" + row.MenuId + "' class='menu-item-delete menu-item-command fas fa-trash'>&nbsp;</span>");
+            ObjMenu.push("</span>");
+            ObjMenu.push("</li>");
         } 
     }
     ObjMenu.push("</ul>");
@@ -104,7 +132,6 @@ function RefreshMenuDOM() {
         });
     }
 
-
     // show add and delete
     $(".parent-menu-item").mouseover(function () {
         $(this).closest('div').find(".menu-add-delete:first").show();
@@ -120,55 +147,73 @@ function RefreshMenuDOM() {
         $(this).closest('li').find(".menu-add-delete:first").hide();
     });
 
-
     // edit menu item
     $(".menu-item-edit").click(function () {
         var menuId = $(this).attr("menuId");
 
         // get parent item to refresh
-        var obj = $(this).closest("li.refresh-item");
-        RefreshItem = obj.attr("id");
+        GetParentRefreshId(this);
 
-        //console.log("SelectMenu menuId=" + menuId + "    RefreshItem=" + RefreshItem);
+        // highlight item
+        HighlightMenuItem(this);
 
-        // set highlight item
-        var highlight = $(this).attr("highlight");
-        HighlightedItem = highlight;
-
-        HighlightMenuItem();
         SelectMenu(menuId);
+
+        console.log("Edit menuId=" + menuId + "    RefreshItem=" + RefreshItem);
     });
 
 
     // add menu item
-    $(".menu-add-delete").click(function () {
+    $(".menu-item-add").click(function () { 
 
         // get parent menuId
         var obj = $(this).closest("li");
         var parentId = obj.attr("id").replace("MenuId","");
         ParentId = parentId;
 
+        // get parent item to refresh
+        GetParentRefreshId(this);
 
-        // set highlight item
-        var highlight = $(this).attr("highlight");
-        HighlightedItem = highlight;
-
-        HighlightMenuItem();
+        // highlight item
+        HighlightMenuItem(this);
 
         SelectMenu(0);
 
+        console.log("Add ParentId=" + ParentId + "    RefreshItem=" + RefreshItem);
 
-        console.log("add to menuId=" + parentId );
+    });
+
+
+    // delete menu item
+    $(".menu-item-delete").click(function () {
+        var deleteId = $(this).attr("deleteId");
+
+        // get parent item to refresh
+        GetParentRefreshId(this);
+
+        // highlight item
+        HighlightMenuItem(this);
+
+        var menu = Menus.find(w => w.MenuId == deleteId);
+
+        ConfirmBox("Warning", "Delete " + menu.MenuTitle + "?", "DeleteMenu_(" + deleteId + ");")
+
+        console.log("deleteId=" + deleteId + "    Title=" + menu.MenuTitle + "    RefreshItem=" + RefreshItem);
+
     });
 
 }
 
-function HighlightMenuItem() {
-    $(".menu-item").removeClass("menu-item-active");
-    $(".parent-menu-item").removeClass("menu-item-active");
+function GetParentRefreshId(t) {
+    var obj = $(t).closest("li.refresh-item");
+    RefreshItem = obj.attr("id");
+}
 
-    $("#" + HighlightedItem).addClass("menu-item-active");
 
+function HighlightMenuItem(t) {
+    var objHighlight = $(t).closest(".highlight");
+    $(".highlight").removeClass("menu-item-active");
+    $(objHighlight).addClass("menu-item-active");
 }
 
 function SortMenu(menuId, newOrder) {
@@ -184,39 +229,53 @@ function SortMenu(menuId, newOrder) {
 }
 
 function SelectMenu(menuId) {
-    $("#EditMenu #MenuId").val(menuId);
-    var json = ToJsonString("EditMenu");
-    $.ajax({
-        url: "./Data/GetFormData",
-        data: { json: json },
-        type: "POST",
-        dataType: "json",
-        success: function (data) {
+    AppSpinner(true);
 
-            BindForm("EditMenu", data[0]);
+    setTimeout(function () { 
 
-            // set grid and form target type dropdowns
-            var targetType = $("#EditMenu input[name='TargetType']:checked").val();
-            if (targetType == "grid") {
-                $("#EditMenu #TargetGridId").val(data[0].TargetId);
-            } else if (targetType == "form") {
-                $("#EditMenu #TargetFormId").val(data[0].TargetId);
-            } 
+        $("#EditMenu #MenuId").val(menuId);
+        var json = ToJsonString("EditMenu");
+        $.ajax({
+            url: "./Data/GetFormData",
+            data: { json: json },
+            type: "POST",
+            dataType: "json",
+            success: function (data) {
 
-            // set display of TargetType options
-            $(".targetType-class").hide();
-            $("#span_" + data[0].TargetType).show();
+                BindForm("EditMenu", data[0]);
+
+                // set grid and form target type dropdowns
+                var targetType = $("#EditMenu input[name='TargetType']:checked").val();
+                if (targetType == "grid") {
+                    $("#EditMenu #TargetGridId").val(data[0].TargetId);
+                } else if (targetType == "form") {
+                    $("#EditMenu #TargetFormId").val(data[0].TargetId);
+                } 
+
+                // set display of TargetType options
+                $(".targetType-class").hide();
+                $("#span_" + data[0].TargetType).show();
 
 
-            // set ParentId if new
-            if (data[0].IsNewRecord == "True") {
-                $("#EditMenu #ParentId").val(ParentId);
-                $("#EditMenu #MenuId").val(menuId);
+                // set ParentId if new
+                if (data[0].IsNewRecord == "True") {
+                    $("#EditMenu #ParentId").val(ParentId);
+                    $("#EditMenu #MenuId").val(menuId);
+                }
+
+                if (menuId == 0) {
+                    DisableButton("cmd_Delete_EditMenu");
+                } else {
+                    EnableButton("cmd_Delete_EditMenu");
+                }
+
+                $("#editMenuBox").show();
+            },
+            complete: function () {
+                AppSpinner(false);
             }
-
-            $("#editMenuBox").show();
-        }
-    });
+        });
+    }, 500);
 }
 
 

@@ -161,6 +161,7 @@ input[type=text] {
     padding: 5px;
     border-radius: 3px;
     text-align: center;
+    color: #333333;
 }
 
     .command-active-span:hover {
@@ -175,7 +176,9 @@ input[type=text] {
     text-align: center;
 }
 
-
+.command-icon {
+ font-size:1.35em;
+}
 /* command-bar with span to the right */
 .command-bar {
     background: #ddd;
