@@ -1,21 +1,22 @@
-
 <style>
-
-    #sortable1 > li {
-        width: 200px;
-        cursor: move;
-        border: solid 1px #ccc;
+    .accordion-panel {
+        display: none;
+        margin-left: 10px;
     }
 
-    #sortable2 > li {
-        width: 200px;
-        cursor: move;
-        border: solid 1px #ccc;
+    .accordion {
+        cursor: pointer;
+        margin-left: 1px;
     }
 
-
-
+    .data-object-bar {
+        width:100%;
+        background-color:#ccc;
+        padding:5px;
+    }
 </style>
+
+
 
 <center>
     <table style="width:98%;">
@@ -41,74 +42,69 @@
         </tr>
 
         <tr valign="top">
-            <td class="" style="border:solid 1px #ccc;width:10%;">
+            <td class="" style="border:solid 1px #ccc;width:13%;">
                 <div id="divAppDatabases"></div>
             </td>
-            <td class="" style="border:solid 1px #ccc;width:10%;">
+            <td class="" style="border:solid 1px #ccc;width:13%;">
                 <div id="divAppTables"></div>
             </td>
-            <td class="" style="border:solid 1px #ccc;width:10%;">
-                <table>
-                    <tr>
-                        <td class="width200 command-bar">
-                            Fields
-                            <span>[x]</span>
-                            <span>[+]</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding-bottom:20px;">
-                            <div id="divColumns"></div>
-                        </td>
-                    </tr>
+            <td class="" style="border:solid 1px #ccc;width:13%;">
+                <table class="data-objects" style="width:100%;display:none;">
 
                     <tr>
-                        <td class="width200 command-bar">
-                            Grids
-                            <span>[x]</span>
-                            <span>[+]</span>
-                        </td>
-                    </tr>
-                    <tr>
                         <td style="padding-bottom:20px;">
-                            <div id="divGrids"></div>
-                        </td>
-                    </tr>
 
-                    <tr>
-                        <td class="width200 command-bar">
-                            Forms
-                            <span>[x]</span>
-                            <span>[+]</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding-bottom:20px;">
-                            <div id="divForms"></div>
+
+                            <div class="data-object-bar"><span class="accordion"><span class='fas fa-caret-right'>&nbsp;</span></span> Fields</div>
+                            <div id="divColumns" class="accordion-panel">
+
+                            </div>
+
+
                         </td>
                     </tr>
 
 
                     <tr>
-                        <td class="width200 command-bar">
-                            Search Forms
-                            <span>[x]</span>
-                            <span>[+]</span>
+                        <td style="padding-bottom:20px;">
+
+                            <div class="data-object-bar"><span class="accordion"><span class='fas fa-caret-right'>&nbsp;</span></span> Grids</div>
+                            <div id="divGrids" class="accordion-panel">
+
+                            </div>
+
                         </td>
                     </tr>
+
+
                     <tr>
                         <td style="padding-bottom:20px;">
-                            <div id="divSearchForms"></div>
+                            <div class="data-object-bar"><span class="accordion"><span class='fas fa-caret-right'>&nbsp;</span></span> Forms</div>
+                            <div id="divForms" class="accordion-panel">
+
+                            </div>
+
                         </td>
                     </tr>
+
+                    <tr>
+                        <td style="padding-bottom:20px;">
+                            <div class="data-object-bar"><span class="accordion"><span class='fas fa-caret-right'>&nbsp;</span></span> Search Forms</div>
+                            <div id="divSearchForms" class="accordion-panel">
+
+                            </div>
+
+                        </td>
+                    </tr>
+
 
                 </table>
 
             </td>
-            <td style="width:70%;">
+            <td style="width:60%;">
                 <div id="divProperties">
                 </div>
-                
+
             </td>
 
         </tr>
@@ -118,7 +114,7 @@
 </center>
 
 
-<div id="WindowDatabase"  class="modal-window">
+<div id="WindowDatabase" class="modal-window">
     <div style="padding-top:5px;padding-left:10px;"><span>Add Database</span>  <span style="float:right;padding-right:10px;cursor:pointer;" onclick="CloseModalWindow('WindowDatabase')">X</span></div>
     <hr />
 
@@ -129,6 +125,21 @@
 
     $(document).ready(function () {
         GetDatabaseList();
+
+
+        $(".accordion").click(function () {
+
+            var panel = this.closest("div").nextElementSibling;
+
+            if (panel.style.display === "block") {
+                panel.style.display = "none";
+                $(this).html("<span class='fas fa-caret-right'>&nbsp;</span>");
+            } else {
+                panel.style.display = "block";
+                $(this).html("<span class='fas fa-caret-down'>&nbsp;</span>");
+            }
+        });
+
 
     });
 

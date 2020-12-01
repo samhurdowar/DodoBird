@@ -104,6 +104,7 @@ function SelectTable(appDatabaseId, tableName) {
                 }
                 objForms.push("</table>");
                 $("#divForms").html(objForms.join(""));
+                $(".data-objects").show();
                 SetCommandBarDOM();
             },
             complete: function () {

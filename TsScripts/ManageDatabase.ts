@@ -136,6 +136,9 @@ function SelectTable(appDatabaseId, tableName) {
 
                 $("#divForms").html(objForms.join(""));
 
+                $(".data-objects").show();
+                
+
                 SetCommandBarDOM();
             },
             complete: function () {

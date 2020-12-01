@@ -1,87 +1,84 @@
-<div class="command-bar-container">
-    <span id="cmd_Save_EditTest" class="command-disabled-span"><span class="command-icon fas fa-save">&nbsp;</span> Save</span>
-</div>
+<h2>Accordion</h2>
+<style>
+    .accordion-panel {
+        display: none;
+        margin-left: 25px;
+    }
 
-
-<form id="EditTest">
-    <input type="text" id="TestId" />
-    <input type="text" id="DodoBirdKey" value="" />
-
-    <table>
-        <tr>
-            <td>TestTextbox</td>
-            <td><input type="text" id="TestTextbox" name="TestTextbox" /></td>
-        </tr>
+    .accordion {
+        cursor: pointer;
+        margin-left: 10px;
+    }
+</style>
 
 
 
-        <tr>
-            <td>Single Select</td>
-            <td><select id="TestSelect" name="TestSelect"><option value=""></option><option value="Option1">Option1</option><option value="Option2">Option2</option><option value="Option3">Option3</option></select></td>
-        </tr>
-        <tr>
-            <td>Checkbox</td>
-            <td><input type="checkbox" id="TestCheckbox" name="TestCheckbox" value="true" /></td>
-        </tr>
-        <tr>
-            <td>Checkboxes</td>
-            <td>
-                <input type="checkbox" name="TestCheckboxes" value="Check1" class="Checkboxes_TestCheckboxes" />Checkbox 1
-                <input type="checkbox" name="TestCheckboxes" value="Check2" class="Checkboxes_TestCheckboxes" />Checkbox 2
-                <input type="checkbox" name="TestCheckboxes" value="Check3" class="Checkboxes_TestCheckboxes" />Checkbox 3
-                <input type="checkbox" name="TestCheckboxes" value="Check4" class="Checkboxes_TestCheckboxes" />Checkbox 4
-            </td>
-        </tr>
-        <tr>
-            <td>Radios</td>
-            <td>
-            <input type='radio' name='TestRadios' value='Yes'> Yes    
-            <input type='radio' name='TestRadios' value='No' /> No     
-            <input type='radio' name='TestRadios' value='Maybe' /> Maybe
-            </td>
-        </tr>
-    </table>
+<table>
+
+    <tr>
+        <td style="padding-bottom:20px;">
 
 
-    <table>
-        <tr><td>Available Fields</td><td>Fields in Grid</td></tr>
+            <div><span class="accordion" expand="divColumns"><span class='fas fa-caret-right'>&nbsp;</span></span> Fields</div>
+            <div id="divColumns" class="accordion-panel">
+                aaaa
+            </div>
 
-        <tr>
-            <td valign="top">
-                <div id="availableColumns">
 
-                </div>
-            </td>
-            <td valign="top">
-                <div id="gridColumns">
+        </td>
+    </tr>
 
-                </div>
 
-            </td>
-        </tr>
-    </table>
+    <tr>
+        <td style="padding-bottom:20px;">
 
-</form>
+            <div><span class="accordion" expand="divGrids"><span class='fas fa-caret-right'>&nbsp;</span></span> Grids</div>
+            <div class="accordion-panel">
+                bbbbb
+            </div>
+
+        </td>
+    </tr>
+
+
+    <tr>
+        <td style="padding-bottom:20px;">
+            <div><span class="accordion" expand="divForms"><span class='fas fa-caret-right'>&nbsp;</span></span> Forms</div>
+            <div class="accordion-panel">
+                ccccc
+            </div>
+
+        </td>
+    </tr>
+
+    <tr>
+        <td style="padding-bottom:20px;">
+            <div><span class="accordion" expand="divSearchForms"><span class='fas fa-caret-right'>&nbsp;</span></span> Search Forms</div>
+            <div class="accordion-panel">
+                dddddd
+            </div>
+
+        </td>
+    </tr>
+
+
+</table>
+
 <script>
 
+    $(".accordion").click(function () {
 
+        var panel = this.closest("div").nextElementSibling;
 
-    $(document).ready(function () {
-        data = { "TestId": 1, "DodoBirdKey": "0|Grid", "GridFilter": "GridFilter value", "GridSort": "GridSort value", "TestSelect": "Option2", "TestCheckbox": true, "TestCheckboxes": "Check1,Check3", "TestRadios": "Maybe" };
-
-        BindForm("EditTest", data);
-
+        //alert($(panel).attr("id"));
+        //$(panel).toggleSlide();
+        if (panel.style.display === "block") {
+            panel.style.display = "none";
+            $(this).html("<span class='fas fa-caret-right'>&nbsp;</span>");
+        } else {
+            panel.style.display = "block";
+            $(this).html("<span class='fas fa-caret-down'>&nbsp;</span>");
+        }
     });
 
-
-
-
-
-    function Save_EditGrid() {
-        var json = ToJsonString("EditTest");
-        console.log(json);
-
-
-        DisableButton("cmd_Save_EditTest");
-    }
 </script>

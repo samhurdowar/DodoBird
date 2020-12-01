@@ -130,24 +130,7 @@ table tr td {
     cursor: pointer;
 }
 
-.width150 {
-    width: 150px;
-}
-.width200 {
-    width: 200px;
-}
-input[type=text] {
-    width: 250px;
-}
-.width300 {
-    width: 300px;
-}
-.width350 {
-    width: 350px;
-}
-.width400 {
-    width:400px;
-}
+
 /* form command buttons */
 
 .command-bar-container {

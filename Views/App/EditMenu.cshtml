@@ -98,7 +98,7 @@
                                         <input type='radio' name='TargetType' value='page' /> Custom Page
                                         <span id="span_page" class="targetType-class" style="display: none; position: relative; left: 25px;">
                                             <span class="command-icon fas fa-arrow-right">&nbsp;</span>
-                                            <input type="text" name="PageFile" id="PageFile" value="" />
+                                            <input type="text" name="PageFile" id="PageFile" value="" style="width:300px;" />
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             <font style="color:#808080;font-style:italic;">i.e. ~/Views/Home/FileName.cshtml</font>
                                         </span>
@@ -248,6 +248,18 @@
 
                 if (menuId == $("#EditMenu #MenuId").val()) {
                     $("#editMenuBox").hide();
+                } else {
+                    // highlight current item 
+                    setTimeout(function () {
+                        $(".highlight").removeClass("menu-item-active");
+
+                        var highlightId = $("#EditMenu #MenuId").val();
+                        if ($("#MenuId" + highlightId).hasClass("highlight")) {
+                            $("#MenuId" + highlightId).addClass("menu-item-active");
+                        } else {
+                            $("#MenuId" + highlightId + " div").addClass("menu-item-active");
+                        }
+                    }, 1000);
                 }
             },
             complete: function () {
