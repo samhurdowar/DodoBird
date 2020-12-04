@@ -3,9 +3,10 @@ var ObjMenu = [];
 var RefreshItem = "RootMenus";
 var HighlightedItem = "";
 var ParentId = "0";
-function GetAdminMenuList() {
+function GetAdminMenuList(highlightId) {
     $.ajax({
         url: "./Menu/GetAdminMenuList",
+        type: "POST",
         dataType: "json",
         success: function (data) {
             SortableMenuItems = "RootMenus";
@@ -48,7 +49,7 @@ function GetAdminMenuList() {
             var r = Math.floor(Math.random() * 1001);
             var str = ObjMenu.join("") + "<span id='AmAlive" + r + "'></span>";
             $("#" + RefreshItem).html(str);
-            RefreshDOM("RefreshMenuDOM()", "AmAlive" + r);
+            RefreshDOM("RefreshMenuDOM(" + highlightId + ")", "AmAlive" + r);
         }
     });
 }
@@ -92,7 +93,7 @@ function GetAdminSubMenuList(menuId, subMenus, data) {
     }
     ObjMenu.push("</ul>");
 }
-function RefreshMenuDOM() {
+function RefreshMenuDOM(highlightId) {
     var words = SortableMenuItems.split(",");
     for (var i = 0; i < words.length; i++) {
         $("#" + words[i]).sortable({
@@ -154,6 +155,18 @@ function RefreshMenuDOM() {
         ConfirmBox("Warning", "Delete " + menu.MenuTitle + "?", "DeleteMenu_(" + deleteId + ");");
         console.log("deleteId=" + deleteId + "    Title=" + menu.MenuTitle + "    RefreshItem=" + RefreshItem);
     });
+    // highlight
+    if (highlightId > 0) {
+        setTimeout(function () {
+            $(".highlight").removeClass("menu-item-active");
+            if ($("#MenuId" + highlightId).hasClass("highlight")) {
+                $("#MenuId" + highlightId).addClass("menu-item-active");
+            }
+            else {
+                $("#MenuId" + highlightId + " div").addClass("menu-item-active");
+            }
+        }, 500);
+    }
 }
 function GetParentRefreshId(t) {
     var obj = $(t).closest("li.refresh-item");
@@ -167,10 +180,11 @@ function HighlightMenuItem(t) {
 function SortMenu(menuId, newOrder) {
     $.ajax({
         url: "./Menu/SortMenu",
+        type: "POST",
         data: { menuId: menuId, newOrder: newOrder },
         dataType: "text",
         success: function (data) {
-            GetAdminMenuList();
+            GetAdminMenuList(0);
         }
     });
 }
@@ -181,8 +195,8 @@ function SelectMenu(menuId) {
         var json = ToJsonString("EditMenu");
         $.ajax({
             url: "./Data/GetFormData",
-            data: { json: json },
             type: "POST",
+            data: { json: json },
             dataType: "json",
             success: function (data) {
                 BindForm("EditMenu", data[0]);
@@ -219,26 +233,28 @@ function SelectMenu(menuId) {
 function GetMenuList() {
     $.ajax({
         url: "./Menu/GetMenuList",
+        type: "POST",
         dataType: "json",
         success: function (data) {
             Menus = data;
             ObjMenu.length = 0;
             ObjMenu.push("<ul>");
             // get main menus
+            //let mainMenus = data.filter(it => it.ParentId == 0);
+            //mainMenus = SortJson(mainMenus, "SortOrder");
             var mainMenus = data.filter(function (it) { return it.ParentId == 0; });
-            mainMenus = SortJson(mainMenus, "SortOrder");
             for (var i in mainMenus) {
                 var row = mainMenus[i];
                 var subMenus = data.filter(function (w) { return w.ParentId == row.MenuId; });
                 if (subMenus.length > 0) {
                     ObjMenu.push("<li onclick='MenuClick(" + row.MenuId + ")'>");
-                    ObjMenu.push("<span id='displayMenuId" + row.MenuId + "'>" + row.MenuTitle + "</span>");
+                    ObjMenu.push("<span id='displayMenuId" + row.MenuId + "'>" + row.SortOrder + ": " + row.MenuTitle + "</span>");
                     GetSubMenuList(subMenus, data);
                     ObjMenu.push("</li>");
                 }
                 else {
                     ObjMenu.push("<li onclick='MenuClick(" + row.MenuId + ")'>");
-                    ObjMenu.push("<span id='displayMenuId" + row.MenuId + "'>" + row.MenuTitle + "</span>");
+                    ObjMenu.push("<span id='displayMenuId" + row.MenuId + "'>" + row.SortOrder + ": " + row.MenuTitle + "</span>");
                     ObjMenu.push("</li>");
                 }
             }
@@ -253,17 +269,18 @@ function GetSubMenuList(subMenus, data) {
     // get sub menus
     for (var x in subMenus) {
         var row = subMenus[x];
+        //let subMenus_ = data.filter(w => w.ParentId == row.MenuId);
+        //subMenus_ = SortJson(subMenus_, "SortOrder");
         var subMenus_ = data.filter(function (w) { return w.ParentId == row.MenuId; });
-        subMenus_ = SortJson(subMenus_, "SortOrder");
         if (subMenus_.length > 0) {
             ObjMenu.push("<li onclick='MenuClick(" + row.MenuId + ")'>");
-            ObjMenu.push("<span id='displayMenuId" + row.MenuId + "'>" + row.MenuTitle + "</span>&nbsp;&nbsp;<span class='menu-item-command fas fa-caret-right'>&nbsp;</span>");
+            ObjMenu.push("<span id='displayMenuId" + row.MenuId + "'>" + row.SortOrder + ": " + row.MenuTitle + "</span>&nbsp;&nbsp;<span class='menu-item-command fas fa-caret-right'>&nbsp;</span>");
             GetSubMenuList(subMenus_, data);
             ObjMenu.push("</li>");
         }
         else {
             ObjMenu.push("<li onclick='MenuClick(" + row.MenuId + ")'>");
-            ObjMenu.push("<span id='displayMenuId" + row.MenuId + "'>" + row.MenuTitle + "</span>");
+            ObjMenu.push("<span id='displayMenuId" + row.MenuId + "'>" + row.SortOrder + ": " + row.MenuTitle + "</span>");
             ObjMenu.push("</li>");
         }
     }

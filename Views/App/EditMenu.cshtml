@@ -120,7 +120,7 @@
 
 <script>
     $(document).ready(function () {
-        GetAdminMenuList();
+        GetAdminMenuList(0);
 
         GetMenuOptions();
 
@@ -135,6 +135,7 @@
     function GetMenuOptions() {
         $.ajax({
             url: "./Menu/GetMenuOptions",
+            type: "POST",
             dataType: "json",
             success: function (data) {
                 GetSelect("TargetGridId", data.Grids);
@@ -182,40 +183,34 @@
         DisableButton("cmd_Save_EditMenu");
         AppSpinner(true);
 
-        $.ajax({
-            url: "./Data/SaveFormData",
-            data: { json: json },
-            dataType: "text",
-            success: function (menuId) {
-
-                GetAdminMenuList();
-
-                // update menu 
-                GetMenuList();
-
-                // highlight
-                setTimeout(function () {
-                    $(".highlight").removeClass("menu-item-active");
-
-                    if ($("#MenuId" + menuId).hasClass("highlight")) {
-                        $("#MenuId" + menuId).addClass("menu-item-active");
-                    } else {
-                        $("#MenuId" + menuId + " div").addClass("menu-item-active");
+        setTimeout(function () { 
+            $.ajax({
+                url: "./Data/SaveFormData",
+                type: "POST",
+                data: { json: json },
+                dataType: "text",
+                success: function (menuId) {
+                    if ($("#EditMenu #MenuId").val() == "0") {
+                        $("#EditMenu #MenuId").val(menuId);
+                        SortMenu(menuId, 10000);
                     }
+                    
+                    GetAdminMenuList(menuId);
 
+                    // update menu 
+                    GetMenuList();
+
+                    // update Menus array
+                    //UpdateArray("Menus", "MenuId", menuId, "MenuTitle", $("#EditMenu #MenuTitle").val());
+
+
+                    //MessageBox("Information", response, false);
+                },
+                complete: function () {
                     AppSpinner(false);
-                }, 1000);
-
-
-                // update Menus array
-                //UpdateArray("Menus", "MenuId", menuId, "MenuTitle", $("#EditMenu #MenuTitle").val());
-
-
-                //MessageBox("Information", response, false);
-            },
-            complete: function () {
-            }
-        });
+                }
+            });
+        }, 500);
     }
 
 
@@ -233,11 +228,12 @@
         AppSpinner(true);
         $.ajax({
             url: "./Data/DeleteData",
+            type: "POST",
             data: { json: json },
             dataType: "text",
             success: function (response) {
                 if (response == "SUCCESS") {
-                    GetAdminMenuList();
+                    GetAdminMenuList(0);
 
                     // update menu 
                     GetMenuList();

@@ -6,6 +6,7 @@ using System.Text;
 using System.Web.Helpers;
 using System.Web.Mvc;
 using DodoBird.Models.Db;
+using DodoBird.Services;
 
 namespace DodoBird.Controllers
 {
@@ -16,8 +17,18 @@ namespace DodoBird.Controllers
 			return View();
 		}
 
-        public ActionResult GetPage(string pageFile)
+
+        [HttpPost]
+        public ActionResult GetPage(int id, string targetType, string pageFile = "")
         {
+            if (id > 0 && targetType == "form")
+            {
+                var formSchema = DataService.GetFormSchema(id);
+                return PartialView(formSchema.PageFile);
+            }
+
+
+
             return PartialView(pageFile);   //"~/Views/Home/Test.cshtml"
         }
 

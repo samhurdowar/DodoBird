@@ -7,6 +7,7 @@ namespace DodoBird.Models
 {
     public class TableSchema
     {
+        public string Owner { get; set; }
         public string TableName { get; set; }
         public List<PrimaryKey> PrimaryKeys = new List<PrimaryKey>();
         public List<Column> Columns = new List<Column>();
@@ -40,6 +41,8 @@ namespace DodoBird.Models
         public string GridName { get; set; }
         public string GridFilter { get; set; }
         public string GridSort { get; set; }
+        public int GridType { get; set; }
+        public string Layout { get; set; }
         public List<Column> AvailableColumns = new List<Column>();
         public List<Column> GridColumns = new List<Column>();
     }

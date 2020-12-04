@@ -19,20 +19,25 @@ namespace DodoBird.Services
             {
                 Db.Database.Connection.ConnectionString = SessionService.GetConnectionString(appDatabaseId);
 
-                var sql = @"SELECT DISTINCT TABLE_NAME AS TableName FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_NAME = @TableName";
+                var sql = @"SELECT DISTINCT TABLE_SCHEMA AS Owner, TABLE_NAME AS TableName FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_NAME = @TableName";
                 var tableSchema = Db.Database.SqlQuery<TableSchema>(sql, new SqlParameter("@TableName", tableName)).FirstOrDefault();
 
                 // get primarykeys 
                 sql = @"
-                    SELECT DISTINCT c.name AS ColumnName, t.name AS DataType
+                    SELECT c.name AS ColumnName, t.name AS DataType 
                     FROM sys.columns c 
                     JOIN sys.objects o ON o.object_id = c.object_id AND o.type = 'U' 
-                    JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE i ON i.TABLE_NAME = o.name 
-                    JOIN sys.Types t ON t.system_type_id = c.system_type_id 
-                    WHERE OBJECTPROPERTY(OBJECT_ID(CONSTRAINT_SCHEMA + '.' + CONSTRAINT_NAME), 'IsPrimaryKey') = 1  AND i.COLUMN_NAME = c.name AND o.name = @TableName
+                    JOIN sys.Types t ON t.system_type_id = c.system_type_id AND t.system_type_id = t.user_type_id 
+                    WHERE o.name = @TableName1 AND c.name IN (
+                    SELECT column_name 
+                    FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS TC 
+                    INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS KU
+                    ON TC.CONSTRAINT_TYPE = 'PRIMARY KEY' AND TC.CONSTRAINT_NAME = KU.CONSTRAINT_NAME AND KU.table_name = @TableName2
+                    )
+
                 ";
 
-                var keys = Db.Database.SqlQuery<PrimaryKey>(sql, new SqlParameter("@TableName", tableName)).ToList();
+                var keys = Db.Database.SqlQuery<PrimaryKey>(sql, new SqlParameter("@TableName1", tableName), new SqlParameter("@TableName2", tableName)).ToList();
                 foreach (var key in keys)
                 {
                     tableSchema.PrimaryKeys.Add(key);
@@ -48,7 +53,7 @@ namespace DodoBird.Services
                     CAST(ISNULL(CASE c.is_computed WHEN 1 THEN 1 ELSE 0 END, 0) AS Bit) AS IsComputed,
                     t.name AS DataType
                     FROM sys.columns c 
-                    JOIN sys.Types t ON t.system_type_id = c.system_type_id AND t.name <> 'sysname' 
+                    JOIN sys.Types t ON t.system_type_id = c.system_type_id AND t.system_type_id = t.user_type_id AND t.name <> 'sysname' 
                     JOIN sys.objects o ON o.object_id = c.object_id AND o.type = 'U' AND o.name = @TableName
                ";
 

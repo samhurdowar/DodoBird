@@ -1,6 +1,17 @@
 ﻿
 /*  table  */
-table tr td {
+
+.table-bordered tr td {
+    border: 1px solid #ccc;
+}
+
+.table-padding-sm tr td {
+    padding: 2px;
+}
+.table-padding-md tr td {
+    padding: 4px;
+}
+.table-padding-lg tr td {
     padding: 7px;
 }
 
@@ -282,4 +293,36 @@ table tr td {
     background-color: #ccc;
     opacity: 0.5;
     z-index: 1;
+}
+.custom-tab-content {
+    list-style-type: none;
+    padding: 10px;
+}
+
+.custom-tab {
+    list-style-type: none;
+    margin: 0;
+    padding-top: 3px;
+    overflow: hidden;
+    background-color: #ccc;
+}
+
+    .custom-tab li {
+        float: left;
+        cursor: pointer;
+        margin-right: 5px;
+        padding: 3px;
+        padding-right: 10px;
+    }
+
+        .custom-tab li:hover {
+            background-color: #eee;
+            border-top-right-radius: 7px;
+            border-top-left-radius: 7px;
+        }
+
+.custom-tab-active {
+    background-color: #eee;
+    border-top-right-radius: 7px;
+    border-top-left-radius: 7px;
 }

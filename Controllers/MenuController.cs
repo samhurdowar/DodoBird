@@ -13,20 +13,21 @@ namespace DodoBird.Controllers
 {
 	public class MenuController : Controller
 	{
-
+        [HttpPost]
         public string GetAdminMenuList()
         {
-            var json = HelperService.GetJsonData(1, "SELECT * FROM Menu");
+            var json = HelperService.GetJsonData(1, "SELECT * FROM Menu ORDER BY ParentId, SortOrder");
             return json;
         }
 
-
+        [HttpPost]
         public string GetMenuList()
         {
-            var json = HelperService.GetJsonData(1, "SELECT * FROM Menu");
+            var json = HelperService.GetJsonData(1, "SELECT * FROM Menu ORDER BY ParentId, SortOrder");
             return json;
         }
 
+        [HttpPost]
         public string SortMenu(int menuId, int newOrder)
         {
             try
@@ -44,6 +45,7 @@ namespace DodoBird.Controllers
             }
         }
 
+        [HttpPost]
         public string GetMenuOptions()
         {
             var jsonGrids = HelperService.GetJsonData(0, "SELECT GridId AS OptionValue, TableName  + ' - ' + GridName AS OptionText FROM Grid ORDER BY TableName, GridName");

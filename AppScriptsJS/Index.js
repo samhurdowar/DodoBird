@@ -27,31 +27,20 @@ function MenuClick(menuId) {
             GetGrid(menu.MenuId, true);
         }
         else if (menu.TargetId > 0 && menu.TargetType == "form") {
-            // get form
             $.ajax({
-                url: "./Form/GetFormSchema",
-                data: { formId: menu.TargetId },
+                url: "./Home/GetPage",
+                data: { id: menu.TargetId, targetType: menu.TargetType, pageFile: "" },
                 type: "POST",
-                dataType: "json",
-                success: function (data) {
-                    if (data[0].TargetType == "page" && data[0].PageFile.length > 0) {
-                        $.ajax({
-                            url: "./Home/GetPage",
-                            data: { pageFile: data[0].PageFile },
-                            type: "POST",
-                            dataType: "text",
-                            success: function (response) {
-                                AddTab(menu.MenuId, menu.MenuTitle, isRefresh, response);
-                            }
-                        });
-                    }
+                dataType: "text",
+                success: function (response) {
+                    AddTab(menu.MenuId, menu.MenuTitle, isRefresh, response);
                 }
             });
         }
         else if (menu.PageFile.length > 0 && menu.TargetType == "page") {
             $.ajax({
                 url: "./Home/GetPage",
-                data: { pageFile: menu.PageFile },
+                data: { id: 0, targetType: "", pageFile: menu.PageFile },
                 type: "POST",
                 dataType: "text",
                 success: function (response) {
@@ -124,6 +113,8 @@ function SetCommandBarDOM() {
         $(".command-bar-select6").removeClass("command-bar-active");
         $(this).addClass("command-bar-active");
     });
+    var windowHeight = window.innerHeight - 300;
+    $(".scroll").css("height", windowHeight + "px");
 }
 function SortJson(array, key) {
     return array.sort(function (a, b) {
@@ -203,5 +194,46 @@ function UpdateArray(arrayName, keyName, keyValue, targetName, targetValue) {
     if (i > -1) {
         array[i][targetName] = targetValue;
     }
+}
+function TabIt(id, initIndex) {
+    $("#" + id + "Content li").hide();
+    // initialize 
+    $("#" + id + " li").each(function () {
+        if ($(this).index() == initIndex) {
+            $(this).addClass("custom-tab-active");
+        }
+        else {
+            $(this).removeClass("custom-tab-active");
+        }
+    });
+    $("#" + id + "Content").children().each(function () {
+        if ($(this).index() == initIndex) {
+            $(this).show();
+        }
+        else {
+            $(this).hide();
+        }
+    });
+    $("#" + id + " li").click(function () {
+        var selectedIndex = $(this).index();
+        // set active current
+        $("#" + id + " li").each(function () {
+            if ($(this).index() == selectedIndex) {
+                $(this).addClass("custom-tab-active");
+            }
+            else {
+                $(this).removeClass("custom-tab-active");
+            }
+        });
+        // display content
+        $("#" + id + "Content").children().each(function () {
+            if ($(this).index() == selectedIndex) {
+                $(this).show();
+            }
+            else {
+                $(this).hide();
+            }
+        });
+    });
 }
 //# sourceMappingURL=Index.js.map

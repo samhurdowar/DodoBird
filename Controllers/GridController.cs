@@ -9,6 +9,9 @@ using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using DodoBird.Services;
+using DodoBird.Models;
+using System.IO;
+using System.Drawing;
 
 namespace DodoBird.Controllers
 {
@@ -24,31 +27,16 @@ namespace DodoBird.Controllers
 
                 Db.Database.Connection.ConnectionString = SessionService.GetConnectionString(gridSchema.AppDatabaseId);
 
-                StringBuilder sb = new StringBuilder();
                 StringBuilder sbRecords = new StringBuilder();
-                // add primary key columns
-                foreach (var key in tableSchema.PrimaryKeys)
+                var selectColumns = "";
+
+                // Standard grid
+                if (gridSchema.GridType == 0)
                 {
-                    sb.Append(key.ColumnName + ",");
-                }
-                
-                // set sort and direction 
-                if (pageNavigation.SortDirection == null || pageNavigation.SortDirection.Length == 0) pageNavigation.SortDirection = "ASC";
-
-
-                // select columns in grid
-                var gridColumns = gridSchema.GridColumns;
-                var tableColumns = tableSchema.Columns;
-
-                var columns = from a in gridColumns
-                              join b in tableColumns.Where(w => !w.IsPrimaryKey) on a.ColumnName equals b.ColumnName
-                              orderby a.ColumnOrder
-                              select b;
-                foreach (var column in columns)
+                    selectColumns = GetStandardGridSelect(gridSchema, tableSchema, ref pageNavigation);
+                } else
                 {
-                    if (pageNavigation.OrderByColumn == null || pageNavigation.OrderByColumn.Length == 0) pageNavigation.OrderByColumn = column.ColumnName;  // default sort
-
-                    sb.Append(column.ColumnName + ",");
+                    selectColumns = GetCustomGridSelect(gridSchema, tableSchema, ref pageNavigation);
                 }
 
 
@@ -57,22 +45,17 @@ namespace DodoBird.Controllers
                 var offSet = " OFFSET " + ((pageNavigation.CurrentPage - 1) * numOfRecordsOnPage) + " ROWS ";
                 var fetch = " FETCH NEXT " + numOfRecordsOnPage + " ROWS ONLY ";
 
-                var selectColumns = sb.ToString();
-                selectColumns = selectColumns.Substring(0, selectColumns.Length - 1);
-                var exe = "SELECT " + selectColumns + " FROM " + tableSchema.TableName + " ORDER BY " + pageNavigation.OrderByColumn + " " + pageNavigation.SortDirection + " " + offSet + fetch + " FOR JSON AUTO, INCLUDE_NULL_VALUES";
-
-
+                var exe = "SELECT " + selectColumns + " FROM " + tableSchema.Owner + "." + tableSchema.TableName + " ORDER BY " + pageNavigation.OrderByColumn + " " + pageNavigation.SortDirection + " " + offSet + fetch + " FOR JSON AUTO, INCLUDE_NULL_VALUES";
 
                 // loop for records
-                var recs = Db.Database.SqlQuery<string>(exe).ToList();  //, new SqlParameter("@CompanyId", companyId)
+                var recs = Db.Database.SqlQuery<string>(exe).ToList();  
                 foreach (var rec in recs)
                 {
                     sbRecords.Append(rec);
                 }
 
-
                 // get total count
-                var exeCount = "SELECT COUNT(1) FROM " + tableSchema.TableName;
+                var exeCount = "SELECT COUNT(1) FROM " + tableSchema.Owner + "." + tableSchema.TableName;
                 var recordCount = Db.Database.SqlQuery<int>(exeCount).FirstOrDefault();
 
                 var numOfPages = 0;
@@ -82,11 +65,120 @@ namespace DodoBird.Controllers
                     numOfPages = (int)Math.Ceiling(totalPage_);
                 }
 
-                return "{ \"PrimaryKey\" : \"xxx\", \"RecordCount\" : " + recordCount + ", \"NumOfPages\" : " + numOfPages + ", \"OrderByColumn\" : \"" + pageNavigation.OrderByColumn + "\", \"SortDirection\" : \"" + pageNavigation.SortDirection + "\", \"Records\" : " + sbRecords.ToString() + " }";
+
+                var xxx = Db.Database.SqlQuery<byte[]>("SELECT ThumbNailPhoto FROM Production.ProductPhoto WHERE ProductPhotoID = 86").FirstOrDefault();
+
+                var base64Image = System.Convert.ToBase64String(xxx);
+
+                var imgsrc = string.Format("data:image/jpg;base64,{0}", base64Image);
+                //Image image = ByteArrayToImage(xxx);
+
+                return "{ \"PrimaryKey\" : \"" + imgsrc + "\", \"RecordCount\" : " + recordCount + ", \"NumOfPages\" : " + numOfPages + ", \"OrderByColumn\" : \"" + pageNavigation.OrderByColumn + "\", \"SortDirection\" : \"" + pageNavigation.SortDirection + "\", \"Records\" : " + sbRecords.ToString() + " }";
 
                 
 
             }
         }
+
+
+
+
+        public byte[] ImageToByteArray(System.Drawing.Image imageIn)
+        {
+            using (var ms = new MemoryStream())
+            {
+                imageIn.Save(ms, System.Drawing.Imaging.ImageFormat.Gif);
+
+                return ms.ToArray();
+            }
+        }
+
+        public Image ByteArrayToImage(byte[] byteArrayIn)
+        {
+            using (var ms = new MemoryStream(byteArrayIn))
+            {
+                var returnImage = Image.FromStream(ms);
+
+                return returnImage;
+            }
+        }
+
+
+
+
+        private string GetStandardGridSelect(GridSchema gridSchema, TableSchema tableSchema, ref PageNavigation pageNavigation)
+        {
+
+
+            // set sort and direction 
+            if (pageNavigation.SortDirection == null || pageNavigation.SortDirection.Length == 0) pageNavigation.SortDirection = "ASC";
+
+
+            StringBuilder sb = new StringBuilder();
+
+            // add primary key columns
+            foreach (var key in tableSchema.PrimaryKeys)
+            {
+                sb.Append(key.ColumnName + ",");
+            }
+
+            // select columns in grid
+            var gridColumns = gridSchema.GridColumns;
+            var tableColumns = tableSchema.Columns;
+
+            var columns = from a in gridColumns
+                            join b in tableColumns.Where(w => !w.IsPrimaryKey) on a.ColumnName equals b.ColumnName
+                            orderby a.ColumnOrder
+                            select b;
+            foreach (var column in columns)
+            {
+                sb.Append(column.ColumnName + ",");
+
+                if (pageNavigation.OrderByColumn == null || pageNavigation.OrderByColumn.Length == 0) pageNavigation.OrderByColumn = column.ColumnName;  // default sort
+            }
+
+            var selectColumns = sb.ToString();
+            selectColumns = selectColumns.Substring(0, selectColumns.Length - 1);
+
+
+
+            return selectColumns;
+
+            
+        }
+
+        private string GetCustomGridSelect(GridSchema gridSchema, TableSchema tableSchema, ref PageNavigation pageNavigation)
+        {
+            // set sort and direction 
+            if (pageNavigation.SortDirection == null || pageNavigation.SortDirection.Length == 0) pageNavigation.SortDirection = "ASC";
+
+
+            StringBuilder sb = new StringBuilder();
+
+            // add primary key columns
+            foreach (var key in tableSchema.PrimaryKeys)
+            {
+                sb.Append(key.ColumnName + ",");
+            }
+
+            // replace tokens
+            var layout = gridSchema.Layout.Replace("'","''").Replace("\"", "\\\"");
+            var columns = tableSchema.Columns;
+            foreach (var column in columns)
+            {
+                layout = layout.Replace("[" + column.ColumnName + "]", "' + ISNULL(" + column.ColumnName + ",'') + '");
+
+                if (pageNavigation.OrderByColumn == null || pageNavigation.OrderByColumn.Length == 0) pageNavigation.OrderByColumn = column.ColumnName;  // default sort
+            }
+
+            var selectColumns = sb.ToString() + "'" + layout + "' AS GridRecord ";
+
+
+            return selectColumns;
+
+
+        }
+
+
     }
 }

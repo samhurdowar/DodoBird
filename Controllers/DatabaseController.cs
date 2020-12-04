@@ -14,12 +14,14 @@ namespace DodoBird.Controllers
 {
     public class DatabaseController : Controller
     {
+        [HttpPost]
         public string GetDatabaseList()
         {
             var json = HelperService.GetJsonData(0, "SELECT * FROM AppDatabase");
             return json;
         }
 
+        [HttpPost]
         public string GetTableList(int appDatabaseId)
         {
             var sql = @"SELECT DISTINCT TABLE_SCHEMA AS TableSchema, TABLE_NAME AS TableName FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE ";
@@ -28,7 +30,7 @@ namespace DodoBird.Controllers
             return json;
         }
 
-
+        [HttpPost]
         public string GetTableOjects(int appDatabaseId, string tableName)
         {
             // get TableSchema
@@ -54,7 +56,7 @@ namespace DodoBird.Controllers
         }
 
 
-
+        [HttpPost]
         public string GetGridSchema(int gridId)
         {
             // get TableSchema
@@ -64,6 +66,7 @@ namespace DodoBird.Controllers
             return json;
         }
 
+        [HttpPost]
         public string SortGridColumn(int gridId, string columnName, int fromIndex, int toIndex, int newOrder)
         {
             try

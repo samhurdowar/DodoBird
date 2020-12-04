@@ -4,9 +4,15 @@
 
 
 <form id="EditGrid">
-    <input type="text" id="GridId" />
+    FormId <input type="text" id="FormId" value="2" /><br />
+    GridId <input type="text" id="GridId" /><br />
+    GridType <input type="text" id="GridType" /><br />
 
     <table>
+        <tr>
+            <td>Grid Name</td>
+            <td><input type="text" id="GridName" name="GridName" /></td>
+        </tr>
         <tr>
             <td>Filter Clause</td>
             <td><input type="text" id="GridFilter" name="GridFilter" /></td>
@@ -19,32 +25,83 @@
     </table>
 
 
-    <table>
-        <tr><td>Available Fields</td><td>Fields in Grid</td></tr>
 
-        <tr>
-            <td valign="top">
-                <div id="availableColumns">
 
-                </div>
-            </td>
-            <td valign="top">
-                <div id="gridColumns">
+    <ul id="gridTab" class="custom-tab">
+        <li>Standard Grid</li>
+        <li>Custom Layout</li>
+    </ul>
 
-                </div>
+    <ul id="gridTabContent" class="custom-tab-content">
 
-            </td>
-        </tr>
-    </table>
+        <li>
+            <table>
+                <tr><td>Available Fields</td><td>Fields in Grid</td></tr>
+                <tr>
+                    <td valign="top">
+                        <div id="availableColumns">
+
+                        </div>
+                    </td>
+                    <td valign="top">
+                        <div id="gridColumns">
+
+                        </div>
+
+                    </td>
+                </tr>
+            </table>
+        </li>
+
+        <li>
+            <textarea id="Layout" style="width:500px;height:300px;"></textarea>
+        </li>
+
+    </ul>
 
 </form>
 
 <script>
+
     function Save_EditGrid() {
-        var json = ToJsonString("EditGrid");
-        console.log(json);
-
-
+        
         DisableButton("cmd_Save_EditGrid");
+
+        AppSpinner(true);
+
+        // set GridType  0-Standard Grid    1-Custom Layout
+        var gridType = 0;
+        var i = 0;
+        $("#gridTab li").each(function () {
+            if ($(this).hasClass("custom-tab-active")) {
+                gridType = i;
+            }
+            i++;
+        });
+
+
+        $("#EditGrid #GridType").val(gridType);
+
+
+        var json = ToJsonString("EditGrid");
+
+        console.log("EditGrid json=" + json);
+
+        setTimeout(function () {
+            $.ajax({
+                url: "./Data/SaveFormData",
+                type: "POST",
+                data: { json: json },
+                dataType: "text",
+                success: function (id) {
+
+
+                },
+                complete: function () {
+                    AppSpinner(false);
+                }
+            });
+        }, 500);
+
     }
 </script>

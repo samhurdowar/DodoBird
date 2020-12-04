@@ -10,12 +10,21 @@
     }
 
     .data-object-bar {
-        width:100%;
-        background-color:#ccc;
-        padding:5px;
+        width: 100%;
+        background-color: #ccc;
+        padding: 5px;
     }
 </style>
 
+<style>
+    div.scroll {
+        width: 100%;
+        
+        overflow: auto;
+        border: solid 1px #ccc;
+        border-radius: 5px;
+    }
+</style>
 
 
 <center>
@@ -139,7 +148,6 @@
                 $(this).html("<span class='fas fa-caret-down'>&nbsp;</span>");
             }
         });
-
 
     });
 

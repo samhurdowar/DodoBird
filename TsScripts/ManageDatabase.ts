@@ -2,6 +2,7 @@
 function GetDatabaseList() {
     $.ajax({
         url: "./Database/GetDatabaseList",
+        type: "POST",
         dataType: "json",
         success: function (records) {
             var obj = [];
@@ -25,16 +26,19 @@ function GetDatabaseList() {
     });
 }
 
+
+//GetTableList
 function SelectDatabase(appDatabaseId) {
     AppSpinner(true);
     setTimeout(function () {
         $.ajax({
             url: "./Database/GetTableList",
+            type: "POST",
             data: { appDatabaseId: appDatabaseId },
             dataType: "json",
             success: function (records) {
                 var obj = [];
-                obj.push("<table style='width:100%;'>");
+                obj.push("<div class='scroll'><table style='width:100%;'>");
 
                 // record rows - tables
                 for (var i = 0; i < records.length; i++) {
@@ -45,7 +49,7 @@ function SelectDatabase(appDatabaseId) {
                     obj.push("</tr>");
                 }
 
-                obj.push("</table>");
+                obj.push("</table></div>");
 
                 $("#divAppTables").html(obj.join(""));
 
@@ -71,6 +75,7 @@ function SelectTable(appDatabaseId, tableName) {
 
         $.ajax({
             url: "./Database/GetTableOjects",
+            type: "POST",
             data: { appDatabaseId: appDatabaseId, tableName: tableName },
             dataType: "json",
             success: function (data) {
@@ -78,8 +83,8 @@ function SelectTable(appDatabaseId, tableName) {
                 // EditTable
                 $.ajax({
                     url: "./Home/GetPage",
-                    data: { pageFile: "~/Views/App/EditTable.cshtml" },
                     type: "POST",
+                    data: { id: 0, targetType: "", pageFile: "~/Views/App/EditTable.cshtml" },
                     dataType: "text",
                     success: function (response) {
                         $("#divProperties").html(response);
@@ -93,7 +98,12 @@ function SelectTable(appDatabaseId, tableName) {
                 var columns = data.TableSchema.Columns;
                 Columns = data.TableSchema.Columns;
                 var objColumns = [];
-                objColumns.push("<table style='width:100%;'>");
+
+                if (columns.length > 20) {
+                    objColumns.push("<div class='scroll'>");
+                }
+
+                objColumns.push("<table class='table-padding-sm' style='width:100%;'>");
                 for (var i = 0; i < columns.length; i++) {
                     var row = columns[i];
                     objColumns.push("<tr id='ColumnName" + row.ColumnName + "' appDatabaseId='" + appDatabaseId + "' tableName='" + tableName + "' columnName='" + row.ColumnName + "' onclick='SelectColumn(this)'>");
@@ -101,6 +111,10 @@ function SelectTable(appDatabaseId, tableName) {
                     objColumns.push("</tr>");
                 }
                 objColumns.push("</table>");
+
+                if (columns.length > 20) {
+                    objColumns.push("</div>");
+                }
 
                 $("#divColumns").html(objColumns.join(""));
 
@@ -155,8 +169,8 @@ function SelectColumn(t) {
     setTimeout(function () {
         $.ajax({
             url: "./Home/GetPage",
-            data: { pageFile: "~/Views/App/EditColumn.cshtml" },
             type: "POST",
+            data: { id: 0, targetType: "", pageFile: "~/Views/App/EditColumn.cshtml" },
             dataType: "text",
             success: function (response) {
                 $("#divProperties").html(response);
@@ -179,8 +193,8 @@ function SelectGrid(gridId) {
     setTimeout(function () {
         $.ajax({
             url: "./Home/GetPage",
-            data: { pageFile: "~/Views/App/EditGrid.cshtml" },
             type: "POST",
+            data: { id: 0, targetType: "", pageFile: "~/Views/App/EditGrid.cshtml" },
             dataType: "text",
             success: function (response) {
                 $("#divProperties").html(response);
@@ -202,12 +216,15 @@ var ToColumnIndex = "";
 function GetGridSchema(gridId) {
     $.ajax({
         url: "./Database/GetGridSchema",
+        type: "POST",
         data: { gridId: gridId },
         dataType: "json",
         success: function (data) {
 
-
             BindForm("EditGrid", data);
+
+            TabIt("gridTab", data.GridType);
+
             // set AvailableColumns
             var obj1 = [];
             obj1.push("<ul id='sortableGrid1' columnIndex='0' class='connectedSortable'>");
@@ -271,6 +288,7 @@ function GetGridSchema(gridId) {
 function SortGridColumn(gridId, columnName, fromIndex, toIndex, newOrder) {
     $.ajax({
         url: "./Database/SortGridColumn",
+        type: "POST",
         data: { gridId: gridId, columnName: columnName, fromIndex: fromIndex, toIndex: toIndex, newOrder: newOrder },
         dataType: "text",
         success: function (response) {
@@ -278,10 +296,6 @@ function SortGridColumn(gridId, columnName, fromIndex, toIndex, newOrder) {
         }
     });
 }
-
-
-
-
 
 
 
@@ -296,6 +310,7 @@ function SaveDatabase() {
 
     $.ajax({
         url: "./Database/SortGridColumn",
+        type: "POST",
         data: { json: json },
         dataType: "text",
         success: function (response) {

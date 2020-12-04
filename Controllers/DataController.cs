@@ -17,7 +17,7 @@ namespace DodoBird.Controllers
 	public class DataController : Controller
 	{
 
-
+        [HttpPost]
         public string GetFormData(string json)
         {
             dynamic jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject(json);
@@ -83,6 +83,9 @@ namespace DodoBird.Controllers
             return json;
         }
 
+
+        [HttpPost]
+        [ValidateInput(false)]
         public string SaveFormData(string json)
         {
             dynamic jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject(json);
@@ -95,6 +98,7 @@ namespace DodoBird.Controllers
             return response;
         }
 
+        [HttpPost]
         public string DeleteData(string json)
         {
 
