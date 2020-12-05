@@ -39,13 +39,16 @@ namespace DodoBird.Controllers
                     selectColumns = GetCustomGridSelect(gridSchema, tableSchema, ref pageNavigation);
                 }
 
-
                 // set select statement get page of records in json format
+                var selectStatment = "SELECT " + selectColumns + " FROM " + tableSchema.Owner + "." + tableSchema.TableName + " ORDER BY " + pageNavigation.OrderByColumn + " " + pageNavigation.SortDirection;
+
+
+                // set paging in json format
                 var numOfRecordsOnPage = 15;
                 var offSet = " OFFSET " + ((pageNavigation.CurrentPage - 1) * numOfRecordsOnPage) + " ROWS ";
                 var fetch = " FETCH NEXT " + numOfRecordsOnPage + " ROWS ONLY ";
 
-                var exe = "SELECT " + selectColumns + " FROM " + tableSchema.Owner + "." + tableSchema.TableName + " ORDER BY " + pageNavigation.OrderByColumn + " " + pageNavigation.SortDirection + " " + offSet + fetch + " FOR JSON AUTO, INCLUDE_NULL_VALUES";
+                var exe = selectStatment + " " + offSet + fetch + " FOR JSON AUTO, INCLUDE_NULL_VALUES";
 
                 // loop for records
                 var recs = Db.Database.SqlQuery<string>(exe).ToList();  
@@ -65,45 +68,10 @@ namespace DodoBird.Controllers
                     numOfPages = (int)Math.Ceiling(totalPage_);
                 }
 
-
-                var xxx = Db.Database.SqlQuery<byte[]>("SELECT ThumbNailPhoto FROM Production.ProductPhoto WHERE ProductPhotoID = 86").FirstOrDefault();
-
-                var base64Image = System.Convert.ToBase64String(xxx);
-
-                var imgsrc = string.Format("data:image/jpg;base64,{0}", base64Image);
-                //Image image = ByteArrayToImage(xxx);
-
-                return "{ \"PrimaryKey\" : \"" + imgsrc + "\", \"RecordCount\" : " + recordCount + ", \"NumOfPages\" : " + numOfPages + ", \"OrderByColumn\" : \"" + pageNavigation.OrderByColumn + "\", \"SortDirection\" : \"" + pageNavigation.SortDirection + "\", \"Records\" : " + sbRecords.ToString() + " }";
-
-                
+                return "{ \"imgSrc\" : \"\", \"RecordCount\" : " + recordCount + ", \"NumOfPages\" : " + numOfPages + ", \"OrderByColumn\" : \"" + pageNavigation.OrderByColumn + "\", \"SortDirection\" : \"" + pageNavigation.SortDirection + "\", \"Records\" : " + sbRecords.ToString() + " }";
 
             }
         }
-
-
-
-
-        public byte[] ImageToByteArray(System.Drawing.Image imageIn)
-        {
-            using (var ms = new MemoryStream())
-            {
-                imageIn.Save(ms, System.Drawing.Imaging.ImageFormat.Gif);
-
-                return ms.ToArray();
-            }
-        }
-
-        public Image ByteArrayToImage(byte[] byteArrayIn)
-        {
-            using (var ms = new MemoryStream(byteArrayIn))
-            {
-                var returnImage = Image.FromStream(ms);
-
-                return returnImage;
-            }
-        }
-
-
 
 
         private string GetStandardGridSelect(GridSchema gridSchema, TableSchema tableSchema, ref PageNavigation pageNavigation)

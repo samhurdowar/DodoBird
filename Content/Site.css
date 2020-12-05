@@ -173,7 +173,8 @@
 .command-icon {
  font-size:1.35em;
 }
-/* command-bar with span to the right */
+
+/* command-bar  */
 .command-bar {
     background: #ddd;
     padding: 5px;
@@ -182,67 +183,25 @@
 
     .command-bar span {
         float: right;
-        cursor:pointer;
-        margin-right:3px;
+        cursor: pointer;
+        margin-right: 3px;
     }
+
         .command-bar span:hover {
-            border-radius:3px;
+            border-radius: 3px;
             background: #f9733d;
         }
 
-/* command-bar-select 1-6 */
-.command-bar-active {
+/* select-bar  */
+.select-bar {
+    cursor: pointer;
+}
+    .select-bar:hover {
+        background: #eee;
+    }
+.select-bar-active {
     background: #f9733d;
 }
-
-
-.command-bar-select1 {
-    cursor: pointer;
-}
-    .command-bar-select1:hover {
-        background: #eee;
-    }
-
-.command-bar-select2 {
-    cursor: pointer;
-}
-
-    .command-bar-select2:hover {
-        background: #eee;
-    }
-
-.command-bar-select3 {
-    cursor: pointer;
-}
-
-    .command-bar-select3:hover {
-        background: #eee;
-    }
-
-.command-bar-select4 {
-    cursor: pointer;
-}
-
-    .command-bar-select4:hover {
-        background: #eee;
-    }
-
-.command-bar-select5 {
-    cursor: pointer;
-}
-
-    .command-bar-select5:hover {
-        background: #eee;
-    }
-
-.command-bar-select6 {
-    cursor: pointer;
-}
-
-    .command-bar-select6:hover {
-        background: #eee;
-    }
-
 
 /***********  buttons  ***************/
 .app-btn {

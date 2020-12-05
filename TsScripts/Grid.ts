@@ -30,8 +30,9 @@ function GetGrid(menuId: number, newTab: boolean) {
                 PageNavigations[i].OrderByColumn = data.OrderByColumn;
                 PageNavigations[i].SortDirection = data.SortDirection;
             }
-            var content_ = "<img src='" + data.PrimaryKey + "'>";
-            AddTab(menuId, "xxx", false, content_);
+
+
+            GenerateGridTable(menuId, newTab, data.Records);
 
             //if (1==1) {
             //    GenerateCustomGrid(menuId, newTab, data.Records);
@@ -147,10 +148,6 @@ function GenerateCustomGrid(menuId: number, newTab: boolean, records) {
 
 }
 
-
-
-
-
 function GenerateGridTable(menuId: number, newTab: boolean, records) {
     
     var pageIndex = PageNavigations.findIndex(w => w.MenuId == menuId);
@@ -185,9 +182,8 @@ function GenerateGridTable(menuId: number, newTab: boolean, records) {
 
     // record rows
     for (var i = 0; i < records.length; i++) {
-
         var row = records[i];
-        obj.push("<tr class='tr-all tr-row-pointer'>");  //xxx  id='row" + row[primaryKey] + "'
+        obj.push("<tr class='tr-all tr-row-pointer'>");  
         for (var column in row) {
             obj.push("<td>" + row[column] + "</td>");
         }

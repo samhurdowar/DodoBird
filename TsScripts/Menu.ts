@@ -55,24 +55,16 @@ function GetAdminMenuList(highlightId) {
                 }
             }
 
-            var r = Math.floor(Math.random() * 1001);
-            var str = ObjMenu.join("") + "<span id='AmAlive" + r + "'></span>";
+            var str = ObjMenu.join("") + AddAlive();
             $("#" + RefreshItem).html(str);
 
-            RefreshDOM("RefreshMenuDOM(" + highlightId + ")", "AmAlive" + r);
+            RefreshDOM("RefreshMenuDOM(" + highlightId + ")");
         }
     });
 }
 
 
-function RefreshDOM(functionToFire, amAlive) {
-    var myVar = setInterval(function () {
-        if ($("#" + amAlive).length) {
-            eval(functionToFire);
-            clearInterval(myVar);
-        }
-    }, 500);
-}
+
 
 function GetAdminSubMenuList(menuId, subMenus, data) {
     SortableMenuItems += ",Children" + menuId;

@@ -236,8 +236,7 @@
     </Compile>
     <Compile Include="Models\DataModels.cs" />
     <Compile Include="Models\DodoBirdModels.cs" />
-    <Compile Include="Models\App\CommonModels.cs" />
-    <Compile Include="Models\App\SysColumn.cs" />
+    <Compile Include="Models\CommonModels.cs" />
     <Compile Include="Models\Db\DodoBirdModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1828,7 +1827,6 @@
     <Content Include="Content\spinner.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
-    <Content Include="Images\acme.png" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -1948,6 +1946,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Code\" />
+    <Folder Include="Images\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -1963,6 +1962,7 @@
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="TsScripts\ClientForm.ts" />
     <TypeScriptCompile Include="TsScripts\Grid.ts" />
+    <TypeScriptCompile Include="TsScripts\ManageTable.ts" />
     <TypeScriptCompile Include="TsScripts\Menu.ts" />
     <TypeScriptCompile Include="TsScripts\Index.ts" />
     <TypeScriptCompile Include="TsScripts\ManageDatabase.ts" />

@@ -3,6 +3,9 @@
 var Menus; 
 var CloseTabFirst = false; var DisableFocus = false;
 var ConfirmBoxFunction = "";
+
+var RandomRefreshObject = "";
+
 $(document).ready(function () {
     GetMenuList();
 });
@@ -108,37 +111,6 @@ function CloseTab(menuId: number) {
     $("#page" + menuId).remove();
 }
 
-
-function SetCommandBarDOM() {
-
-    $(".command-bar-select1").click(function () {
-        $(".command-bar-select1").removeClass("command-bar-active");
-        $(this).addClass("command-bar-active");
-    });
-    $(".command-bar-select2").click(function () {
-        $(".command-bar-select2").removeClass("command-bar-active");
-        $(this).addClass("command-bar-active");
-    });
-    $(".command-bar-select3").click(function () {
-        $(".command-bar-select3").removeClass("command-bar-active");
-        $(this).addClass("command-bar-active");
-    });
-    $(".command-bar-select4").click(function () {
-        $(".command-bar-select4").removeClass("command-bar-active");
-        $(this).addClass("command-bar-active");
-    });
-    $(".command-bar-select5").click(function () {
-        $(".command-bar-select5").removeClass("command-bar-active");
-        $(this).addClass("command-bar-active");
-    });
-    $(".command-bar-select6").click(function () {
-        $(".command-bar-select6").removeClass("command-bar-active");
-        $(this).addClass("command-bar-active");
-    });
-
-    var windowHeight = window.innerHeight - 300;
-    $(".scroll").css("height", windowHeight + "px");
-}
 
 function SortJson(array, key) {
     return array.sort(function (a, b) {
@@ -286,4 +258,22 @@ function TabIt(id, initIndex) {
         });
 
     });
+}
+
+
+function AddAlive() {
+    var r = Math.floor(Math.random() * 1001);
+    RandomRefreshObject = "AmAlive" + r
+
+    return "<span id='" + RandomRefreshObject + "'></span>";
+
+
+}
+function RefreshDOM(functionToFire) {
+    var myVar = setInterval(function () {
+        if ($("#" + RandomRefreshObject).length) {
+            eval(functionToFire);
+            clearInterval(myVar);
+        }
+    }, 500);
 }

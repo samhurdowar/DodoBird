@@ -1,3 +1,6 @@
+var Columns;
+var ToColumnIndex = "";
+var AppDatabaseId;
 function GetDatabaseList() {
     $.ajax({
         url: "./Database/GetDatabaseList",
@@ -10,17 +13,29 @@ function GetDatabaseList() {
             for (var i = 0; i < records.length; i++) {
                 var row = records[i];
                 obj.push("<tr onclick='SelectDatabase(" + row.AppDatabaseId + ")'>");
-                obj.push("<td class='command-bar-select1'>" + row.DatabaseName + "</td>");
+                obj.push("<td id='highlight-database" + row.AppDatabaseId + "' class='select-bar highlight-database'>" + row.DatabaseName + "</td>");
                 obj.push("</tr>");
             }
             obj.push("</table>");
             $("#divAppDatabases").html(obj.join(""));
-            SetCommandBarDOM();
+            $(".highlight-database").click(function () {
+                var id = $(this).attr("id").replace("highlight-database", "");
+                HighlightDatabase(id);
+            });
         }
     });
 }
+function HighlightDatabase(id) {
+    $(".highlight-database").removeClass("select-bar-active");
+    $("#highlight-database" + id).addClass("select-bar-active");
+}
+function HighlightObject(id) {
+    $(".highlight-object").removeClass("select-bar-active");
+    $("#highlight-object" + id).addClass("select-bar-active");
+}
 //GetTableList
 function SelectDatabase(appDatabaseId) {
+    AppDatabaseId = appDatabaseId;
     AppSpinner(true);
     setTimeout(function () {
         $.ajax({
@@ -35,87 +50,17 @@ function SelectDatabase(appDatabaseId) {
                 for (var i = 0; i < records.length; i++) {
                     var row = records[i];
                     obj.push("<tr onclick=\"SelectTable(" + appDatabaseId + ",'" + row.TableName + "')\">");
-                    obj.push("<td class='command-bar-select2'>" + row.TableName + "</td>");
+                    obj.push("<td id='highlight-table" + row.TableName + "' class='select-bar highlight-table'>" + row.TableName + "</td>");
                     obj.push("</tr>");
                 }
                 obj.push("</table></div>");
                 $("#divAppTables").html(obj.join(""));
-                SetCommandBarDOM();
                 // clear divAppColumns
                 $("#divAppColumns").html("");
-            },
-            complete: function () {
-                AppSpinner(false);
-            }
-        });
-    }, 500);
-}
-var Columns;
-function SelectTable(appDatabaseId, tableName) {
-    AppSpinner(true);
-    setTimeout(function () {
-        $.ajax({
-            url: "./Database/GetTableOjects",
-            type: "POST",
-            data: { appDatabaseId: appDatabaseId, tableName: tableName },
-            dataType: "json",
-            success: function (data) {
-                // EditTable
-                $.ajax({
-                    url: "./Home/GetPage",
-                    type: "POST",
-                    data: { id: 0, targetType: "", pageFile: "~/Views/App/EditTable.cshtml" },
-                    dataType: "text",
-                    success: function (response) {
-                        $("#divProperties").html(response);
-                        BindForm("EditTable", data.TableSchema);
-                    }
+                $(".highlight-table").click(function () {
+                    var id = $(this).attr("id").replace("highlight-table", "");
+                    HighlightTable(id);
                 });
-                // TableSchema.Columns
-                var columns = data.TableSchema.Columns;
-                Columns = data.TableSchema.Columns;
-                var objColumns = [];
-                if (columns.length > 20) {
-                    objColumns.push("<div class='scroll'>");
-                }
-                objColumns.push("<table class='table-padding-sm' style='width:100%;'>");
-                for (var i = 0; i < columns.length; i++) {
-                    var row = columns[i];
-                    objColumns.push("<tr id='ColumnName" + row.ColumnName + "' appDatabaseId='" + appDatabaseId + "' tableName='" + tableName + "' columnName='" + row.ColumnName + "' onclick='SelectColumn(this)'>");
-                    objColumns.push("<td class='command-bar-select3'>" + row.ColumnName + "</td>");
-                    objColumns.push("</tr>");
-                }
-                objColumns.push("</table>");
-                if (columns.length > 20) {
-                    objColumns.push("</div>");
-                }
-                $("#divColumns").html(objColumns.join(""));
-                // Grids
-                var grids = data.Grids;
-                var objGrids = [];
-                objGrids.push("<table style='width:100%;'>");
-                for (var i = 0; i < grids.length; i++) {
-                    var row = grids[i];
-                    objGrids.push("<tr onclick='SelectGrid(" + row.GridId + ")'>");
-                    objGrids.push("<td class='command-bar-select3'>" + row.GridName + "</td>");
-                    objGrids.push("</tr>");
-                }
-                objGrids.push("</table>");
-                $("#divGrids").html(objGrids.join(""));
-                // Forms
-                var forms = data.Forms;
-                var objForms = [];
-                objForms.push("<table style='width:100%;'>");
-                for (var i = 0; i < forms.length; i++) {
-                    var row = forms[i];
-                    objForms.push("<tr onclick='SelectForm(" + row.FormId + ")'>");
-                    objForms.push("<td class='command-bar-select3'>" + row.FormName + "</td>");
-                    objForms.push("</tr>");
-                }
-                objForms.push("</table>");
-                $("#divForms").html(objForms.join(""));
-                $(".data-objects").show();
-                SetCommandBarDOM();
             },
             complete: function () {
                 AppSpinner(false);
@@ -161,7 +106,6 @@ function SelectGrid(gridId) {
         });
     }, 500);
 }
-var ToColumnIndex = "";
 function GetGridSchema(gridId) {
     $.ajax({
         url: "./Database/GetGridSchema",

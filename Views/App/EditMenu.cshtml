@@ -213,12 +213,9 @@
         }, 500);
     }
 
-
     function Delete_EditMenu() {
         var menu = Menus.find(w => w.MenuId == $("#EditMenu #MenuId").val());
-
         ConfirmBox("Warning", "Delete " + menu.MenuTitle + "?", "DeleteMenu_(" + menu.MenuId + ");")
-
     }
 
 

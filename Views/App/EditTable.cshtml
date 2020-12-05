@@ -1,16 +1,18 @@
 
 <div class="command-bar-container">
     <span id="cmd_Save_EditTable" class="command-disabled-span"><span class="command-icon fas fa-save">&nbsp;</span> Save</span>
+
+    <span id="cmd_Delete_EditTable" class="command-disabled-span"><span class="command-icon fas fa-trash-alt">&nbsp;</span> Delete</span>
 </div>
 
 
 
 <form id="EditTable" action="/" method="post">
-
+    <input type="text" id="OldTableName" value="" />
     <table>
         <tr>
             <td>Table Name</td>
-            <td><input type="text" name="TableName" id="TableName" value="" /></td>
+            <td><input type="text" id="TableName" value="" /></td>
         </tr>
     </table>
 
@@ -19,9 +21,82 @@
 
 <script>
     function Save_EditTable() {
-        alert("Hello");
-
-
         DisableButton("cmd_Save_EditTable");
+        AppSpinner(true);
+
+
+        var json = ToJsonString("EditTable");
+        setTimeout(function () {
+            $.ajax({
+                url: "./Database/SaveTable",
+                type: "POST",
+                data: { appDatabaseId: AppDatabaseId, json: json },
+                dataType: "json",
+                success: function (data) {
+                    if (data.Successful) {
+                        SelectDatabase(AppDatabaseId);
+                        SelectTable(AppDatabaseId, data.Id);
+                        RefreshDOM("HighlightTable('" + data.Id + "')");
+
+                    } else {
+                        MessageBox("Error", data.ErrorMessage, false);
+                    }
+                },
+                complete: function () {
+                    AppSpinner(false);
+                }
+            });
+        }, 500);
+
     }
+
+
+    function Delete_EditTable() {
+        var tableName = $("#EditTable #OldTableName").val();
+        ConfirmBox("Warning", "Deleting " + tableName + " will delete all records in this table.  Proceed?", "DeleteTable_('" + tableName + "');")
+    }
+
+
+    function DeleteTable_(tableName) {
+        var json = "{ \"FormId\" : \"1\", \"MenuId\" : \"" + menuId + "\" }";
+
+        AppSpinner(true);
+        $.ajax({
+            url: "./Data/DeleteData",
+            type: "POST",
+            data: { json: json },
+            dataType: "text",
+            success: function (response) {
+                if (response == "SUCCESS") {
+                    GetAdminMenuList(0);
+
+                    // update menu 
+                    GetMenuList();
+                } else {
+                    MessageBox("Error", response, false);
+                }
+
+
+                if (menuId == $("#EditMenu #MenuId").val()) {
+                    $("#editMenuBox").hide();
+                } else {
+                    // highlight current item 
+                    setTimeout(function () {
+                        $(".highlight").removeClass("menu-item-active");
+
+                        var highlightId = $("#EditMenu #MenuId").val();
+                        if ($("#MenuId" + highlightId).hasClass("highlight")) {
+                            $("#MenuId" + highlightId).addClass("menu-item-active");
+                        } else {
+                            $("#MenuId" + highlightId + " div").addClass("menu-item-active");
+                        }
+                    }, 1000);
+                }
+            },
+            complete: function () {
+                AppSpinner(false);
+            }
+        });
+    }
+
 </script>

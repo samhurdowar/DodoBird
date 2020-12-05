@@ -84,5 +84,52 @@ namespace DodoBird.Controllers
             }
         }
 
+
+
+        [HttpPost]
+        public string SaveTable(int appDatabaseId, string json)
+        {
+            try
+            {
+                dynamic jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject(json);
+                var sql = "";
+                var oldTableName = jsonObj["OldTableName"].ToString();
+                var tableName = jsonObj["TableName"].ToString();
+
+                using (DodoBirdEntities Db = new DodoBirdEntities())
+                {
+                    Db.Database.Connection.ConnectionString = SessionService.GetConnectionString(appDatabaseId);
+
+                    if (oldTableName.Length > 0 && tableName.Length > 0)
+                    {
+                        if (oldTableName == "NEWTABLE")
+                        {
+                            sql = "CREATE TABLE " + jsonObj["TableName"] + "(" + jsonObj["TableName"] + "Id int not null primary key identity(1,1), AddDate datetime not null default getdate(), Modified datetime not null default getdate(), AddBy int not null default 0, ModifiedBy int not null default 0)";
+                            Db.Database.ExecuteSqlCommand(sql);
+                        }
+                        else if (oldTableName != tableName)
+                        {
+                            TableSchema tableSchema = DataService.GetTableSchema(appDatabaseId, oldTableName);
+
+                            sql = "sp_RENAME '" + tableSchema.Owner + "." + tableSchema.TableName + "' , '" + tableName + "'";
+                            Db.Database.ExecuteSqlCommand(sql);
+                        }
+   
+                    }
+
+                }
+
+                var response = JsonConvert.SerializeObject(new ClientResponse { Successful = true, Id = tableName, ActionExecuted = "SaveTable", JsonData = "", ErrorMessage = "" });
+
+                return response;
+            }
+            catch (System.Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ClientResponse { Successful = false, Id = appDatabaseId.ToString(), ActionExecuted = "SaveTable", ErrorMessage = ex.Message });
+            }
+        }
+
+
+
     }
 }
