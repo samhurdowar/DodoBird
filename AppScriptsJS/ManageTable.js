@@ -21,6 +21,48 @@ function SelectTable(appDatabaseId, tableName) {
                         $("#divProperties").html(response);
                         BindForm("EditTable", data.TableSchema);
                         $("#EditTable #OldTableName").val(data.TableSchema.TableName);
+                        EnableButton("cmd_Delete_EditTable");
+                        // dependent tables
+                        var obj = [];
+                        if (data.TableSchema.DependentTables.length > 0) {
+                            var dependTables1 = data.TableSchema.DependentTables;
+                            obj.push("<table class='table-padding-sm' style='width:100%;'>");
+                            obj.push("<tr>");
+                            obj.push("<td>ParentTableName</td>");
+                            obj.push("<td>ParentKey</td>");
+                            obj.push("<td>TableName</td>");
+                            obj.push("<td>DependentKey</td>");
+                            obj.push("<td>JoinType</td>");
+                            obj.push("<td>Relation</td>");
+                            obj.push("</tr>");
+                            for (var i = 0; i < dependTables1.length; i++) {
+                                var row1 = dependTables1[i];
+                                obj.push("<tr>");
+                                obj.push("<td >" + row1.ParentOwner + "." + row1.ParentTableName + "</td>");
+                                obj.push("<td >" + row1.ParentKey + "</td>");
+                                obj.push("<td >" + row1.Owner + "." + row1.TableName + "</td>");
+                                obj.push("<td >" + row1.DependentKey + "</td>");
+                                obj.push("<td >" + row1.JoinType + "</td>");
+                                obj.push("<td >" + row1.Relation + "</td>");
+                                obj.push("</tr>");
+                                if (dependTables1[i].DependentTables.length > 0) {
+                                    var dependTables2 = dependTables1[i].DependentTables;
+                                    for (var x = 0; x < dependTables2.length; x++) {
+                                        var row2 = dependTables2[x];
+                                        obj.push("<tr>");
+                                        obj.push("<td >" + row2.ParentOwner + "." + row2.ParentTableName + "</td>");
+                                        obj.push("<td >" + row2.ParentKey + "</td>");
+                                        obj.push("<td >" + row2.Owner + "." + row2.TableName + "</td>");
+                                        obj.push("<td >" + row2.DependentKey + "</td>");
+                                        obj.push("<td >" + row2.JoinType + "</td>");
+                                        obj.push("<td >" + row2.Relation + "</td>");
+                                        obj.push("</tr>");
+                                    }
+                                }
+                            }
+                            obj.push("</table>");
+                            $("#divDependentTables").html(obj.join(""));
+                        }
                     }
                 });
                 // TableSchema.Columns
@@ -88,6 +130,7 @@ function AddTable() {
         success: function (response) {
             $("#divProperties").html(response);
             BindForm("EditTable", { OldTableName: "NEWTABLE", TableName: "" });
+            DisableButton("cmd_Delete_EditTable");
         }
     });
 }

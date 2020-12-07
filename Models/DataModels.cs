@@ -7,11 +7,33 @@ namespace DodoBird.Models
 {
     public class TableSchema
     {
+        public int AppDatabaseId { get; set; }
         public string Owner { get; set; }
         public string TableName { get; set; }
         public List<PrimaryKey> PrimaryKeys = new List<PrimaryKey>();
         public List<Column> Columns = new List<Column>();
+        public List<DependentTable> DependentTables = new List<DependentTable>();
     }
+
+
+
+    public class DependentTable
+    {
+        public int DependentTableId { get; set; }
+        public int AppDatabaseId { get; set; }
+        public string ParentOwner { get; set; }
+        public string ParentTableName { get; set; }
+        public string ParentKey { get; set; }
+        public string DependentKey { get; set; }
+        public string JoinType { get; set; }
+        public string Relation { get; set; }
+        public string Owner { get; set; }
+        public string TableName { get; set; }
+        public List<PrimaryKey> PrimaryKeys = new List<PrimaryKey>();
+        public List<Column> Columns = new List<Column>();
+        public List<DependentTable> DependentTables = new List<DependentTable>();
+    }
+
 
     public class PrimaryKey
     {
@@ -24,7 +46,7 @@ namespace DodoBird.Models
         public string ColumnName { get; set; }
         public string DataType { get; set; }
         public int DataLength { get; set; }
-        public bool IsPrimaryKey { get; set; }
+        public bool IsPrimaryKey = false;
         public bool IsIdentity { get; set; }
         public bool IsRequired { get; set; }
         public bool IsComputed { get; set; }

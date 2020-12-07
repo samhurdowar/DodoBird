@@ -1,6 +1,10 @@
 ﻿
 /*  table  */
 
+
+table {
+    border-collapse: unset;
+}
 .table-bordered tr td {
     border: 1px solid #ccc;
 }
@@ -238,7 +242,7 @@
     display: none;
     border-radius: 7px;
     background-color: #fff;
-    min-width: 400px;
+    min-width: 600px;
     z-index:2;
 }
 

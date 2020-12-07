@@ -131,5 +131,33 @@ namespace DodoBird.Controllers
 
 
 
+        //
+        [HttpPost]
+        public string DeleteTable(int appDatabaseId, string tableName)
+        {
+            try
+            {
+                var sql = "";
+
+                using (DodoBirdEntities Db = new DodoBirdEntities())
+                {
+                    Db.Database.Connection.ConnectionString = SessionService.GetConnectionString(appDatabaseId);
+
+                    TableSchema tableSchema = DataService.GetTableSchema(appDatabaseId, tableName);
+
+                    sql = "DROP TABLE " + tableSchema.Owner + "." + tableSchema.TableName;
+                    Db.Database.ExecuteSqlCommand(sql);
+
+                }
+
+                var response = JsonConvert.SerializeObject(new ClientResponse { Successful = true, Id = tableName, ActionExecuted = "DeleteTable", JsonData = "", ErrorMessage = "" });
+
+                return response;
+            }
+            catch (System.Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ClientResponse { Successful = false, Id = appDatabaseId.ToString(), ActionExecuted = "DeleteTable", ErrorMessage = ex.Message });
+            }
+        }
     }
 }

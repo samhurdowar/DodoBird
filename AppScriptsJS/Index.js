@@ -219,7 +219,9 @@ function RefreshDOM(functionToFire) {
         if ($("#" + RandomRefreshObject).length) {
             eval(functionToFire);
             clearInterval(myVar);
+            console.log("RefreshDOM() stopped");
         }
+        console.log("RefreshDOM()");
     }, 500);
 }
 //# sourceMappingURL=Index.js.map

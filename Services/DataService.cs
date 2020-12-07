@@ -19,11 +19,93 @@ namespace DodoBird.Services
             {
                 Db.Database.Connection.ConnectionString = SessionService.GetConnectionString(appDatabaseId);
 
-                var sql = @"SELECT DISTINCT TABLE_SCHEMA AS Owner, TABLE_NAME AS TableName FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_NAME = @TableName";
-                var tableSchema = Db.Database.SqlQuery<TableSchema>(sql, new SqlParameter("@TableName", tableName)).FirstOrDefault();
+                var sql = @"SELECT DISTINCT " + appDatabaseId + " AS AppDatabaseId,TABLE_SCHEMA AS Owner, TABLE_NAME AS TableName FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_NAME = @TableName";
+                TableSchema tableSchema = Db.Database.SqlQuery<TableSchema>(sql, new SqlParameter("@TableName", tableName)).FirstOrDefault();
 
                 // get primarykeys 
-                sql = @"
+                var primaryKeys = GetPrimaryKeys(Db, tableName);
+                tableSchema.PrimaryKeys.AddRange(primaryKeys);
+
+                // get columns   
+                var columns = GetTableColumns(Db, tableName);
+                tableSchema.Columns.AddRange(columns);
+
+
+                // get dependent tables
+
+                List<DependentTable> dependentTables = GetDependentTables(appDatabaseId, tableSchema);
+                tableSchema.DependentTables.AddRange(dependentTables);
+
+                return tableSchema;
+            }
+        }
+
+
+        private static List<DependentTable> GetDependentTables(int appDatabaseId, TableSchema parentTableSchema)
+        {
+            using (DodoBirdEntities Db = new DodoBirdEntities())
+            {
+
+                var sql = @"SELECT * FROM DependentTable WHERE AppDatabaseId = @AppDatabaseId AND ParentOwner = @ParentOwner AND ParentTableName = @ParentTableName ";
+                var dependentTables = Db.Database.SqlQuery<DependentTable>(sql, new SqlParameter("@AppDatabaseId", appDatabaseId), new SqlParameter("@ParentOwner", parentTableSchema.Owner), new SqlParameter("@ParentTableName", parentTableSchema.TableName)).ToList();
+
+                if (dependentTables.Count > 0)
+                {
+                    using (DodoBirdEntities userDb = new DodoBirdEntities())
+                    {
+                        userDb.Database.Connection.ConnectionString = SessionService.GetConnectionString(appDatabaseId);
+
+                        // get info for each dependent table
+                        var i = 0;
+                        foreach (var dependentTable in dependentTables)
+                        {
+                            sql = @"SELECT DISTINCT " + appDatabaseId + " AS AppDatabaseId,TABLE_SCHEMA AS Owner, TABLE_NAME AS TableName FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = @Owner AND TABLE_NAME = @TableName";
+                            var dependentTableSchema = userDb.Database.SqlQuery<TableSchema>(sql, new SqlParameter("@Owner", dependentTable.Owner), new SqlParameter("@TableName", dependentTable.TableName)).FirstOrDefault();
+
+                            if (dependentTableSchema != null)
+                            {
+                                // get primarykeys 
+                                var primaryKeys = GetPrimaryKeys(userDb, dependentTable.TableName);
+                                dependentTable.PrimaryKeys.AddRange(primaryKeys);
+
+                                // get columns   
+                                var columns = GetTableColumns(userDb, dependentTable.TableName);
+                                dependentTable.Columns.AddRange(columns);
+
+
+                                // recursive. 
+                                sql = @"SELECT COUNT(1) FROM DependentTable WHERE AppDatabaseId = @AppDatabaseId AND ParentOwner = @ParentOwner AND ParentTableName = @ParentTableName";
+                                var dependentCount = Db.Database.SqlQuery<int>(sql, new SqlParameter("@AppDatabaseId", appDatabaseId), new SqlParameter("@ParentOwner", dependentTableSchema.Owner), new SqlParameter("@ParentTableName", dependentTableSchema.TableName)).FirstOrDefault();
+
+                                if (dependentCount > 0)
+                                {
+                                    var dependentTables_ = GetDependentTables(appDatabaseId, dependentTableSchema);
+                                    dependentTables[i].DependentTables.AddRange(dependentTables_);
+                                }
+                            }
+                            i++;
+                        }
+                    }
+  
+                }
+
+                return dependentTables;
+
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+        private static List<PrimaryKey> GetPrimaryKeys(DodoBirdEntities Db, string tableName)
+        {
+            var sql = @"
                     SELECT c.name AS ColumnName, t.name AS DataType 
                     FROM sys.columns c 
                     JOIN sys.objects o ON o.object_id = c.object_id AND o.type = 'U' 
@@ -34,17 +116,20 @@ namespace DodoBird.Services
                     INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS KU
                     ON TC.CONSTRAINT_TYPE = 'PRIMARY KEY' AND TC.CONSTRAINT_NAME = KU.CONSTRAINT_NAME AND KU.table_name = @TableName2
                     )
-
                 ";
 
-                var keys = Db.Database.SqlQuery<PrimaryKey>(sql, new SqlParameter("@TableName1", tableName), new SqlParameter("@TableName2", tableName)).ToList();
-                foreach (var key in keys)
-                {
-                    tableSchema.PrimaryKeys.Add(key);
-                }
+            var keys = Db.Database.SqlQuery<PrimaryKey>(sql, new SqlParameter("@TableName1", tableName), new SqlParameter("@TableName2", tableName)).ToList();
+            return keys;
+        }
 
-                // get columns   
-                sql = @"
+
+        private static List<Column> GetTableColumns(DodoBirdEntities Db, string tableName)
+        {
+            // get primarykeys 
+            var primaryKeys = GetPrimaryKeys(Db, tableName);
+
+            // get columns   
+            var sql = @"
                     SELECT c.name AS ColumnName, ISNULL(c.column_id,0) AS ColumnOrder, CAST(ISNULL(c.max_length,0) AS int) AS DataLength,
                     REPLACE(REPLACE(REPLACE(ISNULL(object_definition(c.default_object_id),''), '(', ''), ')', ''), '''', '')   AS DefaultValue,
                     CAST(0 AS Bit) AS IsPrimaryKey,
@@ -58,25 +143,19 @@ namespace DodoBird.Services
                ";
 
 
-                var columns = Db.Database.SqlQuery<Column>(sql, new SqlParameter("@TableName", tableName)).ToList();
-
-
-                // merge with primarykeys to mark IsPrimaryKey
-                var columns_ = from a in columns
-                           join b in keys on a.ColumnName equals b.ColumnName
-                           into aa
-                           from bb in aa.DefaultIfEmpty()
-                           select new Column { ColumnName = a.ColumnName, DataLength = a.DataLength, IsPrimaryKey = (bb == null) ? false : true, IsIdentity = a.IsIdentity, IsRequired = a.IsRequired, IsComputed = a.IsComputed, DataType = a.DataType, DefaultValue = a.DefaultValue };
-
-                foreach (var column in columns_)
+            var columns = Db.Database.SqlQuery<Column>(sql, new SqlParameter("@TableName", tableName)).ToList();
+            foreach (var column in columns)
+            {
+                if (primaryKeys.Where(w => w.ColumnName == column.ColumnName).Count() > 0 )
                 {
-                    tableSchema.Columns.Add(column);
+                    column.IsPrimaryKey = true;
                 }
-
-                return tableSchema;
-
             }
+
+            return columns;
         }
+
+
 
         public static GridSchema GetGridSchema(int gridId)
         {

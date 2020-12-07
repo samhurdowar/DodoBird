@@ -8,15 +8,80 @@
 
 
 <form id="EditTable" action="/" method="post">
-    <input type="text" id="OldTableName" value="" />
+    OldTableName: <input type="text" id="OldTableName" /><br />
+
+
     <table>
         <tr>
             <td>Table Name</td>
-            <td><input type="text" id="TableName" value="" /></td>
+            <td><input type="text" id="TableName" /></td>
         </tr>
     </table>
 
 </form>
+
+
+<br />
+
+
+<span onclick="OpenModalWindow('WindowDependentTable')"><span class="command-icon fas fa-save">&nbsp;</span> Open xxx</span>
+
+<div id="divDependentTables"></div>
+
+
+
+<div id="WindowDependentTable" class="modal-window">
+    <div style="padding-top:5px;padding-left:10px;"><span>Add Database</span>  <span style="float:right;padding-right:10px;cursor:pointer;" onclick="CloseModalWindow('WindowDependentTable')">X</span></div>
+    <hr />
+    <div style="padding:25px;">
+
+        <form id="EditDependentTable" action="/" method="post"  style="border-collapse: unset;">
+            DependentTableId: <input type="text" id="DependentTableId" /><br />
+            AppDatabaseId: <input type="text" id="AppDatabaseId" /><br />
+            ParentOwner: <input type="text" id="ParentOwner" /><br />
+            ParentTableName: <input type="text" id="ParentTableName" /><br />
+
+
+            <table class="table-padding-md" style="border-collapse: unset;">
+                <tr>
+                    <td>ParentKey</td>
+                    <td><input type="text" id="ParentKey" /></td>
+                </tr>
+
+                <tr>
+                    <td>JoinType</td>
+                    <td><input type="text" id="JoinType" /></td>
+                </tr>
+                <tr>
+                    <td>Relation</td>
+                    <td><input type="text" id="Relation" /></td>
+                </tr>
+
+
+                <tr>
+                    <td>Owner</td>
+                    <td><input type="text" id="Owner" /></td>
+                </tr>
+                <tr>
+                    <td>TableName</td>
+                    <td><input type="text" id="TableName" /></td>
+                </tr>
+
+                <tr>
+                    <td>DependentKey</td>
+                    <td><input type="text" id="DependentKey" /></td>
+                </tr>
+
+
+            </table>
+
+        </form>
+
+    </div>
+
+
+</div>
+
 
 
 <script>
@@ -58,45 +123,32 @@
 
 
     function DeleteTable_(tableName) {
-        var json = "{ \"FormId\" : \"1\", \"MenuId\" : \"" + menuId + "\" }";
 
         AppSpinner(true);
-        $.ajax({
-            url: "./Data/DeleteData",
-            type: "POST",
-            data: { json: json },
-            dataType: "text",
-            success: function (response) {
-                if (response == "SUCCESS") {
-                    GetAdminMenuList(0);
 
-                    // update menu 
-                    GetMenuList();
-                } else {
-                    MessageBox("Error", response, false);
+        setTimeout(function () {
+            $.ajax({
+                url: "./Database/DeleteTable",
+                type: "POST",
+                data: { appDatabaseId: AppDatabaseId, tableName: tableName },
+                dataType: "json",
+                success: function (data) {
+                    if (data.Successful) {
+                        SelectDatabase(AppDatabaseId);
+                        $(".data-objects").hide();
+                        $("#divProperties").html("");
+
+
+                    } else {
+                        MessageBox("Error", data.ErrorMessage, false);
+                    }
+                },
+                complete: function () {
+                    AppSpinner(false);
                 }
+            });
+        }, 500);
 
-
-                if (menuId == $("#EditMenu #MenuId").val()) {
-                    $("#editMenuBox").hide();
-                } else {
-                    // highlight current item 
-                    setTimeout(function () {
-                        $(".highlight").removeClass("menu-item-active");
-
-                        var highlightId = $("#EditMenu #MenuId").val();
-                        if ($("#MenuId" + highlightId).hasClass("highlight")) {
-                            $("#MenuId" + highlightId).addClass("menu-item-active");
-                        } else {
-                            $("#MenuId" + highlightId + " div").addClass("menu-item-active");
-                        }
-                    }, 1000);
-                }
-            },
-            complete: function () {
-                AppSpinner(false);
-            }
-        });
     }
 
 </script>
