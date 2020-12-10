@@ -79,16 +79,10 @@ function SelectTable(appDatabaseId, tableName) {
                                     }
 
                                 }
-
-
                             }
                             obj.push("</table>");
                             $("#divDependentTables").html(obj.join(""));
                         }
-
-
-
-
                     }
                 });
 

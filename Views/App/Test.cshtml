@@ -1,58 +1,83 @@
 <style>
-    .custom-tab-content {
+    ul, #myUL {
         list-style-type: none;
-        padding: 10px;
-    }
-    .custom-tab {
-        list-style-type: none;
-        margin: 0;
-        padding-top: 3px;
-        overflow: hidden;
-        background-color: #ccc;
+        
     }
 
-        .custom-tab li {
-            float: left;
-            cursor: pointer;
-            margin-right: 5px;
-            padding: 3px;
-            padding-right: 10px;
+    #myUL {
+        padding: 0;
+        margin-left: 10px;
+    }
+
+
+    .caret-tree {
+        cursor: pointer;
+        user-select: none;
+        border: 1px solid #ccc;
+        padding: 0;
+        margin: 0;
+    }
+
+        .caret-tree::before {
+            content: "+";
+            color: black;
+            padding: 0;
+            margin: 0;
+            
         }
 
-            .custom-tab li:hover {
-                background-color: #eee;
-                border-top-right-radius: 7px;
-                border-top-left-radius: 7px;
-            }
+    .caret-tree-down::before {
+        content: "-";
+        padding: 0;
+        margin-left: 3px;
+        margin-right: 2px;
+    }
 
-    .custom-tab-active {
-        background-color: #eee;
-        border-top-right-radius: 7px;
-        border-top-left-radius: 7px;
+    .caret-tree-nested {
+        display: none;
+    }
+
+    .caret-tree-active {
+        display: block;
     }
 </style>
 
-
-<ul id="xxx" class="custom-tab">
-    <li>Oskaloosa</li>
-    <li>Tampa</li>
-    <li>Denver</li>
+<ul id="myUL">
+    <li>
+        <span class="caret-tree"></span> <span style="margin-left:3px;">Beverages</span>
+        <ul class="caret-tree-nested">
+            <li>Water</li>
+            <li>Coffee</li>
+            <li>
+                <span class="caret-tree"></span> <span style="margin-left:3px;">Tea</span>
+                <ul class="caret-tree-nested">
+                    <li>Black Tea</li>
+                    <li>White Tea</li>
+                    <li>
+                        <span class="caret-tree"></span> <span style="margin-left:3px;">Green Tea</span>
+                        <ul class="caret-tree-nested">
+                            <li>Sencha</li>
+                            <li>Gyokuro</li>
+                            <li>Matcha</li>
+                            <li>Pi Lo Chun</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
 </ul>
-
-<ul id="xxxContent" class="custom-tab-content">
-    <li>Oskaloosa xxxContent</li>
-    <li>Tampa xxxContent</li>
-    <li>Denver xxxContent</li>
-</ul>
-
-
-
 
 
 <script>
 
-    TabIt("xxx", 2);
+    var toggler = document.getElementsByClassName("caret-tree");
+    var i;
 
-
-
+    for (i = 0; i < toggler.length; i++) {
+        toggler[i].addEventListener("click", function () {
+            this.parentElement.querySelector(".caret-tree-nested").classList.toggle("caret-tree-active");
+            this.classList.toggle("caret-tree-down");
+        });
+    }
 </script>
