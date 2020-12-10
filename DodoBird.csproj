@@ -1962,6 +1962,8 @@
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="TsScripts\ClientForm.ts" />
     <TypeScriptCompile Include="TsScripts\Grid.ts" />
+    <TypeScriptCompile Include="TsScripts\ManageGrid.ts" />
+    <TypeScriptCompile Include="TsScripts\ManageColumn.ts" />
     <TypeScriptCompile Include="TsScripts\ManageTable.ts" />
     <TypeScriptCompile Include="TsScripts\Menu.ts" />
     <TypeScriptCompile Include="TsScripts\Index.ts" />

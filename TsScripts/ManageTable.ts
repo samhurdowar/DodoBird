@@ -1,7 +1,98 @@
-﻿
-function HighlightTable(id) {
-    $(".highlight-table").removeClass("select-bar-active");
-    $("#highlight-table" + id).addClass("select-bar-active");
+﻿function ExpandTables(t) {
+
+    t.parentElement.querySelector(".caret-tree-nested").classList.toggle("caret-tree-active");
+    t.classList.toggle("caret-tree-down");
+
+    var id = $(t).attr("id");
+
+    // expand_Tables 
+    if (id.indexOf("expand_Tables") > -1 && $(t).hasClass("caret-tree-down")) {
+        GetTableList(id.replace("expand_Tables", ""));
+    }
+}
+
+
+function ExpandTable(t) {
+    t.parentElement.querySelector(".caret-tree-nested").classList.toggle("caret-tree-active");
+    t.classList.toggle("caret-tree-down");
+}
+
+function GetTableList(appDatabaseId) {
+
+    AppSpinner(true);
+    setTimeout(function () {
+        $.ajax({
+            url: "./Database/GetTableList",
+            type: "POST",
+            data: { appDatabaseId: appDatabaseId },
+            dataType: "json",
+            success: function (records) {
+                var obj = [];
+                var id = "";
+                // record rows - tables
+                for (var i = 0; i < records.length; i++) {
+
+                    var row = records[i];
+
+
+                    id = appDatabaseId + row.TableName;
+
+                    obj.push("<li>");
+                    obj.push("<span id='expand_Table" + id + "' class='xxx' onclick='ExpandTable(this)'></span> <span id='select_TableName" + id + "' class='highlight-item select_TableName'>" + row.TableName + "</span>");
+                    obj.push("<ul id='expand_Table" + id + "_ul' class='caret-tree-nested'>");
+
+                    obj.push("<li>");
+                    obj.push("<span id='expand_Fields" + id + "' class='xxx' onclick='ExpandColumns(" + appDatabaseId + ",this)'></span> <span style='margin-left:3px;'>Columns</span>");
+                    obj.push("<ul id='expand_Fields" + id + "_ul' class='caret-tree-nested'>");
+                    obj.push("</ul>");
+                    obj.push("</li>");
+
+                    obj.push("<li>");
+                    obj.push("<span id='expand_Grids" + id + "' class='xxx' onclick='ExpandGrids(" + appDatabaseId + ",this)'></span> <span style='margin-left:3px;'>Grids</span>");
+                    obj.push("<ul id='expand_Grids" + id + "_ul' class='caret-tree-nested'>");
+                    obj.push("</ul>");
+                    obj.push("</li>");
+
+                    obj.push("<li>");
+                    obj.push("<span id='expand_Forms" + id + "' class='caret-tree'></span> <span style='margin-left:3px;'>Forms</span>");
+                    obj.push("<ul id='expand_Forms" + id + "_ul' class='caret-tree-nested'>");
+                    obj.push("</ul>");
+                    obj.push("</li>");
+
+
+                    obj.push("<li>");
+                    obj.push("<span id='expand_Views" + id + "' class='caret-tree'></span> <span style='margin-left:3px;'>Views</span>");
+                    obj.push("<ul id='expand_Views" + id + "_ul' class='caret-tree-nested'>");
+                    obj.push("</ul>");
+                    obj.push("</li>");
+
+                    obj.push("<li>");
+                    obj.push("<span id='expand_Searches" + id + "' class='caret-tree'></span> <span style='margin-left:3px;'>Search Forms</span>");
+                    obj.push("<ul id='expand_Searches" + id + "_ul' class='caret-tree-nested'>");
+                    obj.push("</ul>");
+                    obj.push("</li>");
+
+
+                    obj.push("</ul>");
+                    obj.push("</li>");
+
+                }
+
+                $("#expand_Tables" + appDatabaseId + "_ul").html(obj.join(""));
+
+                // select_TableName
+                $(".select_TableName").click(function () {
+                    var id = $(this).attr("id");
+                    HighlightItem(id);
+                    SelectTable(appDatabaseId, id.replace("select_TableName" + appDatabaseId, ""));
+                })
+
+            },
+            complete: function () {
+                AppSpinner(false);
+            }
+        });
+    }, 500);
 }
 
 function SelectTable(appDatabaseId, tableName) {
@@ -85,73 +176,6 @@ function SelectTable(appDatabaseId, tableName) {
                         }
                     }
                 });
-
-
-                // TableSchema.Columns
-                var columns = data.TableSchema.Columns;
-                Columns = data.TableSchema.Columns;
-                var objColumns = [];
-
-                if (columns.length > 20) {
-                    objColumns.push("<div class='scroll'>");
-                }
-
-                objColumns.push("<table class='table-padding-sm' style='width:100%;'>");
-                for (var i = 0; i < columns.length; i++) {
-                    var row = columns[i];
-                    objColumns.push("<tr id='ColumnName" + row.ColumnName + "' appDatabaseId='" + appDatabaseId + "' tableName='" + tableName + "' columnName='" + row.ColumnName + "' onclick='SelectColumn(this)'>");
-                    objColumns.push("<td id='highlight-objectColumnName" + row.ColumnName + "' class='select-bar highlight-object'>" + row.ColumnName + "</td>");
-                    objColumns.push("</tr>");
-                }
-                objColumns.push("</table>");
-
-                if (columns.length > 20) {
-                    objColumns.push("</div>");
-                }
-
-                $("#divColumns").html(objColumns.join(""));
-
-
-                // Grids
-                var grids = data.Grids;
-                var objGrids = [];
-                objGrids.push("<table style='width:100%;'>");
-                for (var i = 0; i < grids.length; i++) {
-
-                    var row = grids[i];
-                    objGrids.push("<tr onclick='SelectGrid(" + row.GridId + ")'>");
-                    objGrids.push("<td id='highlight-objectGridId" + row.GridId + "' class='select-bar highlight-object'>" + row.GridName + "</td>");
-                    objGrids.push("</tr>");
-                }
-                objGrids.push("</table>");
-
-                $("#divGrids").html(objGrids.join(""));
-
-
-                // Forms
-                var forms = data.Forms;
-                var objForms = [];
-                objForms.push("<table style='width:100%;'>");
-                for (var i = 0; i < forms.length; i++) {
-
-                    var row = forms[i];
-                    objForms.push("<tr onclick='SelectForm(" + row.FormId + ")'>");
-                    objForms.push("<td id='highlight-objectFormId" + row.FormId + "' class='select-bar highlight-object'>" + row.FormName + "</td>");
-                    objForms.push("</tr>");
-                }
-                objForms.push("</table>");
-
-
-                $("#divForms").html(objForms.join("") + AddAlive());
-
-                $(".data-objects").show();
-
-                // set hightlight click
-                $(".highlight-object").click(function () {
-                    var id = $(this).attr("id").replace("highlight-object", "");
-                    HighlightObject(id);
-                });
-
 
             },
             complete: function () {
