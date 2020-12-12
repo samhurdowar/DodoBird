@@ -10,41 +10,44 @@ function GetDatabaseList() {
         url: "./Database/GetDatabaseList",
         type: "POST",
         dataType: "json",
-        success: function (records) {
-            var obj = [];
-            obj.push("<ul id='objectExplorer'>");
+        success: function (clientResponse) {
+            if (clientResponse.Successful) {
 
-            // record rows
-            for (var i = 0; i < records.length; i++) {
+                var obj = [];
+                obj.push("<ul id='objectExplorer'>");
 
-                var row = records[i];
+                // record rows
+                var records = JSON.parse(clientResponse.JsonData);
+                for (var i = 0; i < records.length; i++) {
 
-                obj.push("<li>");
-                obj.push("<span id='expand_Databases" + row.AppDatabaseId + "' class='xxx' onclick='ExpandDatabases(this)'></span> <span id='select_AppDatabaseId" + row.AppDatabaseId + "' class='highlight-item select_AppDatabaseId'>" + row.DatabaseName + "</span>");
-                obj.push("<ul id='expand_Databases" + row.AppDatabaseId + "_ul' class='caret-tree-nested'>");
+                    var row = records[i];
 
-                obj.push("<li>");
-                obj.push("<span id='expand_Tables" + row.AppDatabaseId + "' class='xxx' onclick='ExpandTables(this)'></span> <span>Tables</span>");
-                obj.push("<ul id='expand_Tables" + row.AppDatabaseId + "_ul' class='caret-tree-nested'>");
+                    obj.push("<li>");
+                    obj.push("<span id='expand_Databases" + row.AppDatabaseId + "' class='xxx' onclick='ExpandDatabases(this)'></span> <span id='select_AppDatabaseId" + row.AppDatabaseId + "' class='highlight-item select_AppDatabaseId'>" + row.DatabaseName + "</span>");
+                    obj.push("<ul id='expand_Databases" + row.AppDatabaseId + "_ul' class='caret-tree-nested'>");
+
+                    obj.push("<li>");
+                    obj.push("<span id='expand_Tables" + row.AppDatabaseId + "' class='xxx' onclick='ExpandTables(this)'></span> <span>Tables</span>");
+                    obj.push("<ul id='expand_Tables" + row.AppDatabaseId + "_ul' class='caret-tree-nested'>");
+
+                    obj.push("</ul>");
+                    obj.push("</li>");
+
+                    obj.push("</ul>");
+                    obj.push("</li>");
+
+                }
 
                 obj.push("</ul>");
-                obj.push("</li>");
 
-                obj.push("</ul>");
-                obj.push("</li>");
+                $("#divObjectExplorer").html(obj.join(""));
 
+                $(".select_AppDatabaseId").click(function () {
+                    HighlightItem($(this).attr("id"));
+                })
+            } else {
+                MessageBox("Error", clientResponse.ErrorMessage, false);
             }
-
-            obj.push("</ul>");
-
-            $("#divObjectExplorer").html(obj.join(""));
-
-            $(".select_AppDatabaseId").click(function () {
-
-                //alert("Under construction");
-
-                HighlightItem($(this).attr("id"));
-            })
         }
     });
 }

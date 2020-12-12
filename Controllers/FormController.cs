@@ -21,8 +21,8 @@ namespace DodoBird.Controllers
 
             FormSchema formSchema = DataService.GetFormSchema(formId);
 
-            var json = HelperService.GetJsonData(formSchema.AppDatabaseId, "SELECT * FROM Form WHERE FormId = @FormId", new SqlParameter[] { new SqlParameter("@FormId", formId) } );
-            return json;
+            var clientResponse = HelperService.GetJsonData(formSchema.AppDatabaseId, "SELECT * FROM Form WHERE FormId = @FormId", new SqlParameter[] { new SqlParameter("@FormId", formId) } );
+            return clientResponse.JsonData;
 
         }
     }

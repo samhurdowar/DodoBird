@@ -1,0 +1,133 @@
+
+<style>
+    .connectedFormColumns li {
+        padding: 5px;
+        width: 300px;
+        cursor:move;
+    }
+    .form-section-header li {
+        padding: 5px;
+        width: 200px;
+        cursor: move;
+    }
+
+    .edit-formlayout-section, .edit-formlayout-column {
+        cursor: pointer;
+    }
+
+        .edit-formlayout-section:hover, .edit-formlayout-column:hover {
+            color: #ff0000;
+        }
+
+
+</style>
+ 
+
+<div class="command-bar-container">
+    <span id="cmd_Save_EditForm" class="command-disabled-span"><span class="command-icon fas fa-save">&nbsp;</span> Save</span>
+</div>
+
+<form id="EditForm">
+    FormId <input type="text" id="FormId" value="" /><br />
+    AppDatabaseId <input type="text" id="AppDatabaseId" /><br />
+    TableName <input type="text" id="TableName" /><br />
+
+    <hr />
+
+    <table>
+        <tr>
+            <td>Form Name</td>
+            <td><input type="text" id="FormName" name="FormName" /></td>
+        </tr>
+    </table>
+
+    <ul id="FormTab" class="custom-tab">
+        <li>Template Layout</li>
+        <li>Custom Layout</li>
+        <li>Page File</li>
+    </ul>
+
+    <ul id="FormTabContent" class="custom-tab-content">
+        <li>
+
+            <table style="width:100%;" border="1">
+                <tr>
+                    <td style="width:20%;">
+                        Available Columns
+                    </td>
+                    <td style="width:80%;">
+                        Add Section
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="width:20%;">
+                        <div id="FormAvailableColumns"></div>
+                    </td>
+                    <td style="width:80%;">
+                        <div id="FormSections"></div>
+                    </td>
+                </tr>
+
+            </table>
+
+        </li>
+
+        <li>
+            Custom layout
+        </li>
+
+        <li>
+
+            <table>
+                <tr>
+                    <td>Page File</td>
+                    <td><input type="text" id="PageFile" name="PageFile" /></td>
+                </tr>
+            </table>
+        </li>
+    </ul>
+
+</form>
+
+<script>
+
+    function Save_EditForm() {
+
+        DisableButton("cmd_Save_EditForm");
+
+        AppSpinner(true);
+
+        // set FormType  0-Template Layout (template)   1-Custom Layout (custom)  3-Page File (page)
+        var FormType = 0;
+        var i = 0;
+        $("#FormTab li").each(function () {
+            if ($(this).hasClass("custom-tab-active")) {
+                FormType = i;
+            }
+            i++;
+        });
+
+        $("#EditForm #FormType").val(FormType);
+
+        var json = ToJsonString("EditForm");
+
+        console.log("EditForm json=" + json);
+
+        setTimeout(function () {
+            $.ajax({
+                url: "./Data/SaveFormData",
+                type: "POST",
+                data: { json: json },
+                dataType: "text",
+                success: function (id) {
+
+
+                },
+                complete: function () {
+                    AppSpinner(false);
+                }
+            });
+        }, 300);
+    }
+</script>

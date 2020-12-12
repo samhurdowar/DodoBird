@@ -19,51 +19,57 @@ function GetTableList(appDatabaseId) {
             type: "POST",
             data: { appDatabaseId: appDatabaseId },
             dataType: "json",
-            success: function (records) {
-                var obj = [];
-                var id = "";
-                // record rows - tables
-                for (var i = 0; i < records.length; i++) {
-                    var row = records[i];
-                    id = appDatabaseId + row.TableName;
-                    obj.push("<li>");
-                    obj.push("<span id='expand_Table" + id + "' class='xxx' onclick='ExpandTable(this)'></span> <span id='select_TableName" + id + "' class='highlight-item select_TableName'>" + row.TableName + "</span>");
-                    obj.push("<ul id='expand_Table" + id + "_ul' class='caret-tree-nested'>");
-                    obj.push("<li>");
-                    obj.push("<span id='expand_Fields" + id + "' class='xxx' onclick='ExpandColumns(" + appDatabaseId + ",this)'></span> <span style='margin-left:3px;'>Columns</span>");
-                    obj.push("<ul id='expand_Fields" + id + "_ul' class='caret-tree-nested'>");
-                    obj.push("</ul>");
-                    obj.push("</li>");
-                    obj.push("<li>");
-                    obj.push("<span id='expand_Grids" + id + "' class='xxx' onclick='ExpandGrids(" + appDatabaseId + ",this)'></span> <span style='margin-left:3px;'>Grids</span>");
-                    obj.push("<ul id='expand_Grids" + id + "_ul' class='caret-tree-nested'>");
-                    obj.push("</ul>");
-                    obj.push("</li>");
-                    obj.push("<li>");
-                    obj.push("<span id='expand_Forms" + id + "' class='caret-tree'></span> <span style='margin-left:3px;'>Forms</span>");
-                    obj.push("<ul id='expand_Forms" + id + "_ul' class='caret-tree-nested'>");
-                    obj.push("</ul>");
-                    obj.push("</li>");
-                    obj.push("<li>");
-                    obj.push("<span id='expand_Views" + id + "' class='caret-tree'></span> <span style='margin-left:3px;'>Views</span>");
-                    obj.push("<ul id='expand_Views" + id + "_ul' class='caret-tree-nested'>");
-                    obj.push("</ul>");
-                    obj.push("</li>");
-                    obj.push("<li>");
-                    obj.push("<span id='expand_Searches" + id + "' class='caret-tree'></span> <span style='margin-left:3px;'>Search Forms</span>");
-                    obj.push("<ul id='expand_Searches" + id + "_ul' class='caret-tree-nested'>");
-                    obj.push("</ul>");
-                    obj.push("</li>");
-                    obj.push("</ul>");
-                    obj.push("</li>");
+            success: function (clientResponse) {
+                if (clientResponse.Successful) {
+                    var obj = [];
+                    var id = "";
+                    // record rows - tables
+                    var records = JSON.parse(clientResponse.JsonData);
+                    for (var i = 0; i < records.length; i++) {
+                        var row = records[i];
+                        id = appDatabaseId + row.TableName;
+                        obj.push("<li>");
+                        obj.push("<span id='expand_Table" + id + "' class='xxx' onclick='ExpandTable(this)'></span> <span id='select_TableName" + id + "' class='highlight-item select_TableName'>" + row.TableName + "</span>");
+                        obj.push("<ul id='expand_Table" + id + "_ul' class='caret-tree-nested'>");
+                        obj.push("<li>");
+                        obj.push("<span id='expand_Fields" + id + "' class='xxx' onclick='ExpandColumns(" + appDatabaseId + ",this)'></span> <span style='margin-left:3px;'>Columns</span>");
+                        obj.push("<ul id='expand_Fields" + id + "_ul' class='caret-tree-nested'>");
+                        obj.push("</ul>");
+                        obj.push("</li>");
+                        obj.push("<li>");
+                        obj.push("<span id='expand_Grids" + id + "' class='xxx' onclick='ExpandGrids(" + appDatabaseId + ",this)'></span> <span style='margin-left:3px;'>Grids</span>");
+                        obj.push("<ul id='expand_Grids" + id + "_ul' class='caret-tree-nested'>");
+                        obj.push("</ul>");
+                        obj.push("</li>");
+                        obj.push("<li>");
+                        obj.push("<span id='expand_Forms" + id + "' class='xxx' onclick='ExpandForms(" + appDatabaseId + ",this)'></span> <span style='margin-left:3px;'>Forms</span>");
+                        obj.push("<ul id='expand_Forms" + id + "_ul' class='caret-tree-nested'>");
+                        obj.push("</ul>");
+                        obj.push("</li>");
+                        obj.push("<li>");
+                        obj.push("<span id='expand_Views" + id + "' class='caret-tree'></span> <span style='margin-left:3px;'>Views</span>");
+                        obj.push("<ul id='expand_Views" + id + "_ul' class='caret-tree-nested'>");
+                        obj.push("</ul>");
+                        obj.push("</li>");
+                        obj.push("<li>");
+                        obj.push("<span id='expand_Searches" + id + "' class='caret-tree'></span> <span style='margin-left:3px;'>Search Forms</span>");
+                        obj.push("<ul id='expand_Searches" + id + "_ul' class='caret-tree-nested'>");
+                        obj.push("</ul>");
+                        obj.push("</li>");
+                        obj.push("</ul>");
+                        obj.push("</li>");
+                    }
+                    $("#expand_Tables" + appDatabaseId + "_ul").html(obj.join(""));
+                    // select_TableName
+                    $(".select_TableName").click(function () {
+                        var id = $(this).attr("id");
+                        HighlightItem(id);
+                        SelectTable(appDatabaseId, id.replace("select_TableName" + appDatabaseId, ""));
+                    });
                 }
-                $("#expand_Tables" + appDatabaseId + "_ul").html(obj.join(""));
-                // select_TableName
-                $(".select_TableName").click(function () {
-                    var id = $(this).attr("id");
-                    HighlightItem(id);
-                    SelectTable(appDatabaseId, id.replace("select_TableName" + appDatabaseId, ""));
-                });
+                else {
+                    MessageBox("Error", clientResponse.ErrorMessage, false);
+                }
             },
             complete: function () {
                 AppSpinner(false);

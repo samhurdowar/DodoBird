@@ -10,61 +10,65 @@ function GetAdminMenuList(highlightId) {
         url: "./Menu/GetAdminMenuList",
         type: "POST",
         dataType: "json",
-        success: function (data) {
+        success: function (clientResponse) {
 
-            SortableMenuItems = "RootMenus";
+            if (clientResponse.Successful) {
 
-            ObjMenu.length = 0;
+                var data = JSON.parse(clientResponse.JsonData);
+                SortableMenuItems = "RootMenus";
 
-            // get main menus
-            let mainMenus;
-            if (RefreshItem == "RootMenus") {
-                mainMenus = data.filter(it => it.ParentId == 0);
-            } else {
-                mainMenus = data.filter(it => it.MenuId == RefreshItem.replace("MenuId", ""));
-            }
+                ObjMenu.length = 0;
 
-            mainMenus = SortJson(mainMenus, "SortOrder");
-            for (var i in mainMenus) {
-                var row = mainMenus[i];
-
-                let subMenus = data.filter(w => w.ParentId == row.MenuId);
-                subMenus = SortJson(subMenus, "SortOrder");
-                if (subMenus.length > 0) {
-
-                    ObjMenu.push("<li id='MenuId" + row.MenuId + "' class='refresh-item'>");
-                    ObjMenu.push("<div class='highlight parent-menu-item'>");
-                    ObjMenu.push("<span menuId='" + row.MenuId + "' class='menu-item-edit'>" + row.MenuId + "-" + row.MenuTitle + "</span>");
-                    ObjMenu.push("<span class='menu-add-delete'>");
-                    ObjMenu.push("      <span class='menu-item-add menu-item-command fas fa-plus'> &nbsp; </span>");
-                    ObjMenu.push("      <span deleteId='" + row.MenuId + "' class='menu-item-delete menu-item-command fas fa-trash'>&nbsp;</span>");
-                    ObjMenu.push("</span>");
-                    ObjMenu.push("</div>");
-
-                    GetAdminSubMenuList(row.MenuId, subMenus, data);
-
-                    ObjMenu.push("</li>");
+                // get main menus
+                let mainMenus;
+                if (RefreshItem == "RootMenus") {
+                    mainMenus = data.filter(it => it.ParentId == 0);
                 } else {
-                    ObjMenu.push("<li id='MenuId" + row.MenuId + "' class='highlight refresh-item menu-item'>");
-                    ObjMenu.push("<span menuId='" + row.MenuId + "' class='menu-item-edit'>" + row.MenuId + "-" + row.MenuTitle + "</span>");
-                    ObjMenu.push("<span class='menu-add-delete'>");
-                    ObjMenu.push("      <span class='menu-item-add menu-item-command fas fa-plus'> &nbsp; </span>");
-                    ObjMenu.push("      <span deleteId='" + row.MenuId + "' class='menu-item-delete menu-item-command fas fa-trash'>&nbsp;</span>");
-                    ObjMenu.push("</span>");
-                    ObjMenu.push("</li>");
+                    mainMenus = data.filter(it => it.MenuId == RefreshItem.replace("MenuId", ""));
                 }
+
+                mainMenus = SortJson(mainMenus, "SortOrder");
+                for (var i in mainMenus) {
+                    var row = mainMenus[i];
+
+                    let subMenus = data.filter(w => w.ParentId == row.MenuId);
+                    subMenus = SortJson(subMenus, "SortOrder");
+                    if (subMenus.length > 0) {
+
+                        ObjMenu.push("<li id='MenuId" + row.MenuId + "' class='refresh-item'>");
+                        ObjMenu.push("<div class='highlight parent-menu-item'>");
+                        ObjMenu.push("<span menuId='" + row.MenuId + "' class='menu-item-edit'>" + row.MenuId + "-" + row.MenuTitle + "</span>");
+                        ObjMenu.push("<span class='menu-add-delete'>");
+                        ObjMenu.push("      <span class='menu-item-add menu-item-command fas fa-plus'> &nbsp; </span>");
+                        ObjMenu.push("      <span deleteId='" + row.MenuId + "' class='menu-item-delete menu-item-command fas fa-trash'>&nbsp;</span>");
+                        ObjMenu.push("</span>");
+                        ObjMenu.push("</div>");
+
+                        GetAdminSubMenuList(row.MenuId, subMenus, data);
+
+                        ObjMenu.push("</li>");
+                    } else {
+                        ObjMenu.push("<li id='MenuId" + row.MenuId + "' class='highlight refresh-item menu-item'>");
+                        ObjMenu.push("<span menuId='" + row.MenuId + "' class='menu-item-edit'>" + row.MenuId + "-" + row.MenuTitle + "</span>");
+                        ObjMenu.push("<span class='menu-add-delete'>");
+                        ObjMenu.push("      <span class='menu-item-add menu-item-command fas fa-plus'> &nbsp; </span>");
+                        ObjMenu.push("      <span deleteId='" + row.MenuId + "' class='menu-item-delete menu-item-command fas fa-trash'>&nbsp;</span>");
+                        ObjMenu.push("</span>");
+                        ObjMenu.push("</li>");
+                    }
+                }
+
+                var str = ObjMenu.join("") + AddAlive();
+                $("#" + RefreshItem).html(str);
+
+                RefreshDOM("RefreshMenuDOM(" + highlightId + ")");
+            } else {
+                MessageBox("Error", clientResponse.ErrorMessage, false);
             }
 
-            var str = ObjMenu.join("") + AddAlive();
-            $("#" + RefreshItem).html(str);
-
-            RefreshDOM("RefreshMenuDOM(" + highlightId + ")");
         }
     });
 }
-
-
-
 
 function GetAdminSubMenuList(menuId, subMenus, data) {
     SortableMenuItems += ",Children" + menuId;
@@ -250,36 +254,46 @@ function SelectMenu(menuId) {
             type: "POST",
             data: { json: json },
             dataType: "json",
-            success: function (data) {
+            success: function (clientResponse) {
 
-                BindForm("EditMenu", data[0]);
+                if (clientResponse.Successful) {
 
-                // set grid and form target type dropdowns
-                var targetType = $("#EditMenu input[name='TargetType']:checked").val();
-                if (targetType == "grid") {
-                    $("#EditMenu #TargetGridId").val(data[0].TargetId);
-                } else if (targetType == "form") {
-                    $("#EditMenu #TargetFormId").val(data[0].TargetId);
-                } 
+                    var data_ = JSON.parse(clientResponse.JsonData);
+                    var data = data_[0];
 
-                // set display of TargetType options
-                $(".targetType-class").hide();
-                $("#span_" + data[0].TargetType).show();
+                    BindForm("EditMenu", data);
+
+                    // set grid and form target type dropdowns
+                    var targetType = $("#EditMenu input[name='TargetType']:checked").val();
+                    if (targetType == "grid") {
+                        $("#EditMenu #TargetGridId").val(data.TargetId);
+                    } else if (targetType == "form") {
+                        $("#EditMenu #TargetFormId").val(data.TargetId);
+                    }
+
+                    // set display of TargetType options
+                    $(".targetType-class").hide();
+                    $("#span_" + data.TargetType).show();
 
 
-                // set ParentId if new
-                if (data[0].IsNewRecord == "True") {
-                    $("#EditMenu #ParentId").val(ParentId);
-                    $("#EditMenu #MenuId").val(menuId);
-                }
+                    // set ParentId if new
+                    if (data.IsNewRecord == "True") {
+                        $("#EditMenu #ParentId").val(ParentId);
+                        $("#EditMenu #MenuId").val(menuId);
+                    }
 
-                if (menuId == 0) {
-                    DisableButton("cmd_Delete_EditMenu");
+                    if (menuId == 0) {
+                        DisableButton("cmd_Delete_EditMenu");
+                    } else {
+                        EnableButton("cmd_Delete_EditMenu");
+                    }
+
+                    $("#editMenuBox").show();
                 } else {
-                    EnableButton("cmd_Delete_EditMenu");
+                    MessageBox("Error", clientResponse.ErrorMessage, false);
                 }
 
-                $("#editMenuBox").show();
+
             },
             complete: function () {
                 AppSpinner(false);
@@ -289,45 +303,53 @@ function SelectMenu(menuId) {
 }
 
 
-
 function GetMenuList() {
     $.ajax({
         url: "./Menu/GetMenuList",
         type: "POST",
         dataType: "json",
-        success: function (data) {
-            Menus = data;
-            ObjMenu.length = 0;
-            ObjMenu.push("<ul>");
+        success: function (clientResponse) {
 
-            // get main menus
-            //let mainMenus = data.filter(it => it.ParentId == 0);
-            //mainMenus = SortJson(mainMenus, "SortOrder");
+            if (clientResponse.Successful) {
+                var data = JSON.parse(clientResponse.JsonData);
 
-            let mainMenus = data.filter(it => it.ParentId == 0);
+                Menus = data;
+                ObjMenu.length = 0;
+                ObjMenu.push("<ul>");
 
-            for (var i in mainMenus) {
-                var row = mainMenus[i];
+                // get main menus
+                //let mainMenus = data.filter(it => it.ParentId == 0);
+                //mainMenus = SortJson(mainMenus, "SortOrder");
+
+                let mainMenus = data.filter(it => it.ParentId == 0);
+
+                for (var i in mainMenus) {
+                    var row = mainMenus[i];
 
 
-                let subMenus = data.filter(w => w.ParentId == row.MenuId);
-                if (subMenus.length > 0) {
-                    ObjMenu.push("<li onclick='MenuClick(" + row.MenuId + ")'>");
-                    ObjMenu.push("<span id='displayMenuId" + row.MenuId + "'>" + row.SortOrder + ": " + row.MenuTitle + "</span>");
-                    GetSubMenuList(subMenus, data);
-                    ObjMenu.push("</li>");
-                    
-                } else {
-                    ObjMenu.push("<li onclick='MenuClick(" + row.MenuId + ")'>");
-                    ObjMenu.push("<span id='displayMenuId" + row.MenuId + "'>" + row.SortOrder + ": " + row.MenuTitle + "</span>");
-                    ObjMenu.push("</li>");
+                    let subMenus = data.filter(w => w.ParentId == row.MenuId);
+                    if (subMenus.length > 0) {
+                        ObjMenu.push("<li onclick='MenuClick(" + row.MenuId + ")'>");
+                        ObjMenu.push("<span id='displayMenuId" + row.MenuId + "'>" + row.SortOrder + ": " + row.MenuTitle + "</span>");
+                        GetSubMenuList(subMenus, data);
+                        ObjMenu.push("</li>");
+
+                    } else {
+                        ObjMenu.push("<li onclick='MenuClick(" + row.MenuId + ")'>");
+                        ObjMenu.push("<span id='displayMenuId" + row.MenuId + "'>" + row.SortOrder + ": " + row.MenuTitle + "</span>");
+                        ObjMenu.push("</li>");
+                    }
+
                 }
-                
-            }
-            ObjMenu.push("</ul>");
+                ObjMenu.push("</ul>");
 
-            var str = ObjMenu.join("");
-            $("#main_nav").html(str)
+                var str = ObjMenu.join("");
+                $("#main_nav").html(str)
+            } else {
+                MessageBox("Error", clientResponse.ErrorMessage, false);
+            }
+
+
         }
     });
 }

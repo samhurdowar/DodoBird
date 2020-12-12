@@ -166,7 +166,7 @@ function BindForm(formName, data) {
             if (keys.indexOf("|" + id + "|") > -1) {
                 dataValue = (data[id] != null) ? data[id] : "";
 
-                console.log("BindData id=" + id + "  elementType=" + elementType + "    dataValue=" + dataValue);
+                //console.log("BindData id=" + id + "  elementType=" + elementType + "    dataValue=" + dataValue);
 
                 if (elementType == "text") {
                     $(this).val(dataValue);

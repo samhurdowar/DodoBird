@@ -16,14 +16,17 @@ namespace DodoBird.Controllers
         [HttpPost]
         public string GetAdminMenuList()
         {
-            var json = HelperService.GetJsonData(1, "SELECT * FROM Menu ORDER BY ParentId, SortOrder");
+            var clientResponse = HelperService.GetJsonData(1, "SELECT * FROM Menu ORDER BY ParentId, SortOrder");
+            var json = JsonConvert.SerializeObject(clientResponse);
             return json;
+
         }
 
         [HttpPost]
         public string GetMenuList()
         {
-            var json = HelperService.GetJsonData(1, "SELECT * FROM Menu ORDER BY ParentId, SortOrder");
+            var clientResponse = HelperService.GetJsonData(1, "SELECT * FROM Menu ORDER BY ParentId, SortOrder");
+            var json = JsonConvert.SerializeObject(clientResponse);
             return json;
         }
 
@@ -48,10 +51,10 @@ namespace DodoBird.Controllers
         [HttpPost]
         public string GetMenuOptions()
         {
-            var jsonGrids = HelperService.GetJsonData(0, "SELECT GridId AS OptionValue, TableName  + ' - ' + GridName AS OptionText FROM Grid ORDER BY TableName, GridName");
-            var jsonForms = HelperService.GetJsonData(0, "SELECT FormId AS OptionValue, TableName  + ' - ' + FormName AS OptionText FROM Form ORDER BY TableName, FormName");
+            var responseGrids = HelperService.GetJsonData(0, "SELECT GridId AS OptionValue, TableName  + ' - ' + GridName AS OptionText FROM Grid ORDER BY TableName, GridName");
+            var responseForms = HelperService.GetJsonData(0, "SELECT FormId AS OptionValue, TableName  + ' - ' + FormName AS OptionText FROM Form ORDER BY TableName, FormName");
 
-            return "{ \"Grids\" : " + jsonGrids + ", \"Forms\" : " + jsonForms + " } ";
+            return "{ \"Grids\" : " + responseGrids.JsonData + ", \"Forms\" : " + responseForms.JsonData + " } ";
         }
 
     }

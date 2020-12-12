@@ -17,8 +17,10 @@ namespace DodoBird.Controllers
         [HttpPost]
         public string GetDatabaseList()
         {
-            var json = HelperService.GetJsonData(0, "SELECT * FROM AppDatabase");
-            return json;
+            var clientResponse = HelperService.GetJsonData(0, "SELECT * FROM AppDatabase");
+            var jsonClientResponse = JsonConvert.SerializeObject(clientResponse);
+
+            return jsonClientResponse;
         }
 
         [HttpPost]
@@ -26,8 +28,9 @@ namespace DodoBird.Controllers
         {
             var sql = @"SELECT DISTINCT TABLE_SCHEMA AS TableSchema, TABLE_NAME AS TableName FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE ";
 
-            var json = HelperService.GetJsonData(appDatabaseId, sql);
-            return json;
+            var clientResponse = HelperService.GetJsonData(appDatabaseId, sql);
+            var jsonClientResponse = JsonConvert.SerializeObject(clientResponse);
+            return jsonClientResponse;
         }
 
         [HttpPost]
@@ -44,15 +47,26 @@ namespace DodoBird.Controllers
 
             // get grids
             var sql = @"SELECT * FROM Grid WHERE AppDatabaseId = @AppDatabaseId AND TableName = @TableName";
-            var jsonGrids = HelperService.GetJsonData(0, sql, new[] { new SqlParameter("@AppDatabaseId", appDatabaseId), new SqlParameter("@TableName", tableName) });
-
+            var responseGrids = HelperService.GetJsonData(0, sql, new[] { new SqlParameter("@AppDatabaseId", appDatabaseId), new SqlParameter("@TableName", tableName) });
+            var jsonGrids = responseGrids.JsonData;
 
             // get forms
             sql = @"SELECT * FROM Form WHERE AppDatabaseId = @AppDatabaseId AND TableName = @TableName";
-            var jsonForms = HelperService.GetJsonData(0, sql, new[] { new SqlParameter("@AppDatabaseId", appDatabaseId), new SqlParameter("@TableName", tableName) });
+            var responseForms = HelperService.GetJsonData(0, sql, new[] { new SqlParameter("@AppDatabaseId", appDatabaseId), new SqlParameter("@TableName", tableName) });
+            var jsonForms = responseForms.JsonData;
 
             return "{ \"TableSchema\" : " + jsonTableSchema + ", \"Grids\" : " + jsonGrids + ", \"Forms\" : " + jsonForms + " } ";
 
+        }
+
+
+        [HttpPost]
+        public string GetFormSchema(int formId)
+        {
+            FormSchema formSchema = DataService.GetFormSchema(formId);
+            var json = JsonConvert.SerializeObject(formSchema, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+
+            return json;
         }
 
 

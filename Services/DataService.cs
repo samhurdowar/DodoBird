@@ -200,13 +200,22 @@ namespace DodoBird.Services
                 var sql = @"SELECT * FROM Form WHERE FormId = @FormId";
                 var formSchema = Db.Database.SqlQuery<FormSchema>(sql, new SqlParameter("@FormId", formId)).FirstOrDefault();
 
-                // get grid columns 
-                sql = @"SELECT ColumnName, ColumnOrder FROM FormColumn WHERE FormId = @FormId ORDER BY ColumnOrder";
-                var formColumns = Db.Database.SqlQuery<Column>(sql, new SqlParameter("@FormId", formId)).ToList();
+                // get form sections 
+                sql = @"SELECT * FROM FormSection WHERE FormId = @FormId ORDER BY SectionOrder";
+                var formSections = Db.Database.SqlQuery<FormSection>(sql, new SqlParameter("@FormId", formId)).ToList();
+                if (formSections.Count > 0)
+                {
+                    formSchema.FormSections.AddRange(formSections);
+                }
+
+                // get form columns 
+                sql = @"SELECT * FROM FormColumn WHERE FormId = @FormId ORDER BY ColumnOrder";
+                var formColumns = Db.Database.SqlQuery<FormColumn>(sql, new SqlParameter("@FormId", formId)).ToList();
                 if (formColumns.Count > 0)
                 {
                     formSchema.FormColumns.AddRange(formColumns);
                 }
+
                 sql = @"SELECT ColumnName FROM FormColumn WHERE FormId = @FormId ORDER BY ColumnOrder";
                 var formColumns_ = Db.Database.SqlQuery<string>(sql, new SqlParameter("@FormId", formId)).ToList();
 

@@ -1928,6 +1928,7 @@
     <Content Include="Views\App\EditGrid.cshtml" />
     <Content Include="Views\App\EditTable.cshtml" />
     <Content Include="Views\App\EditMenu.cshtml" />
+    <Content Include="Views\App\EditForm.cshtml" />
     <None Include="Views\Home\Test.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -1962,6 +1963,7 @@
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="TsScripts\ClientForm.ts" />
     <TypeScriptCompile Include="TsScripts\Grid.ts" />
+    <TypeScriptCompile Include="TsScripts\ManageForm.ts" />
     <TypeScriptCompile Include="TsScripts\ManageGrid.ts" />
     <TypeScriptCompile Include="TsScripts\ManageColumn.ts" />
     <TypeScriptCompile Include="TsScripts\ManageTable.ts" />

@@ -69,18 +69,22 @@ namespace DodoBird.Controllers
                     } 
                     sb.Append("\"" + column.ColumnName + "\":\"" + defaultValue + "\", ");
                 }
-                json = sb.ToString() + " \"IsNewRecord\": \"" + isNewRecord + "\" } ]";
+                var jsonData = sb.ToString() + " \"IsNewRecord\": \"" + isNewRecord + "\" } ]";
 
+                var clientResponse = new ClientResponse { Successful = true, ActionExecuted = "GetFormData", JsonData = jsonData };
+                var jsonClientResponse = JsonConvert.SerializeObject(clientResponse);
+                return jsonClientResponse;
             } else
             {
                 var sql = sb.ToString();
                 sql = "SELECT 'False' AS IsNewRecord, * " + sql.Substring(0, sql.Length - 4);
 
-                json = HelperService.GetJsonData(formSchema.AppDatabaseId, sql, sqlParameters.ToArray());
+                var clientResponse = HelperService.GetJsonData(formSchema.AppDatabaseId, sql, sqlParameters.ToArray());
+                var jsonClientResponse = JsonConvert.SerializeObject(clientResponse);
+                return jsonClientResponse;
             }
 
 
-            return json;
         }
 
 

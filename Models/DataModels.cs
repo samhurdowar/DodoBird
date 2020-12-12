@@ -77,16 +77,48 @@ namespace DodoBird.Models
         public int AppDatabaseId { get; set; }
         public string TableName { get; set; }
         public string FormName { get; set; }
-        public string TargetType { get; set; }
+        public string FormType { get; set; }
         public string PageFile { get; set; }
+        public string FormLayout { get; set; }
         public List<Column> AvailableColumns = new List<Column>();
-        public List<Column> FormColumns = new List<Column>();
+        public List<FormSection> FormSections = new List<FormSection>();
+        public List<FormColumn> FormColumns = new List<FormColumn>();
+    }
 
+
+    public class FormSection
+    {
+        public int FormSectionId { get; set; }
+        public int FormId { get; set; }
+        public int ColumnCount { get; set; }
+        public int SectionOrder { get; set; }
+        public string SectionHeader { get; set; }
+        public DateTime DateAdd { get; set; }
+    }
+
+    public class FormColumn
+    {
+        public int FormId { get; set; }
+        public int FormColumnId { get; set; }
+        public int FormSectionId { get; set; }
+        public int SectionColumn { get; set; }
+        public int ColumnOrder { get; set; }
+        public string ColumnName { get; set; }
+        public string ElementType { get; set; }
+        public DateTime DateAdd { get; set; }
     }
 
 }
 
 /*
+ 
+
+
+
+
+
+
+
 
 
  */

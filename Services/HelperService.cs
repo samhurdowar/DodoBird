@@ -1,4 +1,5 @@
-﻿using DodoBird.Models.Db;
+﻿using DodoBird.Models.App;
+using DodoBird.Models.Db;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -11,43 +12,62 @@ namespace DodoBird.Services
     public static class HelperService
     {
 
-        public static string GetJsonData(int appDatabaseId, string sql, SqlParameter[] sqlParameters = null )
+        public static ClientResponse GetJsonData(int appDatabaseId, string sql, SqlParameter[] sqlParameters = null )
         {
-            using (DodoBirdEntities Db = new DodoBirdEntities())
+            try
             {
-                if (appDatabaseId > 0)
+                using (DodoBirdEntities Db = new DodoBirdEntities())
                 {
-                    Db.Database.Connection.ConnectionString = SessionService.GetConnectionString(appDatabaseId);
-                } else
-                {
-                    Db.Database.Connection.ConnectionString = SessionService.DodoBirdConnectionString;
-                }
-
-                StringBuilder sb = new StringBuilder();
-
-
-                if (sqlParameters != null)
-                {
-                    var items = Db.Database.SqlQuery<string>(sql + " FOR JSON AUTO, INCLUDE_NULL_VALUES", sqlParameters).ToList();
-                    foreach (var item in items)
+                    if (appDatabaseId > 0)
                     {
-                        sb.Append(item);
+                        Db.Database.Connection.ConnectionString = SessionService.GetConnectionString(appDatabaseId);
                     }
-                } else
-                {
-                    var items = Db.Database.SqlQuery<string>(sql + " FOR JSON AUTO, INCLUDE_NULL_VALUES").ToList();
-                    foreach (var item in items)
+                    else
                     {
-                        sb.Append(item);
+                        Db.Database.Connection.ConnectionString = SessionService.DodoBirdConnectionString;
                     }
-                }
 
-                return sb.ToString();
+                    StringBuilder sb = new StringBuilder();
+
+
+                    if (sqlParameters != null)
+                    {
+                        var items = Db.Database.SqlQuery<string>(sql + " FOR JSON AUTO, INCLUDE_NULL_VALUES", sqlParameters).ToList();
+                        foreach (var item in items)
+                        {
+                            sb.Append(item);
+                        }
+                    }
+                    else
+                    {
+                        var items = Db.Database.SqlQuery<string>(sql + " FOR JSON AUTO, INCLUDE_NULL_VALUES").ToList();
+                        foreach (var item in items)
+                        {
+                            sb.Append(item);
+                        }
+                    }
+
+
+                    return new ClientResponse { Successful = true, ActionExecuted = "GetJsonData", JsonData = sb.ToString() };
+
+                }
             }
+            catch (Exception ex)
+            {
+                return new ClientResponse { Successful = false, ActionExecuted = "GetJsonData", JsonData = "", ErrorMessage = ex.Message };
+            }
+
         }
 
 
-
+        //public class ClientResponse
+        //{
+        //    public string Id { get; set; }
+        //    public string ActionExecuted { get; set; }
+        //    public bool Successful { get; set; }
+        //    public string ErrorMessage { get; set; }
+        //    public string JsonData { get; set; }
+        //}
 
         public static string ExecuteSql(int appDatabaseId, string sql, SqlParameter[] sqlParameters = null)
         {

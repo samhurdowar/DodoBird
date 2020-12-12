@@ -3,6 +3,7 @@ var Menus;
 var CloseTabFirst = false;
 var DisableFocus = false;
 var ConfirmBoxFunction = "";
+var TargetId = "";
 var RandomRefreshObject = "";
 $(document).ready(function () {
     GetMenuList();
