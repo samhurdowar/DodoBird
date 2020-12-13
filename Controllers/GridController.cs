@@ -68,7 +68,10 @@ namespace DodoBird.Controllers
                     numOfPages = (int)Math.Ceiling(totalPage_);
                 }
 
-                return "{ \"imgSrc\" : \"\", \"RecordCount\" : " + recordCount + ", \"NumOfPages\" : " + numOfPages + ", \"OrderByColumn\" : \"" + pageNavigation.OrderByColumn + "\", \"SortDirection\" : \"" + pageNavigation.SortDirection + "\", \"Records\" : " + sbRecords.ToString() + " }";
+
+                string json = "{ \"ToFormId\" : \"" + gridSchema.ToFormId + "\", \"RecordCount\" : " + recordCount + ", \"NumOfPages\" : " + numOfPages + ", \"OrderByColumn\" : \"" + pageNavigation.OrderByColumn + "\", \"SortDirection\" : \"" + pageNavigation.SortDirection + "\", \"Records\" : " + sbRecords.ToString() + " }";
+
+                return json;
 
             }
         }
@@ -84,31 +87,36 @@ namespace DodoBird.Controllers
 
             StringBuilder sb = new StringBuilder();
 
-            // add primary key columns
+            // add formId and primary key columns
+            var formId = 6;  //xxx
+            string primaryKeys = "";
+            primaryKeys = "'{ \"FormId\" : \"" + formId  + "\"";
+
             foreach (var key in tableSchema.PrimaryKeys)
             {
-                sb.Append(key.ColumnName + ",");
+                primaryKeys += ", \"" + key.ColumnName + "\" : \"' + CAST(" + key.ColumnName + " AS varchar(250) ) + '\"";
             }
+
+            primaryKeys += " }' AS PrimaryKeys";
+
+            sb.Append(primaryKeys);
 
             // select columns in grid
             var gridColumns = gridSchema.GridColumns;
             var tableColumns = tableSchema.Columns;
 
             var columns = from a in gridColumns
-                            join b in tableColumns.Where(w => !w.IsPrimaryKey) on a.ColumnName equals b.ColumnName
+                            join b in tableColumns on a.ColumnName equals b.ColumnName
                             orderby a.ColumnOrder
                             select b;
             foreach (var column in columns)
             {
-                sb.Append(column.ColumnName + ",");
+                sb.Append(", " + column.ColumnName);
 
                 if (pageNavigation.OrderByColumn == null || pageNavigation.OrderByColumn.Length == 0) pageNavigation.OrderByColumn = column.ColumnName;  // default sort
             }
 
             var selectColumns = sb.ToString();
-            selectColumns = selectColumns.Substring(0, selectColumns.Length - 1);
-
-
 
             return selectColumns;
 

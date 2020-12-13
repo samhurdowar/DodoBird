@@ -3,7 +3,7 @@ var PageNavigations = [];
 function SetPageNavigation(menuId, menuTitle, gridId) {
     var objIndex = PageNavigations.findIndex(function (obj) { return obj.MenuId == menuId; });
     if (objIndex == -1) {
-        PageNavigations.push({ MenuId: menuId, MenuTitle: menuTitle, GridId: gridId, CurrentPage: 1, NumOfPages: 0, RecordCount: 0, PrimaryKey: "", OrderByColumn: "", SortDirection: "ASC" });
+        PageNavigations.push({ MenuId: menuId, MenuTitle: menuTitle, GridId: gridId, CurrentPage: 1, NumOfPages: 0, RecordCount: 0, OrderByColumn: "", SortDirection: "ASC" });
     }
 }
 function GetGrid(menuId, newTab) {
@@ -17,13 +17,12 @@ function GetGrid(menuId, newTab) {
             // update pageNavigation
             var i = PageNavigations.findIndex(function (obj) { return obj.MenuId == menuId; });
             if (i > -1) {
-                //xxxPageNavigations[i].PrimaryKey = data.PrimaryKey;
                 PageNavigations[i].RecordCount = data.RecordCount;
                 PageNavigations[i].NumOfPages = data.NumOfPages;
                 PageNavigations[i].OrderByColumn = data.OrderByColumn;
                 PageNavigations[i].SortDirection = data.SortDirection;
             }
-            GenerateGridTable(menuId, newTab, data.Records);
+            GenerateGridTable(menuId, newTab, data.ToFormId, data.Records);
             //if (1==1) {
             //    GenerateCustomGrid(menuId, newTab, data.Records);
             //} else {
@@ -35,7 +34,7 @@ function GetGrid(menuId, newTab) {
         }
     });
 }
-function GenerateCustomGrid(menuId, newTab, records) {
+function GenerateCustomGrid(menuId, newTab, toFormId, records) {
     var pageIndex = PageNavigations.findIndex(function (w) { return w.MenuId == menuId; });
     var gridId = PageNavigations[pageIndex].GridId;
     //xxx var primaryKey = PageNavigations[pageIndex].PrimaryKey;
@@ -109,10 +108,9 @@ function GenerateCustomGrid(menuId, newTab, records) {
     // set pageDropdown
     $("#pageDropdown" + menuId).val(PageNavigations[pageIndex].CurrentPage);
 }
-function GenerateGridTable(menuId, newTab, records) {
+function GenerateGridTable(menuId, newTab, toFormId, records) {
     var pageIndex = PageNavigations.findIndex(function (w) { return w.MenuId == menuId; });
     var gridId = PageNavigations[pageIndex].GridId;
-    var primaryKey = PageNavigations[pageIndex].PrimaryKey;
     var menuTitle = PageNavigations[pageIndex].MenuTitle;
     var orderByColumn = PageNavigations[pageIndex].OrderByColumn;
     var sortDirection = PageNavigations[pageIndex].SortDirection;
@@ -120,9 +118,9 @@ function GenerateGridTable(menuId, newTab, records) {
     var obj = [];
     obj.push("<table style='width:100%;'>");
     // header row
-    obj.push("<tr id='headerRow'>");
-    var rowHeader = records[0];
-    for (var column in rowHeader) {
+    obj.push("<tr class='headerColumn" + menuId + "'>");
+    var headerColumns = records[0];
+    for (var column in headerColumns) {
         if (orderByColumn == column) {
             if (sortDirection == "ASC") {
                 obj.push("<td>" + column + " <span class='fa fa-sort-down cursor-pointer' onclick='ChangeSortDirection()'> </span></td>");
@@ -139,7 +137,7 @@ function GenerateGridTable(menuId, newTab, records) {
     // record rows
     for (var i = 0; i < records.length; i++) {
         var row = records[i];
-        obj.push("<tr class='tr-all tr-row-pointer'>");
+        obj.push("<tr key='" + row["PrimaryKeys"] + "' class='edit-row-" + menuId + " tr-all tr-row-pointer'>");
         for (var column in row) {
             obj.push("<td>" + row[column] + "</td>");
         }
@@ -179,7 +177,7 @@ function GenerateGridTable(menuId, newTab, records) {
     obj.push();
     var content = obj.join("");
     if (newTab) { // first time. open new tab
-        var content_ = "<div id='grid" + menuId + "_" + gridId + "' style='margin-bottom:20px;'> " + content + "</div>";
+        var content_ = "<div id='grid" + menuId + "_" + gridId + "' style='margin-bottom:20px;'> " + content + "</div><div id='form" + menuId + "_" + gridId + "' style='display:none;margin-bottom:20px;'></div>";
         AddTab(menuId, menuTitle, false, content_);
     }
     else {
@@ -187,6 +185,75 @@ function GenerateGridTable(menuId, newTab, records) {
     }
     // set pageDropdown
     $("#pageDropdown" + menuId).val(PageNavigations[pageIndex].CurrentPage);
+    // hide primaryKeys column 
+    $(".headerColumn" + menuId + " td:first").hide();
+    $(".edit-row-" + menuId + " td:first").hide();
+    $(".edit-row-" + menuId + " td").click(function () {
+        AppSpinner(true);
+        var key = $(this).parent().attr("key");
+        GetFormLayout(toFormId, "form" + menuId + "_" + gridId);
+        // wait for form to post to html
+        var myVar = setInterval(function () {
+            if ($("#" + RandomRefreshObject).length) {
+                clearInterval(myVar);
+                console.log("GetForm() stopped");
+                setTimeout(function () {
+                    $.ajax({
+                        url: "./Form/GetFormData",
+                        type: "POST",
+                        data: { json: key },
+                        dataType: "json",
+                        success: function (clientResponse) {
+                            if (clientResponse.Successful) {
+                                var data_ = JSON.parse(clientResponse.JsonData);
+                                var data = data_[0];
+                                BindForm("FormId" + toFormId, data);
+                                // show form
+                                $("#grid" + menuId + "_" + gridId).hide();
+                                $("#form" + menuId + "_" + gridId).show();
+                                // set go back button
+                                $("#cmd_GoBack_FormId" + toFormId).click(function () {
+                                    // show grid
+                                    $("#form" + menuId + "_" + gridId).hide();
+                                    $("#grid" + menuId + "_" + gridId).show();
+                                });
+                            }
+                            else {
+                                MessageBox("Error", clientResponse.ErrorMessage, false);
+                            }
+                        },
+                        complete: function () {
+                            AppSpinner(false);
+                        }
+                    });
+                }, 300);
+            }
+            console.log("GetForm()");
+        }, 300);
+    });
+}
+function GetFormLayout(formId, boxName) {
+    AppSpinner(true);
+    setTimeout(function () {
+        $.ajax({
+            url: "./Form/GetFormLayout",
+            type: "POST",
+            data: { formId: formId },
+            dataType: "json",
+            success: function (clientResponse) {
+                if (clientResponse.Successful) {
+                    var formLayout = clientResponse.JsonData + AddAlive();
+                    $("#" + boxName).html(formLayout);
+                }
+                else {
+                    MessageBox("Error", clientResponse.ErrorMessage, false);
+                }
+            },
+            complete: function () {
+                AppSpinner(false);
+            }
+        });
+    }, 300);
 }
 function NavigatePage(menuId, pageIndex) {
     // update pageNavigation

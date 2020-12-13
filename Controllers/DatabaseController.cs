@@ -71,6 +71,43 @@ namespace DodoBird.Controllers
 
 
         [HttpPost]
+        public string SortFormSection(int formId, int formSectionId, int newOrder)
+        {
+            try
+            {
+                using (DodoBirdEntities Db = new DodoBirdEntities())
+                {
+                    Db.Database.ExecuteSqlCommand("dbo.SortFormSection @formId, @formSectionId, @newOrder", new[] { new SqlParameter("@formId", formId), new SqlParameter("@formSectionId", formSectionId), new SqlParameter("@newOrder", newOrder) });
+                    return JsonConvert.SerializeObject(new ClientResponse { Successful = true, Id = formSectionId.ToString(), ActionExecuted = "SortFormSection", ErrorMessage = "" });
+                }
+            }
+            catch (System.Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ClientResponse { Successful = false, Id = formSectionId.ToString(), ActionExecuted = "SortFormSection", ErrorMessage = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        public string SortFormColumn(int formId, string columnName, int toFormSectionId, int toSectionColumn, int newOrder)
+        {
+            try
+            {
+                using (DodoBirdEntities Db = new DodoBirdEntities())
+                {
+                    Db.Database.ExecuteSqlCommand("dbo.SortFormColumn @formId, @columnName, @toFormSectionId, @toSectionColumn, @newOrder", new[] { new SqlParameter("@formId", formId), new SqlParameter("@columnName", columnName), new SqlParameter("@toFormSectionId", toFormSectionId), new SqlParameter("@toSectionColumn", toSectionColumn), new SqlParameter("@newOrder", newOrder) });
+                    return JsonConvert.SerializeObject(new ClientResponse { Successful = true, Id = columnName, ActionExecuted = "SortFormColumn", ErrorMessage = "" });
+                }
+            }
+            catch (System.Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ClientResponse { Successful = false, Id = columnName, ActionExecuted = "SortFormColumn", ErrorMessage = ex.Message });
+            }
+        }
+
+
+
+        [HttpPost]
         public string GetGridSchema(int gridId)
         {
             // get TableSchema

@@ -49,7 +49,7 @@ function SelectGrid(gridId) {
                 AppSpinner(false);
             }
         });
-    }, 500);
+    }, 300);
 }
 function GetGridSchema(gridId) {
     $.ajax({

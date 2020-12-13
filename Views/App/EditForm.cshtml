@@ -18,8 +18,6 @@
         .edit-formlayout-section:hover, .edit-formlayout-column:hover {
             color: #ff0000;
         }
-
-
 </style>
  
 
@@ -61,10 +59,10 @@
                 </tr>
 
                 <tr>
-                    <td style="width:20%;">
+                    <td style="width:20%;" valign="top">
                         <div id="FormAvailableColumns"></div>
                     </td>
-                    <td style="width:80%;">
+                    <td style="width:80%;" valign="top">
                         <div id="FormSections"></div>
                     </td>
                 </tr>
@@ -116,7 +114,7 @@
 
         setTimeout(function () {
             $.ajax({
-                url: "./Data/SaveFormData",
+                url: "./Form/SaveFormData",
                 type: "POST",
                 data: { json: json },
                 dataType: "text",

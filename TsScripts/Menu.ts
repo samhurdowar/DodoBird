@@ -247,10 +247,11 @@ function SelectMenu(menuId) {
 
     setTimeout(function () { 
 
-        $("#EditMenu #MenuId").val(menuId);
-        var json = ToJsonString("EditMenu");
+
+        var json = "{ \"FormId\": 1, \"MenuId\": " + menuId + " }";
+
         $.ajax({
-            url: "./Data/GetFormData",
+            url: "./Form/GetFormData",
             type: "POST",
             data: { json: json },
             dataType: "json",
@@ -299,7 +300,7 @@ function SelectMenu(menuId) {
                 AppSpinner(false);
             }
         });
-    }, 500);
+    }, 300);
 }
 
 

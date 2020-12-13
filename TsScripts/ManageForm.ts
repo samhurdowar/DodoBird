@@ -118,7 +118,11 @@ function SetFormLayout(formId) {
             // FormAvailableColumns     
             var availColumns = data.AvailableColumns;
 
-            obj.push("<ul id='availColumns' class='connectedFormColumns'>");
+            obj.push("<ul id='availColumns_0_0' class='connectedFormColumns'>");
+            obj.push("<li id='AvailColumn_EmptyColumn'>");
+            obj.push("--- Drag here to make available ---");
+            obj.push("</li>");
+
             for (var i = 0; i < availColumns.length; i++) {
                 var row = availColumns[i];
 
@@ -129,7 +133,7 @@ function SetFormLayout(formId) {
             obj.push("</ul>");
             $("#FormAvailableColumns").html(obj.join(""));
 
-            var sortableSections = "availColumns";
+            var sortableSections = "availColumns_0_0";
 
             // FormSections
             obj.length = 0;
@@ -152,7 +156,7 @@ function SetFormLayout(formId) {
 
                     sortableSections += ",FormSection_" + row.FormSectionId + "_" + x;
 
-                    obj.push("<td>");
+                    obj.push("<td valign='top'>");
 
                     obj.push("<ul id='FormSection_" + row.FormSectionId + "_" + x + "' class='connectedFormColumns'>");
 
@@ -160,12 +164,12 @@ function SetFormLayout(formId) {
 
                     if (sectionColumns.length > 0) {
                         for (var y = 0; y < sectionColumns.length; y++) {
-                            obj.push("<li id='SetColumn_" + row.FormSectionId + "_" + sectionColumns[y].ColumnName + "'>");
+                            obj.push("<li id='SetColumn_" + sectionColumns[y].ColumnName + "'>");
                             obj.push("<span class='edit-formlayout-column'>" + sectionColumns[y].ColumnName + "</span>");
                             obj.push("</li>");
                         }
                     } else {
-                        obj.push("<li id='SetColumn_" + row.FormSectionId + "_EmptyColumn'>");
+                        obj.push("<li id='SetColumn_EmptyColumn'>");
                         obj.push("--- Drag here ---");
                         obj.push("</li>");
                     }
@@ -186,11 +190,12 @@ function SetFormLayout(formId) {
 
             $("#formSections").sortable({
                 stop: function (event, ui) {
-                    var id = $(ui.item).attr("id").replace("xxx", "");
+                    var id = $(ui.item).attr("id").replace("FormSectionId", "");
                     var newOrder = ui.item.index() + 1;
 
                     console.log("Order Sections:  id=" + id + "    newOrder=" + newOrder);
-                    SetFormLayout(formId);
+
+                    SortFormSection(formId, id, newOrder)
                 }
             });
 
@@ -198,20 +203,34 @@ function SetFormLayout(formId) {
             for (var i = 0; i < ray.length; i++) {
                 $("#" + ray[i]).sortable({
                     connectWith: ".connectedFormColumns",
-
+                    start: function (event, ui) {
+                        ui.item.startPos = ui.item.index();
+                        ui.placeholder.height(ui.item.height());
+                        TargetId = $(this).attr("id");
+                    },
                     stop: function (event, ui) {
                         var id = $(ui.item).attr("id").replace("xxx", "");
                         var newOrder = ui.item.index() + 1;
 
-                        console.log("Move column    id=" + id + "    TargetId=" + TargetId + "    newOrder=" + newOrder);
-                        SetFormLayout(formId);
+                        // null moving available only  
+                        if (id.indexOf("AvailColumn_") > -1 && TargetId.indexOf("availColumns") > -1 ) { return; }
+
+
+                        //console.log("Move column    id=" + id + "    TargetId=" + TargetId + "    newOrder=" + newOrder);
+
+                        var columnName = id.replace("SetColumn_", "").replace("AvailColumn_", "");
+                        var ray = TargetId.split("_");
+                        var toFormSectionId = ray[1];
+                        var toSectionColumn = ray[2];
+
+                        console.log("Move column    formId=" + formId + "    columnName=" + columnName + "    toFormSectionId=" + toFormSectionId + "    toSectionColumn=" + toSectionColumn + "    newOrder=" + newOrder);
+
+                        SortFormColumn(formId, columnName, toFormSectionId, toSectionColumn, newOrder);
 
                     },
                     receive: function (event, ui) {
                         try {
                             TargetId = $(event.target).attr("id");
-                            console.log("targetId=" + TargetId);
-
                         } catch (e) {
                             TargetId = "";
                         }
@@ -241,14 +260,37 @@ function SetFormLayout(formId) {
 
 }
 
-function SortFormColumn(FormId, columnName, fromIndex, toIndex, newOrder) {
+
+function SortFormSection(formId, formSectionId, newOrder) {
     $.ajax({
-        url: "./Database/SortFormColumn",
+        url: "./Database/SortFormSection",
         type: "POST",
-        data: { FormId: FormId, columnName: columnName, fromIndex: fromIndex, toIndex: toIndex, newOrder: newOrder },
-        dataType: "text",
-        success: function (response) {
-            GetFormSchema(FormId);
+        data: { formId: formId, formSectionId: formSectionId, newOrder: newOrder },
+        dataType: "json",
+        success: function (clientResponse) {
+            if (clientResponse.Successful) {
+                SetFormLayout(formId);
+            } else {
+                MessageBox("Error", clientResponse.ErrorMessage, false);
+            }
         }
     });
 }
+
+
+function SortFormColumn(formId, columnName, toFormSectionId, toSectionColumn, newOrder) {
+    $.ajax({
+        url: "./Database/SortFormColumn",
+        type: "POST",
+        data: { formId: formId, columnName: columnName, toFormSectionId: toFormSectionId, toSectionColumn: toSectionColumn, newOrder: newOrder },
+        dataType: "json",
+        success: function (clientResponse) {
+            if (clientResponse.Successful) {
+                SetFormLayout(formId);
+            } else {
+                MessageBox("Error", clientResponse.ErrorMessage, false);
+            }
+        }
+    });
+}
+

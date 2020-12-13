@@ -10,7 +10,7 @@ namespace DodoBird.Models
         public int AppDatabaseId { get; set; }
         public string Owner { get; set; }
         public string TableName { get; set; }
-        public List<PrimaryKey> PrimaryKeys = new List<PrimaryKey>();
+        public List<Column> PrimaryKeys = new List<Column>();
         public List<Column> Columns = new List<Column>();
         public List<DependentTable> DependentTables = new List<DependentTable>();
     }
@@ -29,17 +29,11 @@ namespace DodoBird.Models
         public string Relation { get; set; }
         public string Owner { get; set; }
         public string TableName { get; set; }
-        public List<PrimaryKey> PrimaryKeys = new List<PrimaryKey>();
+        public List<Column> PrimaryKeys = new List<Column>();
         public List<Column> Columns = new List<Column>();
         public List<DependentTable> DependentTables = new List<DependentTable>();
     }
 
-
-    public class PrimaryKey
-    {
-        public string ColumnName { get; set; }
-        public string DataType { get; set; }
-    }
 
     public class Column 
     {
@@ -64,6 +58,7 @@ namespace DodoBird.Models
         public string GridFilter { get; set; }
         public string GridSort { get; set; }
         public int GridType { get; set; }
+        public int ToFormId { get; set; }
         public string Layout { get; set; }
         public List<Column> AvailableColumns = new List<Column>();
         public List<Column> GridColumns = new List<Column>();

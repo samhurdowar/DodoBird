@@ -1,6 +1,7 @@
 ﻿using DodoBird.Models;
 using DodoBird.Models.App;
 using DodoBird.Models.Db;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -103,55 +104,85 @@ namespace DodoBird.Services
 
 
 
-        private static List<PrimaryKey> GetPrimaryKeys(DodoBirdEntities Db, string tableName)
+        private static List<Column> GetPrimaryKeys(DodoBirdEntities Db, string tableName)
         {
             var sql = @"
-                    SELECT c.name AS ColumnName, t.name AS DataType 
-                    FROM sys.columns c 
-                    JOIN sys.objects o ON o.object_id = c.object_id AND o.type = 'U' 
-                    JOIN sys.Types t ON t.system_type_id = c.system_type_id AND t.system_type_id = t.user_type_id 
-                    WHERE o.name = @TableName1 AND c.name IN (
-                    SELECT column_name 
-                    FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS TC 
-                    INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS KU
-                    ON TC.CONSTRAINT_TYPE = 'PRIMARY KEY' AND TC.CONSTRAINT_NAME = KU.CONSTRAINT_NAME AND KU.table_name = @TableName2
-                    )
-                ";
 
-            var keys = Db.Database.SqlQuery<PrimaryKey>(sql, new SqlParameter("@TableName1", tableName), new SqlParameter("@TableName2", tableName)).ToList();
-            return keys;
-        }
+                WITH T1 AS
+                (	
+	                SELECT c.name AS ColumnName, t.name AS DataType 
+	                FROM sys.columns c 
+	                JOIN sys.objects o ON o.object_id = c.object_id AND o.type = 'U' 
+	                JOIN sys.Types t ON t.system_type_id = c.system_type_id AND t.system_type_id = t.user_type_id 
+	                WHERE o.name = @TableName1 AND c.name IN (
+	                SELECT column_name 
+	                FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS TC 
+	                INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS KU
+	                ON TC.CONSTRAINT_TYPE = 'PRIMARY KEY' AND TC.CONSTRAINT_NAME = KU.CONSTRAINT_NAME AND KU.table_name = @TableName2 )
+                ),
+                T2 AS
 
-
-        private static List<Column> GetTableColumns(DodoBirdEntities Db, string tableName)
-        {
-            // get primarykeys 
-            var primaryKeys = GetPrimaryKeys(Db, tableName);
-
-            // get columns   
-            var sql = @"
+                (
                     SELECT c.name AS ColumnName, ISNULL(c.column_id,0) AS ColumnOrder, CAST(ISNULL(c.max_length,0) AS int) AS DataLength,
                     REPLACE(REPLACE(REPLACE(ISNULL(object_definition(c.default_object_id),''), '(', ''), ')', ''), '''', '')   AS DefaultValue,
-                    CAST(0 AS Bit) AS IsPrimaryKey,
+                    CAST(1 AS Bit) AS IsPrimaryKey,
                     CAST(ISNULL(CASE c.is_identity WHEN 1 THEN 1 ELSE 0 END, 0) AS Bit) AS IsIdentity,
                     CAST(ISNULL(CASE c.is_nullable WHEN 1 THEN 0 ELSE 1 END, 0) AS Bit) AS IsRequired,
                     CAST(ISNULL(CASE c.is_computed WHEN 1 THEN 1 ELSE 0 END, 0) AS Bit) AS IsComputed,
                     t.name AS DataType
                     FROM sys.columns c 
                     JOIN sys.Types t ON t.system_type_id = c.system_type_id AND t.system_type_id = t.user_type_id AND t.name <> 'sysname' 
-                    JOIN sys.objects o ON o.object_id = c.object_id AND o.type = 'U' AND o.name = @TableName
+                    JOIN sys.objects o ON o.object_id = c.object_id AND o.type = 'U' AND o.name = @TableName3
+                ) 
+
+                SELECT T2.* FROM T2 JOIN T1 ON T2.ColumnName = T1.ColumnName
+
+                ";
+
+            var keys = Db.Database.SqlQuery<Column>(sql, new SqlParameter("@TableName1", tableName), new SqlParameter("@TableName2", tableName), new SqlParameter("@TableName3", tableName)).ToList();
+            return keys;
+        }
+
+
+        private static List<Column> GetTableColumns(DodoBirdEntities Db, string tableName)
+        {
+
+            // get columns   
+            var sql = @"
+
+                WITH T1 AS
+                (	
+	                SELECT c.name AS ColumnName, 1 AS PrimaryKey 
+	                FROM sys.columns c 
+	                JOIN sys.objects o ON o.object_id = c.object_id AND o.type = 'U' 
+	                JOIN sys.Types t ON t.system_type_id = c.system_type_id AND t.system_type_id = t.user_type_id 
+	                WHERE o.name = @TableName1 AND c.name IN (
+	                SELECT column_name 
+	                FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS TC 
+	                INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS KU
+	                ON TC.CONSTRAINT_TYPE = 'PRIMARY KEY' AND TC.CONSTRAINT_NAME = KU.CONSTRAINT_NAME AND KU.table_name = @TableName2 )
+                ),
+                T2 AS
+
+                (
+                    SELECT c.name AS ColumnName, ISNULL(c.column_id,0) AS ColumnOrder, CAST(ISNULL(c.max_length,0) AS int) AS DataLength,
+                    REPLACE(REPLACE(REPLACE(ISNULL(object_definition(c.default_object_id),''), '(', ''), ')', ''), '''', '')   AS DefaultValue,
+                    CAST(ISNULL(CASE c.is_identity WHEN 1 THEN 1 ELSE 0 END, 0) AS Bit) AS IsIdentity,
+                    CAST(ISNULL(CASE c.is_nullable WHEN 1 THEN 0 ELSE 1 END, 0) AS Bit) AS IsRequired,
+                    CAST(ISNULL(CASE c.is_computed WHEN 1 THEN 1 ELSE 0 END, 0) AS Bit) AS IsComputed,
+                    t.name AS DataType
+                    FROM sys.columns c 
+                    JOIN sys.Types t ON t.system_type_id = c.system_type_id AND t.system_type_id = t.user_type_id AND t.name <> 'sysname' 
+                    JOIN sys.objects o ON o.object_id = c.object_id AND o.type = 'U' AND o.name = @TableName3
+                ) 
+
+                SELECT CAST(ISNULL(T1.PrimaryKey, 0) AS Bit) AS IsPrimaryKey, T2.* FROM T2 LEFT JOIN T1 ON T2.ColumnName = T1.ColumnName
+
+
                ";
 
 
-            var columns = Db.Database.SqlQuery<Column>(sql, new SqlParameter("@TableName", tableName)).ToList();
-            foreach (var column in columns)
-            {
-                if (primaryKeys.Where(w => w.ColumnName == column.ColumnName).Count() > 0 )
-                {
-                    column.IsPrimaryKey = true;
-                }
-            }
-
+            var columns = Db.Database.SqlQuery<Column>(sql, new SqlParameter("@TableName1", tableName), new SqlParameter("@TableName2", tableName), new SqlParameter("@TableName3", tableName)).ToList();
             return columns;
         }
 
@@ -303,12 +334,99 @@ namespace DodoBird.Services
             }
         }
 
-        public static string SaveFormData(int appDatabaseId, string tableName, string json)
+
+
+        public static string GetFormData(string json)
+        {
+            dynamic jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject(json);
+
+            var formId = Convert.ToInt32(jsonObj["FormId"]);
+
+            FormSchema formSchema = DataService.GetFormSchema(formId);
+            TableSchema tableSchema = DataService.GetTableSchema(formSchema.AppDatabaseId, formSchema.TableName);
+
+            // generate sql statement
+            List<SqlParameter> sqlParameters = new List<SqlParameter>();
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("FROM " + formSchema.TableName + " WHERE ");
+
+            // primary keys
+            string primaryKeys = "";
+            primaryKeys = "'{ \"FormId\" : \"" + formId + "\"";
+            var isNewRecord = false;
+            foreach (var key in tableSchema.PrimaryKeys)
+            {
+                if (jsonObj[key.ColumnName] != null)
+                {
+                    var keyValue = jsonObj[key.ColumnName].ToString();
+                    if (keyValue == "" || keyValue == "0")
+                    {
+                        isNewRecord = true;
+                        break;
+                    }
+
+
+                    sb.Append(key.ColumnName + "= @" + key.ColumnName + " AND ");
+
+                    sqlParameters.Add(new SqlParameter("@" + key.ColumnName, keyValue));
+                }
+                else
+                {
+                    isNewRecord = true;
+                }
+
+                primaryKeys += ", \"" + key.ColumnName + "\" : \"' + CAST(" + key.ColumnName + " AS varchar(250) ) + '\"";
+            }
+            primaryKeys += " }' AS PrimaryKeys, ";
+
+            if (isNewRecord)  // get empty template with defaults
+            {
+                var defaultValue = "";
+                sb.Clear();
+                sb.Append("[ { \"PrimaryKeys\": \"{ 'FormId' : " + formId + " }\"");
+                foreach (var column in tableSchema.Columns)
+                {
+                    defaultValue = column.DefaultValue;
+                    if (defaultValue == "getdate")
+                    {
+                        defaultValue = DateTime.Now.ToString();
+                    }
+                    sb.Append(", \"" + column.ColumnName + "\":\"" + defaultValue + "\" ");
+                }
+                var jsonData = sb.ToString() + ", \"IsNewRecord\": \"" + isNewRecord + "\" } ]";
+
+                var clientResponse = new ClientResponse { Successful = true, ActionExecuted = "GetFormData", JsonData = jsonData };
+                var jsonClientResponse = JsonConvert.SerializeObject(clientResponse);
+                return jsonClientResponse;
+            }
+            else
+            {
+                var sql = sb.ToString();
+                sql = "SELECT 'False' AS IsNewRecord, " + primaryKeys + " * " + sql.Substring(0, sql.Length - 4);
+
+                var clientResponse = HelperService.GetJsonData(formSchema.AppDatabaseId, sql, sqlParameters.ToArray());
+                var jsonClientResponse = JsonConvert.SerializeObject(clientResponse);
+                return jsonClientResponse;
+            }
+
+        }
+
+
+
+
+
+        public static ClientResponse SaveFormData(int appDatabaseId, string tableName, string json)
         {
             try
             {
 
                 dynamic jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject(json);
+
+                var primaryKeys_ = jsonObj["PrimaryKeys"].ToString();
+                dynamic primaryKeys = Newtonsoft.Json.JsonConvert.DeserializeObject(primaryKeys_);
+
+                var formId = primaryKeys["FormId"].ToString();
 
                 var tableSchema = GetTableSchema(appDatabaseId, tableName);
 
@@ -335,25 +453,6 @@ namespace DodoBird.Services
                     Guid newGuid = Guid.NewGuid();
                     var newGuid_ = "";
 
-                    // set primary keys
-                    foreach (var column in tableSchema.PrimaryKeys)
-                    {
-                        if (jsonObj[column.ColumnName] != null)
-                        {
-                            recordId = jsonObj[column.ColumnName].ToString();
-                            if (recordId.Length > 0 && recordId != "0")
-                            {
-                                wherePrimaryKey += " " + column.ColumnName + " = '" + recordId + "' AND ";
-                            }
-                        }
-
-                        if (column.DataType == "uniqueidentifier")
-                        {
-                            sbInsert.Append(column.ColumnName + ",");
-                            sbValue.Append("'" + newGuid + "',");
-                            newGuid_ = newGuid.ToString();
-                        }
-                    }
 
                     foreach (var column in tableSchema.Columns.Where(w => !(bool)w.IsComputed && !w.IsPrimaryKey))
                     {
@@ -373,6 +472,46 @@ namespace DodoBird.Services
                     }
 
 
+
+                    // set primary keys
+                    var newPrimaryKeys = "{ 'FormId' : " + formId + "";
+
+                    foreach (var column in tableSchema.PrimaryKeys)
+                    {
+                        if (primaryKeys[column.ColumnName] != null)
+                        {
+                            recordId = primaryKeys[column.ColumnName].ToString();
+                            if (recordId.Length > 0 && recordId != "0")
+                            {
+                                wherePrimaryKey += " " + column.ColumnName + " = '" + recordId + "' AND ";
+                            }
+                        } else if (jsonObj[column.ColumnName] != null)
+                        {
+                            recordId = jsonObj[column.ColumnName].ToString();
+                            if (recordId.Length > 0 && recordId != "0")
+                            {
+                                wherePrimaryKey += " " + column.ColumnName + " = '" + recordId + "' AND ";
+                            }
+                        }
+
+                        if (column.DataType == "uniqueidentifier")
+                        {
+                            sbInsert.Append(column.ColumnName + ",");
+                            sbValue.Append("'" + newGuid + "',");
+                            newGuid_ = newGuid.ToString();
+
+                            newPrimaryKeys = ", '" + column.ColumnName + "' : '" + newGuid_ + "'";
+                        } else if (column.IsIdentity)
+                        {
+                            newPrimaryKeys += ", '" + column.ColumnName + "' : '[IDENTITY]'";
+                        }
+                    }
+
+
+                    newPrimaryKeys += " }";
+
+                    string jsonData = "";
+                    var actionExecuted = "update";
                     if (wherePrimaryKey.Length > 0)  // update
                     {
                         var sql = sbUpdate.ToString().Substring(0, sbUpdate.ToString().Length - 1) + " WHERE " + wherePrimaryKey.Substring(0, wherePrimaryKey.Length - 4);
@@ -383,7 +522,10 @@ namespace DodoBird.Services
                     {
                         SqlParameter[] sqlParameters = insertParams.ToArray();
 
-                        var sql = sbInsert.ToString().Substring(0, sbInsert.ToString().Length - 1) + ") " + sbValue.ToString().Substring(0, sbValue.ToString().Length - 1) + "); SELECT CAST(@@IDENTITY AS varchar(250));";
+                        var sql = sbInsert.ToString().Substring(0, sbInsert.ToString().Length - 1) + ") " + sbValue.ToString().Substring(0, sbValue.ToString().Length - 1) + ");";
+
+
+
                         if (newGuid_.Length > 0) // is guid
                         {
                             sql = sbInsert.ToString().Substring(0, sbInsert.ToString().Length - 1) + ") " + sbValue.ToString().Substring(0, sbValue.ToString().Length - 1) + ");";
@@ -392,19 +534,24 @@ namespace DodoBird.Services
                         }
                         else
                         {
+                            sql += "SELECT CAST(@@IDENTITY AS varchar(250));";
                             recordId = Db.Database.SqlQuery<string>(sql, sqlParameters).FirstOrDefault();
+                            newPrimaryKeys = newPrimaryKeys.Replace("[IDENTITY]", recordId);
+                            var jsonData_ = GetFormData(newPrimaryKeys);
+                            json
                         }
                         Db.SaveChanges();
 
+                        actionExecuted = "insert";
 
                     }
 
-                    return recordId.ToString();
+                    return new ClientResponse { Successful = true, Id = recordId.ToString(), ActionExecuted = actionExecuted, ErrorMessage = "", JsonData = jsonData };
                 }
             }
             catch (Exception ex)
             {
-                return "Unable to process record - " + ex.Message;
+                return new ClientResponse { Successful = false, Id = "", ActionExecuted = "SaveFormData", ErrorMessage = ex.Message };
             }
         }
 
@@ -421,6 +568,17 @@ namespace DodoBird.Services
 }
 
 /*
- 
+             try
+            {
+                using (DodoBirdEntities Db = new DodoBirdEntities())
+                {
+                    Db.Database.ExecuteSqlCommand("dbo.SortFormSection @formId, @formSectionId, @newOrder", new[] { new SqlParameter("@formId", formId), new SqlParameter("@formSectionId", formSectionId), new SqlParameter("@newOrder", newOrder) });
+                    return JsonConvert.SerializeObject(new ClientResponse { Successful = true, Id = formSectionId.ToString(), ActionExecuted = "SortFormSection", ErrorMessage = "" });
+                }
+            }
+            catch (System.Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ClientResponse { Successful = false, Id = formSectionId.ToString(), ActionExecuted = "SortFormSection", ErrorMessage = ex.Message });
+            }
 
  */

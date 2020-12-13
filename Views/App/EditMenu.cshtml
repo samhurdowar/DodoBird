@@ -74,8 +74,7 @@
                 </div>
 
                 <form id="EditMenu" action="/" method="post">
-                    FormId: <input type="text" id="FormId" value="1" /><br />
-                    MenuId: <input type="text" id="MenuId" /><br />
+                    PrimaryKeys: <input type="text" id="PrimaryKeys"  style="width:300px;" /><br />
                     ParentId: <input type="text" id="ParentId" /><br />
                     TargetId: <input type="text" id="TargetId" /><br />
                     <br /><br />
@@ -185,26 +184,32 @@
 
         setTimeout(function () { 
             $.ajax({
-                url: "./Data/SaveFormData",
+                url: "./Form/SaveFormData",
                 type: "POST",
                 data: { json: json },
-                dataType: "text",
-                success: function (menuId) {
-                    if ($("#EditMenu #MenuId").val() == "0") {
-                        $("#EditMenu #MenuId").val(menuId);
-                        SortMenu(menuId, 10000);
+                dataType: "json",
+                success: function (clientResponse) {
+
+                    if (clientResponse.Successful) {
+                        if (clientResponse.ActionExecuted == "insert") {
+                            console.log(clientResponse.JsonData);
+
+                            var data_ = JSON.parse(clientResponse.JsonData);
+                            var data = data_[0];
+
+                            BindForm("EditMenu", data);
+
+                            //SortMenu(menuId, 10000);
+                        }
+
+                        //GetAdminMenuList(menuId);
+
+                        // update menu 
+                        GetMenuList();
+
+                    } else {
+                        MessageBox("Error", clientResponse.ErrorMessage, false);
                     }
-                    
-                    GetAdminMenuList(menuId);
-
-                    // update menu 
-                    GetMenuList();
-
-                    // update Menus array
-                    //UpdateArray("Menus", "MenuId", menuId, "MenuTitle", $("#EditMenu #MenuTitle").val());
-
-
-                    //MessageBox("Information", response, false);
                 },
                 complete: function () {
                     AppSpinner(false);

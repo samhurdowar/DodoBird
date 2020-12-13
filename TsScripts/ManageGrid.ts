@@ -64,7 +64,7 @@ function SelectGrid(gridId) {
             }
         });
 
-    }, 500);
+    }, 300);
 }
 
 function GetGridSchema(gridId) {

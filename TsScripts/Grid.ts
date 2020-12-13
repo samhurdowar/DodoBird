@@ -1,4 +1,4 @@
-﻿let PageNavigations: { MenuId: number, MenuTitle: string, GridId: number, CurrentPage: number, NumOfPages: number, RecordCount: number, PrimaryKey: string, OrderByColumn: string, SortDirection: string }[] = [];
+﻿let PageNavigations: { MenuId: number, MenuTitle: string, GridId: number, CurrentPage: number, NumOfPages: number, RecordCount: number, OrderByColumn: string, SortDirection: string }[] = [];
 
 
 //return "{ \"PrimaryKey\" : \"" + primaryKey + "\", \"RecordCount\" : " + recordCount + ", \"NumOfPages\" : " + numOfPages + ", \"OrderByColumn\" : \"" + pageNavigation.OrderByColumn + "\", \"SortDirection\" : \"" + pageNavigation.SortDirection + "\", \"Records\" : " + sb.ToString() + " }";
@@ -7,7 +7,7 @@
 function SetPageNavigation(menuId: number, menuTitle: string, gridId: number) {
     var objIndex = PageNavigations.findIndex(obj => obj.MenuId == menuId);
     if (objIndex == -1) {
-        PageNavigations.push({ MenuId: menuId, MenuTitle: menuTitle, GridId: gridId, CurrentPage: 1, NumOfPages: 0, RecordCount: 0, PrimaryKey: "", OrderByColumn: "", SortDirection: "ASC" });
+        PageNavigations.push({ MenuId: menuId, MenuTitle: menuTitle, GridId: gridId, CurrentPage: 1, NumOfPages: 0, RecordCount: 0, OrderByColumn: "", SortDirection: "ASC" });
     }
 }
 
@@ -24,7 +24,6 @@ function GetGrid(menuId: number, newTab: boolean) {
             // update pageNavigation
             var i = PageNavigations.findIndex(obj => obj.MenuId == menuId);
             if (i > -1) {
-                //xxxPageNavigations[i].PrimaryKey = data.PrimaryKey;
                 PageNavigations[i].RecordCount = data.RecordCount;
                 PageNavigations[i].NumOfPages = data.NumOfPages;
                 PageNavigations[i].OrderByColumn = data.OrderByColumn;
@@ -32,7 +31,7 @@ function GetGrid(menuId: number, newTab: boolean) {
             }
 
 
-            GenerateGridTable(menuId, newTab, data.Records);
+            GenerateGridTable(menuId, newTab, data.ToFormId, data.Records);
 
             //if (1==1) {
             //    GenerateCustomGrid(menuId, newTab, data.Records);
@@ -49,7 +48,7 @@ function GetGrid(menuId: number, newTab: boolean) {
 
 
 
-function GenerateCustomGrid(menuId: number, newTab: boolean, records) {
+function GenerateCustomGrid(menuId: number, newTab: boolean, toFormId, records) {
 
     var pageIndex = PageNavigations.findIndex(w => w.MenuId == menuId);
     var gridId = PageNavigations[pageIndex].GridId;
@@ -148,11 +147,10 @@ function GenerateCustomGrid(menuId: number, newTab: boolean, records) {
 
 }
 
-function GenerateGridTable(menuId: number, newTab: boolean, records) {
+function GenerateGridTable(menuId: number, newTab: boolean, toFormId, records) {
     
     var pageIndex = PageNavigations.findIndex(w => w.MenuId == menuId);
     var gridId = PageNavigations[pageIndex].GridId;
-    var primaryKey = PageNavigations[pageIndex].PrimaryKey;
     var menuTitle = PageNavigations[pageIndex].MenuTitle;
     var orderByColumn = PageNavigations[pageIndex].OrderByColumn;
     var sortDirection = PageNavigations[pageIndex].SortDirection;
@@ -163,9 +161,9 @@ function GenerateGridTable(menuId: number, newTab: boolean, records) {
     obj.push("<table style='width:100%;'>");
 
     // header row
-    obj.push("<tr id='headerRow'>");
-    var rowHeader = records[0];
-    for (var column in rowHeader) {
+    obj.push("<tr class='headerColumn" + menuId + "'>");
+    var headerColumns = records[0];
+    for (var column in headerColumns) {
 
         if (orderByColumn == column) {
             if (sortDirection == "ASC") {
@@ -183,7 +181,8 @@ function GenerateGridTable(menuId: number, newTab: boolean, records) {
     // record rows
     for (var i = 0; i < records.length; i++) {
         var row = records[i];
-        obj.push("<tr class='tr-all tr-row-pointer'>");  
+
+        obj.push("<tr key='" + row["PrimaryKeys"] + "' class='edit-row-" + menuId + " tr-all tr-row-pointer'>");  
         for (var column in row) {
             obj.push("<td>" + row[column] + "</td>");
         }
@@ -233,7 +232,7 @@ function GenerateGridTable(menuId: number, newTab: boolean, records) {
     var content = obj.join("");
 
     if (newTab) {  // first time. open new tab
-        var content_ = "<div id='grid" + menuId + "_" + gridId + "' style='margin-bottom:20px;'> " + content + "</div>";
+        var content_ = "<div id='grid" + menuId + "_" + gridId + "' style='margin-bottom:20px;'> " + content + "</div><div id='form" + menuId + "_" + gridId + "' style='display:none;margin-bottom:20px;'></div>";
         AddTab(menuId, menuTitle, false, content_);
     } else {
         $("#grid" + menuId + "_" + gridId).html(content);
@@ -242,7 +241,108 @@ function GenerateGridTable(menuId: number, newTab: boolean, records) {
     // set pageDropdown
     $("#pageDropdown" + menuId).val(PageNavigations[pageIndex].CurrentPage);
 
+
+    // hide primaryKeys column 
+    $(".headerColumn" + menuId + " td:first").hide();
+    $(".edit-row-" + menuId + " td:first").hide();
+
+    $(".edit-row-" + menuId + " td").click(function () {
+
+        AppSpinner(true);
+
+        var key = $(this).parent().attr("key");
+
+        GetFormLayout(toFormId, "form" + menuId + "_" + gridId);
+
+
+        // wait for form to post to html
+        var myVar = setInterval(function () {
+            if ($("#" + RandomRefreshObject).length) {
+                clearInterval(myVar);
+                console.log("GetForm() stopped");
+
+                
+                setTimeout(function () {
+                    $.ajax({
+                        url: "./Form/GetFormData",
+                        type: "POST",
+                        data: { json: key },
+                        dataType: "json",
+                        success: function (clientResponse) {
+
+                            if (clientResponse.Successful) {
+                                var data_ = JSON.parse(clientResponse.JsonData);
+                                var data = data_[0];
+
+                                BindForm("FormId" + toFormId, data);
+
+                                // show form
+                                $("#grid" + menuId + "_" + gridId).hide();
+                                $("#form" + menuId + "_" + gridId).show();
+
+
+                                // set go back button
+
+                                $("#cmd_GoBack_FormId" + toFormId).click(function () {
+
+                                    // show grid
+                                    $("#form" + menuId + "_" + gridId).hide();
+                                    $("#grid" + menuId + "_" + gridId).show();
+                                    
+                                });
+
+
+
+                            } else {
+                                MessageBox("Error", clientResponse.ErrorMessage, false);
+                            }
+                        },
+                        complete: function () {
+                            AppSpinner(false);
+                        }
+                    });
+                }, 300);
+
+            }
+            console.log("GetForm()");
+        }, 300);
+
+
+
+    });
+
+
 }
+
+
+
+
+function GetFormLayout(formId, boxName) {
+    AppSpinner(true);
+    setTimeout(function () {
+        $.ajax({
+            url: "./Form/GetFormLayout",
+            type: "POST",
+            data: { formId: formId },
+            dataType: "json",
+            success: function (clientResponse) {
+                if (clientResponse.Successful) {
+                    var formLayout = clientResponse.JsonData + AddAlive();
+                    $("#" + boxName).html(formLayout);
+                } else {
+                    MessageBox("Error", clientResponse.ErrorMessage, false);
+                }
+            },
+            complete: function () {
+                AppSpinner(false);
+            }
+        });
+
+    }, 300);
+}
+
+
+
 
 function NavigatePage(menuId: number, pageIndex: number) {
 

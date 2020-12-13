@@ -85,11 +85,9 @@
 
         var json = ToJsonString("EditGrid");
 
-        console.log("EditGrid json=" + json);
-
         setTimeout(function () {
             $.ajax({
-                url: "./Data/SaveFormData",
+                url: "./Form/SaveFormData",
                 type: "POST",
                 data: { json: json },
                 dataType: "text",
@@ -101,7 +99,7 @@
                     AppSpinner(false);
                 }
             });
-        }, 500);
+        }, 300);
 
     }
 </script>
