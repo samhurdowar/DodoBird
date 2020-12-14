@@ -58,10 +58,14 @@ function GetAdminMenuList(highlightId) {
                     }
                 }
 
+                RandomRefreshObject = "";
+                RefreshDOM("RefreshMenuDOM(" + highlightId + ")");
+
+
                 var str = ObjMenu.join("") + AddAlive();
                 $("#" + RefreshItem).html(str);
 
-                RefreshDOM("RefreshMenuDOM(" + highlightId + ")");
+                
             } else {
                 MessageBox("Error", clientResponse.ErrorMessage, false);
             }
@@ -258,6 +262,7 @@ function SelectMenu(menuId) {
             success: function (clientResponse) {
 
                 if (clientResponse.Successful) {
+                    console.log("clientResponse.JsonData=" + clientResponse.JsonData);
 
                     var data_ = JSON.parse(clientResponse.JsonData);
                     var data = data_[0];
@@ -280,7 +285,6 @@ function SelectMenu(menuId) {
                     // set ParentId if new
                     if (data.IsNewRecord == "True") {
                         $("#EditMenu #ParentId").val(ParentId);
-                        $("#EditMenu #MenuId").val(menuId);
                     }
 
                     if (menuId == 0) {

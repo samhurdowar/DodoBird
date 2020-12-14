@@ -1917,7 +1917,7 @@
     <Content Include="Scripts\jquery-3.5.1.slim.js" />
     <Content Include="Scripts\jquery-3.5.1.slim.min.js" />
     <Content Include="Scripts\Workboard.sql" />
-    <Content Include="Views\App\ManageDatabase.cshtml" />
+    <Content Include="Views\App\ObjectExplorer.cshtml" />
     <Content Include="Scripts\jquery-3.5.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.5.1.min.map" />
     <Content Include="Scripts\moment.min.js.map" />

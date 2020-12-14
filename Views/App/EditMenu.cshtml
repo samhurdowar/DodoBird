@@ -175,7 +175,7 @@
 
         var json = ToJsonString("EditMenu");
 
-        Save_EditMenu_(json);
+        //Save_EditMenu_(json);
     }
 
     function Save_EditMenu_(json) {
@@ -191,18 +191,18 @@
                 success: function (clientResponse) {
 
                     if (clientResponse.Successful) {
+
+                        console.log("PrimaryKeys=" + clientResponse.PrimaryKeys);
+
+                        var data = JSON.parse(clientResponse.PrimaryKeys);
+                        var menuId = data.MenuId;
+
                         if (clientResponse.ActionExecuted == "insert") {
-                            console.log(clientResponse.JsonData);
-
-                            var data_ = JSON.parse(clientResponse.JsonData);
-                            var data = data_[0];
-
-                            BindForm("EditMenu", data);
-
-                            //SortMenu(menuId, 10000);
+                            SortMenu(menuId, 10000);
+                            SelectMenu(menuId);
                         }
 
-                        //GetAdminMenuList(menuId);
+                        GetAdminMenuList(menuId);
 
                         // update menu 
                         GetMenuList();
@@ -219,7 +219,10 @@
     }
 
     function Delete_EditMenu() {
-        var menu = Menus.find(w => w.MenuId == $("#EditMenu #MenuId").val());
+        var primaryKeys = JSON.parse($("#PrimaryKeys").val());
+        var menuId = primaryKeys.MenuId;
+
+        var menu = Menus.find(w => w.MenuId == menuId);
         ConfirmBox("Warning", "Delete " + menu.MenuTitle + "?", "DeleteMenu_(" + menu.MenuId + ");")
     }
 
@@ -229,36 +232,78 @@
 
         AppSpinner(true);
         $.ajax({
-            url: "./Data/DeleteData",
+            url: "./Form/DeleteFormData",
             type: "POST",
             data: { json: json },
-            dataType: "text",
-            success: function (response) {
-                if (response == "SUCCESS") {
+            dataType: "json",
+            success: function (clientResponse) {
+                if (clientResponse.Successful) {
+
+
+                    // update menus
+                    GetMenuList();
+
+
+
+                    // hide edit menu box if current menuid deleted.  Set before object is created 
+                    RandomRefreshObject = "";
+                    var interval1 = setInterval(function () {
+                        console.log("Looking for RandomRefreshObject=" + RandomRefreshObject);
+
+
+                        if (RandomRefreshObject.length > 0) {
+                            if ($("#" + RandomRefreshObject).length) {
+                                console.log("Found RandomRefreshObject=" + RandomRefreshObject);
+
+
+                                if ($("#EditMenu #PrimaryKeys").val().length > 2) {
+                                    var primaryKeys = JSON.parse($("#EditMenu #PrimaryKeys").val());
+                                    var menuId = primaryKeys.MenuId;
+                                    var menu = Menus.filter(w => w.MenuId == menuId);
+
+
+                                    console.log("current menuId=" + menuId + "  menu.length=" + menu.length);
+                                    if (menu.length == 0) {
+                                        $("#editMenuBox").hide();
+                                    } else {
+                                        // highlight current item 
+                                        $(".highlight").removeClass("menu-item-active");
+
+                                        var highlightId = menuId;
+                                        if ($("#MenuId" + highlightId).hasClass("highlight")) {
+                                            $("#MenuId" + highlightId).addClass("menu-item-active");
+                                        } else {
+                                            $("#MenuId" + highlightId + " div").addClass("menu-item-active");
+                                        }
+                                    }
+                                } else {
+                                    $("#editMenuBox").hide();
+                                }
+
+
+                                clearInterval(interval1);
+                            }
+                        }
+
+                    }, 300);
+
+
+
                     GetAdminMenuList(0);
 
-                    // update menu 
-                    GetMenuList();
+
+
+
+
+
                 } else {
                     MessageBox("Error", response, false);
                 }
 
 
-                if (menuId == $("#EditMenu #MenuId").val()) {
-                    $("#editMenuBox").hide();
-                } else {
-                    // highlight current item 
-                    setTimeout(function () {
-                        $(".highlight").removeClass("menu-item-active");
 
-                        var highlightId = $("#EditMenu #MenuId").val();
-                        if ($("#MenuId" + highlightId).hasClass("highlight")) {
-                            $("#MenuId" + highlightId).addClass("menu-item-active");
-                        } else {
-                            $("#MenuId" + highlightId + " div").addClass("menu-item-active");
-                        }
-                    }, 1000);
-                }
+
+
             },
             complete: function () {
                 AppSpinner(false);

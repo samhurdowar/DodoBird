@@ -60,16 +60,7 @@ namespace DodoBird.Services
         }
 
 
-        //public class ClientResponse
-        //{
-        //    public string Id { get; set; }
-        //    public string ActionExecuted { get; set; }
-        //    public bool Successful { get; set; }
-        //    public string ErrorMessage { get; set; }
-        //    public string JsonData { get; set; }
-        //}
-
-        public static string ExecuteSql(int appDatabaseId, string sql, SqlParameter[] sqlParameters = null)
+        public static ClientResponse ExecuteSql(int appDatabaseId, string sql, SqlParameter[] sqlParameters = null)
         {
             try
             {
@@ -96,13 +87,12 @@ namespace DodoBird.Services
                         Db.Database.ExecuteSqlCommand(sql);
                     }
 
-                    return "SUCCESS";
+                    return new ClientResponse { Successful = true, ActionExecuted = "ExecuteSql", JsonData = "", ErrorMessage = "" };
                 }
             }
             catch (Exception ex)
             {
-
-                return ex.Message;
+                return new ClientResponse { Successful = false, ActionExecuted = "GetJsonData", JsonData = "", ErrorMessage = ex.Message };
             }
 
 

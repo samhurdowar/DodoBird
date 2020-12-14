@@ -46,7 +46,7 @@ function ValidateForm(formName) {
             }
             if (!o[id]) {
                 o[id] = elementValue;
-                console.log(id + "=" + elementType + "=" + elementValue);
+                //console.log(id + "=" + elementType + "=" + elementValue);
                 if (elementValue.length == 0 && $(this).hasClass("input-required")) {
                     $(this).closest('td').addClass("input-required-highlight");
                     if (!returnStatus) {
@@ -70,18 +70,11 @@ function ToJsonString(formName) {
     var elementValue = "";
     var o = {};
     $("#" + formName + " :input").each(function () {
-        var id = $(this).attr("name");
-        if (!id) {
-            id = $(this).attr("id");
-            elementType = document.getElementById(id).type;
-            elementValue = document.getElementById(id).value;
-        }
-        else {
-            var x = document.getElementsByName(id);
-            var y = x[0];
-            elementType = y.type;
-            elementValue = y.value;
-        }
+        var id = $(this).attr("id");
+        var inputObject = $("#" + formName + " #" + id);
+        elementType = this.type;
+        elementValue = this.value;
+        //console.log("id=" + id + "    elementType=" + elementType + "    elementValue=" + elementValue);
         try {
             if (elementType == "checkbox" && !o[id]) {
                 var checkedValues = "";
@@ -118,6 +111,7 @@ function ToJsonString(formName) {
         catch (e) { }
     });
     var json = JSON.stringify(o);
+    console.log("json=" + json);
     return json;
 }
 function BindForm(formName, data) {

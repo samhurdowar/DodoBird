@@ -51,7 +51,7 @@ function ValidateForm(formName) {
             if (!o[id]) {
                 
                 o[id] = elementValue;
-                console.log(id + "=" + elementType + "=" + elementValue);
+                //console.log(id + "=" + elementType + "=" + elementValue);
                 if (elementValue.length == 0 && $(this).hasClass("input-required")) {
                     $(this).closest('td').addClass("input-required-highlight");
                     if (!returnStatus) {
@@ -80,17 +80,14 @@ function ToJsonString(formName) {
 
     $("#" + formName + " :input").each(function () {
 
-        var id = $(this).attr("name");
-        if (!id) {
-            id = $(this).attr("id");
-            elementType = (<HTMLInputElement>document.getElementById(id)).type;
-            elementValue = (<HTMLInputElement>document.getElementById(id)).value;
-        } else {
-            var x = document.getElementsByName(id);
-            var y = <HTMLInputElement>x[0];
-            elementType = y.type;
-            elementValue = y.value;
-        }
+        var id = $(this).attr("id");
+
+        var inputObject = $("#" + formName + " #" + id);
+
+        elementType = (<HTMLInputElement>this).type;
+        elementValue = (<HTMLInputElement>this).value;
+
+        //console.log("id=" + id + "    elementType=" + elementType + "    elementValue=" + elementValue);
 
         try {
 
@@ -131,6 +128,8 @@ function ToJsonString(formName) {
     });
 
     var json = JSON.stringify(o);
+
+    console.log("json=" + json);
     return json;
 }
 

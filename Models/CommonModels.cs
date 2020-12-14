@@ -29,6 +29,7 @@ namespace DodoBird.Models.App
         public bool Successful { get; set; }
         public string ErrorMessage { get; set; }
         public string JsonData { get; set; }
+        public string PrimaryKeys { get; set; }
     }
 
 }

@@ -21,7 +21,7 @@ function GetGridList(appDatabaseId, tableName) {
                 for (var i = 0; i < grids.length; i++) {
                     var row = grids[i];
                     obj.push("<li>");
-                    obj.push("<span id='GridId" + row.GridId + "' onclick='SelectGrid(" + row.GridId + ")' class='highlight-item'>" + row.GridName + "</span>");
+                    obj.push("<span id='GridId" + row.GridId + "' gridId='" + row.GridId + "' appDatabaseId='" + appDatabaseId + "' tableName='" + tableName + "' onclick='SelectGrid(this)' class='highlight-item'>" + row.GridName + "</span>");
                     obj.push("</li>");
                 }
                 $("#expand_Grids" + appDatabaseId + tableName + "_ul").html(obj.join(""));
@@ -32,7 +32,21 @@ function GetGridList(appDatabaseId, tableName) {
         });
     }, 300);
 }
-function SelectGrid(gridId) {
+function GetToFormOptions(appDatabaseId, tableName) {
+    var data = Lookups["Forms"].filter(function (w) { return w.TableName == tableName && w.AppDatabaseId == appDatabaseId; });
+    var obj = [];
+    obj.push("<option value=\"0\">None</option>");
+    for (var i in data) {
+        var row = data[i];
+        obj.push("<option value=\"" + row.FormId + "\">" + row.FormName + "</option>");
+    }
+    var str = obj.join("");
+    $("#EditGrid #ToFormId").html(str);
+}
+function SelectGrid(t) {
+    var gridId = $(t).attr("gridId");
+    var appDatabaseId = $(t).attr("appDatabaseId");
+    var tableName = $(t).attr("tableName");
     AppSpinner(true);
     setTimeout(function () {
         $.ajax({
@@ -41,9 +55,21 @@ function SelectGrid(gridId) {
             data: { id: 0, targetType: "", pageFile: "~/Views/App/EditGrid.cshtml" },
             dataType: "text",
             success: function (response) {
-                $("#divProperties").html(response);
-                GetGridSchema(gridId);
-                HighlightItem("GridId" + gridId);
+                // Set before object is created 
+                RandomRefreshObject = "";
+                var interval1 = setInterval(function () {
+                    console.log("SelectGrid - Looking for RandomRefreshObject=" + RandomRefreshObject);
+                    if (RandomRefreshObject.length > 0) {
+                        if ($("#" + RandomRefreshObject).length) {
+                            console.log("SelectGrid - Found RandomRefreshObject=" + RandomRefreshObject);
+                            GetGridSchema(gridId);
+                            HighlightItem("GridId" + gridId);
+                            GetToFormOptions(appDatabaseId, tableName);
+                            clearInterval(interval1);
+                        }
+                    }
+                }, 300);
+                $("#divProperties").html(response + AddAlive());
             },
             complete: function () {
                 AppSpinner(false);

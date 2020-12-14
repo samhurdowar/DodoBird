@@ -1,7 +1,11 @@
 ﻿
 /*  table  */
-
-
+.tr-row-pointer {
+    cursor: pointer;
+}
+.tr-row-pointer:hover {
+    background-color: #11b9fc;
+}
 table {
     border-collapse: unset;
 }

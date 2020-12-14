@@ -18,70 +18,15 @@ namespace DodoBird.Controllers
 	{
 
         [HttpPost]
-        public string DeleteData(string json)
+        public string GetLookups()
         {
+            //
 
-            try
-            {
-                dynamic jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject(json);
+            var forms = HelperService.GetJsonData(1, "SELECT * FROM Form");
+            var dataTypes = HelperService.GetJsonData(1, "SELECT name AS DataType FROM sys.Types WHERE system_type_id = user_type_id ORDER BY name");
 
-                var formId = Convert.ToInt32(jsonObj["FormId"]);
-                var response = "";
-                FormSchema formSchema = DataService.GetFormSchema(formId);
-                TableSchema tableSchema = DataService.GetTableSchema(formSchema.AppDatabaseId, formSchema.TableName);
-
-                // generate sql statement
-                List<SqlParameter> sqlParameters = new List<SqlParameter>();
-
-                StringBuilder sb = new StringBuilder();
-                sb.Append("DELETE FROM " + formSchema.TableName + " WHERE ");
-
-                // primary keys
-                var completeKeys = true;
-                foreach (var key in tableSchema.PrimaryKeys)
-                {
-                    if (jsonObj[key.ColumnName] != null)
-                    {
-                        var keyValue = jsonObj[key.ColumnName].ToString();
-                        if (keyValue == "" || keyValue == "0")
-                        {
-                            completeKeys = false;
-                            break;
-                        }
-
-                        sb.Append(key.ColumnName + "= @" + key.ColumnName + " AND ");
-
-                        sqlParameters.Add(new SqlParameter("@" + key.ColumnName, keyValue));
-                    }
-                    else
-                    {
-                        completeKeys = false;
-                    }
-                }
-
-                if (completeKeys)  // get empty template with defaults
-                {
-                    var sql = sb.ToString();
-                    sql = sql.Substring(0, sql.Length - 4);
-
-                    response = HelperService.ExecuteSql(formSchema.AppDatabaseId, sql, sqlParameters.ToArray());
-
-                }
-                else
-                {
-                    return "Keys received were incomplete.";
-                }
-
-                return response;
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
-
+            return "{ \"Forms\" : " + forms.JsonData + ", \"DataTypes\" : " + dataTypes.JsonData + " } ";
         }
-
-
 
     }
 }

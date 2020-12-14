@@ -40,7 +40,7 @@ namespace DodoBird.Models
         public string ColumnName { get; set; }
         public string DataType { get; set; }
         public int DataLength { get; set; }
-        public bool IsPrimaryKey = false;
+        public bool IsPrimaryKey { get; set; }
         public bool IsIdentity { get; set; }
         public bool IsRequired { get; set; }
         public bool IsComputed { get; set; }

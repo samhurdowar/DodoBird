@@ -1,4 +1,5 @@
 /// <reference path="../Scripts/typings/jquery/jquery.d.ts" />
+var Lookups;
 var Menus;
 var CloseTabFirst = false;
 var DisableFocus = false;
@@ -7,7 +8,18 @@ var TargetId = "";
 var RandomRefreshObject = "";
 $(document).ready(function () {
     GetMenuList();
+    GetLookups();
 });
+function GetLookups() {
+    $.ajax({
+        url: "./Data/GetLookups",
+        type: "POST",
+        dataType: "json",
+        success: function (data) {
+            Lookups = data;
+        }
+    });
+}
 function MenuClick(menuId) {
     AppSpinner(true);
     setTimeout(function () {
@@ -22,7 +34,7 @@ function MenuClick(menuId) {
         });
         // get menu object
         var menu = Menus.find(function (w) { return w.MenuId == menuId; });
-        // route menu =>  AddTab(level_MenuId: string, menuTitle: string, content: string) 
+        // route menu 
         if (menu.TargetId > 0 && menu.TargetType == "grid") {
             var gridId = menu.TargetId;
             SetPageNavigation(menu.MenuId, menu.MenuTitle, gridId);
@@ -35,7 +47,7 @@ function MenuClick(menuId) {
                 type: "POST",
                 dataType: "text",
                 success: function (response) {
-                    AddTab(menu.MenuId, menu.MenuTitle, isRefresh, response);
+                    AddTab(menu.MenuId, menu.MenuTitle, response);
                 }
             });
         }
@@ -46,15 +58,22 @@ function MenuClick(menuId) {
                 type: "POST",
                 dataType: "text",
                 success: function (response) {
-                    AddTab(menu.MenuId, menu.MenuTitle, isRefresh, response);
+                    AddTab(menu.MenuId, menu.MenuTitle, response);
                 },
                 complete: function () {
                 }
             });
         }
-    }, 500);
+    }, 300);
 }
-function AddTab(menuId, menuTitle, isRefresh, content) {
+function AddTab(menuId, menuTitle, content) {
+    var isRefresh = false;
+    $(".tab-item").each(function () {
+        var id = $(this).attr("id").replace("tab", "");
+        if (id == menuId) {
+            isRefresh = true;
+        }
+    });
     if (!isRefresh) {
         $("#MainTab").append("<li id='tab" + menuId + "' class='tab-item' onclick=\"PageFocus('" + menuId + "')\">" + menuTitle + "<span class='main-tab-close fa fa-times' onclick=\"CloseTab('" + menuId + "')\"> </span> </li>");
         $("#MainPageContent").append("<li id='page" + menuId + "' class='page-content'>" + content + "</li>");
@@ -213,16 +232,23 @@ function TabIt(id, initIndex) {
 function AddAlive() {
     var r = Math.floor(Math.random() * 1001);
     RandomRefreshObject = "AmAlive" + r;
+    console.log("Setting RandomRefreshObject=" + RandomRefreshObject);
     return "<span id='" + RandomRefreshObject + "'></span>";
 }
 function RefreshDOM(functionToFire) {
     var myVar = setInterval(function () {
-        if ($("#" + RandomRefreshObject).length) {
-            eval(functionToFire);
-            clearInterval(myVar);
-            console.log("RefreshDOM() stopped");
+        console.log("RefreshDOM() - Looking for RandomRefreshObject=" + RandomRefreshObject);
+        if (RandomRefreshObject.length > 0) {
+            if ($("#" + RandomRefreshObject).length) {
+                console.log("RefreshDOM() - Found RandomRefreshObject=" + RandomRefreshObject);
+                try {
+                    eval(functionToFire);
+                }
+                catch (e) {
+                }
+                clearInterval(myVar);
+            }
         }
-        console.log("RefreshDOM()");
-    }, 500);
+    }, 400);
 }
 //# sourceMappingURL=Index.js.map

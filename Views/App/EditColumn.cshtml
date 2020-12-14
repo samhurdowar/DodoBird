@@ -28,32 +28,6 @@
             <td>Data Type</td>
             <td>
                 <select name="DataType" id="DataType">
-
-                    <option value="">Not supported</option>
-                    <option value="text">text</option>
-                    <option value="varchar">varchar</option>
-                    <option value="char">char</option>
-                    <option value="nvarchar">nvarchar</option>
-                    <option value="nchar">nchar</option>
-                    <option value="ntext">ntext</option>
-                    <option value="uniqueidentifier">uniqueidentifier</option>
-                    <option value="datetime">datetime</option>
-                    <option value="date">date</option>
-                    <option value="time">time</option>
-                    <option value="datetime2">datetime2</option>
-                    <option value="smalldatetime">smalldatetime</option>
-                    <option value="timestamp">timestamp</option>
-                    <option value="bit">bit</option>
-                    <option value="tinyint">tinyint</option>
-                    <option value="smallint">smallint</option>
-                    <option value="int">int</option>
-                    <option value="real">real</option>
-                    <option value="money">money</option>
-                    <option value="float">float</option>
-                    <option value="decimal">decimal</option>
-                    <option value="numeric">numeric</option>
-                    <option value="smallmoney">smallmoney</option>
-                    <option value="bigint">bigint</option>
                 </select>
             </td>
         </tr>
@@ -67,3 +41,23 @@
 </form>
 
 
+<script>
+
+    $(document).ready(function () {
+        GetDataTypeOptions();
+    });
+
+
+    function GetDataTypeOptions() {
+        var data = Lookups["DataTypes"];
+        var obj = [];
+        obj.push("<option value=\"\">Unknown</option>");
+        for (var i in data) {
+            var row = data[i];
+            obj.push("<option value=\"" + row.DataType + "\">" + row.DataType + "</option>");
+        }
+        var str = obj.join("");
+        $("#EditColumn #DataType").html(str);
+    }
+
+</script>

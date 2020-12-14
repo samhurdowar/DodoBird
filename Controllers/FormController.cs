@@ -27,10 +27,10 @@ namespace DodoBird.Controllers
         [HttpPost]
         public string GetFormData(string json)
         {
-            var response = DataService.GetFormData(json);
-            return response;
+            ClientResponse clientResponse = DataService.GetFormData(json);
+            var jsonClientResponse = JsonConvert.SerializeObject(clientResponse);
+            return jsonClientResponse;
         }
-
 
         [HttpPost]
         [ValidateInput(false)]
@@ -56,30 +56,16 @@ namespace DodoBird.Controllers
                 return JsonConvert.SerializeObject(new ClientResponse { Successful = false, Id = "", ActionExecuted = "ERROR-SaveFormData", ErrorMessage = ex.Message });
             }
 
-
-
         }
-
-        /*
-         
-sb.AppendLine("<div class='command-bar-container'>");
-
-
-        
-
-         
-         */
 
         [HttpPost]
         public string GetFormLayout(int formId)
         {
             try
             {
-
                 FormSchema formSchema = DataService.GetFormSchema(formId);
 
                 StringBuilder sb = new StringBuilder();
-
 
                 sb.AppendLine("<div class='command-bar-container'>");
                 sb.AppendLine("    <span id='cmd_GoBack_FormId" + formId + "' class='command-active-span'><span class='command-icon fas fa-arrow-left'>&nbsp;</span> Go Back</span>");
@@ -89,6 +75,7 @@ sb.AppendLine("<div class='command-bar-container'>");
 
                 sb.AppendLine("<form id='FormId" + formId + "'>");
                 sb.AppendLine("PrimaryKeys: <input type='text' id='PrimaryKeys' style='width:400px;' />");
+                sb.AppendLine("<br>FormSaved: <input type='text' id='FormSaved'  />");
 
                 // loop sections 
                 foreach (var formSection in formSchema.FormSections)
@@ -147,9 +134,11 @@ sb.AppendLine("<div class='command-bar-container'>");
                 sb.AppendLine("                url: './Form/SaveFormData',");
                 sb.AppendLine("                type: 'POST',");
                 sb.AppendLine("                data: { json: json },");
-                sb.AppendLine("                dataType: 'text',");
+                sb.AppendLine("                dataType: 'json',");
                 sb.AppendLine("                success: function (clientResponse) {");
                 sb.AppendLine("                    if (clientResponse.Successful) {");
+
+                sb.AppendLine("                        $('#FormId" + formId + " #FormSaved').val('T');");
                 sb.AppendLine("                        DisableButton('cmd_Save_FormId" + formId + "');");
                 sb.AppendLine("                    } else {");
                 sb.AppendLine("                        MessageBox(\"Error\", clientResponse.ErrorMessage, false);");
@@ -171,8 +160,17 @@ sb.AppendLine("<div class='command-bar-container'>");
                 return JsonConvert.SerializeObject(new ClientResponse { Successful = false, Id = formId.ToString(), ActionExecuted = "GetFormLayout", ErrorMessage = ex.Message });
             }
 
-
-
         }
+
+
+        [HttpPost]
+        public string DeleteFormData(string json)
+        {
+            ClientResponse clientResponse = DataService.DeleteFormData(json);
+            var jsonClientResponse = JsonConvert.SerializeObject(clientResponse);
+            return jsonClientResponse;
+        }
+
+
     }
 }

@@ -137,7 +137,7 @@ function GenerateCustomGrid(menuId: number, newTab: boolean, toFormId, records) 
 
     if (newTab) {  // first time. open new tab
         var content_ = "<div id='grid" + menuId + "_" + gridId + "' style='margin-bottom:20px;'> " + content + "</div>";
-        AddTab(menuId, menuTitle, false, content_);
+        AddTab(menuId, menuTitle, content_);
     } else {
         $("#grid" + menuId + "_" + gridId).html(content);
     }
@@ -233,7 +233,7 @@ function GenerateGridTable(menuId: number, newTab: boolean, toFormId, records) {
 
     if (newTab) {  // first time. open new tab
         var content_ = "<div id='grid" + menuId + "_" + gridId + "' style='margin-bottom:20px;'> " + content + "</div><div id='form" + menuId + "_" + gridId + "' style='display:none;margin-bottom:20px;'></div>";
-        AddTab(menuId, menuTitle, false, content_);
+        AddTab(menuId, menuTitle, content_);
     } else {
         $("#grid" + menuId + "_" + gridId).html(content);
     }
@@ -246,7 +246,11 @@ function GenerateGridTable(menuId: number, newTab: boolean, toFormId, records) {
     $(".headerColumn" + menuId + " td:first").hide();
     $(".edit-row-" + menuId + " td:first").hide();
 
+
+
+    // go to edit form 
     $(".edit-row-" + menuId + " td").click(function () {
+        $("#grid" + menuId + "_" + gridId).hide();
 
         AppSpinner(true);
 
@@ -277,7 +281,6 @@ function GenerateGridTable(menuId: number, newTab: boolean, toFormId, records) {
                                 BindForm("FormId" + toFormId, data);
 
                                 // show form
-                                $("#grid" + menuId + "_" + gridId).hide();
                                 $("#form" + menuId + "_" + gridId).show();
 
 
@@ -285,6 +288,11 @@ function GenerateGridTable(menuId: number, newTab: boolean, toFormId, records) {
 
                                 $("#cmd_GoBack_FormId" + toFormId).click(function () {
 
+                                    // refresh grid if changed 
+                                    if ($("#FormId" + toFormId + " #FormSaved").val() == "T") {
+                                        GetGrid(menuId, false);
+                                    }
+                                    
                                     // show grid
                                     $("#form" + menuId + "_" + gridId).hide();
                                     $("#grid" + menuId + "_" + gridId).show();
@@ -304,7 +312,7 @@ function GenerateGridTable(menuId: number, newTab: boolean, toFormId, records) {
                 }, 300);
 
             }
-            console.log("GetForm()");
+
         }, 300);
 
 

@@ -41,7 +41,6 @@ namespace DodoBird.Services
             }
         }
 
-
         private static List<DependentTable> GetDependentTables(int appDatabaseId, TableSchema parentTableSchema)
         {
             using (DodoBirdEntities Db = new DodoBirdEntities())
@@ -95,15 +94,6 @@ namespace DodoBird.Services
             }
         }
 
-
-
-
-
-
-
-
-
-
         private static List<Column> GetPrimaryKeys(DodoBirdEntities Db, string tableName)
         {
             var sql = @"
@@ -142,7 +132,6 @@ namespace DodoBird.Services
             var keys = Db.Database.SqlQuery<Column>(sql, new SqlParameter("@TableName1", tableName), new SqlParameter("@TableName2", tableName), new SqlParameter("@TableName3", tableName)).ToList();
             return keys;
         }
-
 
         private static List<Column> GetTableColumns(DodoBirdEntities Db, string tableName)
         {
@@ -186,8 +175,6 @@ namespace DodoBird.Services
             return columns;
         }
 
-
-
         public static GridSchema GetGridSchema(int gridId)
         {
             using (DodoBirdEntities Db = new DodoBirdEntities())
@@ -219,8 +206,6 @@ namespace DodoBird.Services
 
             }
         }
-
-
 
         public static FormSchema GetFormSchema(int formId)
         {
@@ -262,7 +247,6 @@ namespace DodoBird.Services
 
             }
         }
-
 
         public static void SetDefaultGridAndForm(int appDatabaseId, string tableName)
         {
@@ -334,9 +318,7 @@ namespace DodoBird.Services
             }
         }
 
-
-
-        public static string GetFormData(string json)
+        public static ClientResponse GetFormData(string json)
         {
             dynamic jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject(json);
 
@@ -384,7 +366,7 @@ namespace DodoBird.Services
             {
                 var defaultValue = "";
                 sb.Clear();
-                sb.Append("[ { \"PrimaryKeys\": \"{ 'FormId' : " + formId + " }\"");
+                sb.Append("[ { \"PrimaryKeys\": \"{ \\\"FormId\\\" : " + formId + " }\"");
                 foreach (var column in tableSchema.Columns)
                 {
                     defaultValue = column.DefaultValue;
@@ -397,8 +379,7 @@ namespace DodoBird.Services
                 var jsonData = sb.ToString() + ", \"IsNewRecord\": \"" + isNewRecord + "\" } ]";
 
                 var clientResponse = new ClientResponse { Successful = true, ActionExecuted = "GetFormData", JsonData = jsonData };
-                var jsonClientResponse = JsonConvert.SerializeObject(clientResponse);
-                return jsonClientResponse;
+                return clientResponse;
             }
             else
             {
@@ -406,15 +387,9 @@ namespace DodoBird.Services
                 sql = "SELECT 'False' AS IsNewRecord, " + primaryKeys + " * " + sql.Substring(0, sql.Length - 4);
 
                 var clientResponse = HelperService.GetJsonData(formSchema.AppDatabaseId, sql, sqlParameters.ToArray());
-                var jsonClientResponse = JsonConvert.SerializeObject(clientResponse);
-                return jsonClientResponse;
+                return clientResponse;
             }
-
         }
-
-
-
-
 
         public static ClientResponse SaveFormData(int appDatabaseId, string tableName, string json)
         {
@@ -474,7 +449,7 @@ namespace DodoBird.Services
 
 
                     // set primary keys
-                    var newPrimaryKeys = "{ 'FormId' : " + formId + "";
+                    var newPrimaryKeys = "{ \"FormId\" : \"" + formId + "\"";
 
                     foreach (var column in tableSchema.PrimaryKeys)
                     {
@@ -500,17 +475,16 @@ namespace DodoBird.Services
                             sbValue.Append("'" + newGuid + "',");
                             newGuid_ = newGuid.ToString();
 
-                            newPrimaryKeys = ", '" + column.ColumnName + "' : '" + newGuid_ + "'";
+                            newPrimaryKeys = ", \"" + column.ColumnName + "\" : \"" + newGuid_ + "\"";
                         } else if (column.IsIdentity)
                         {
-                            newPrimaryKeys += ", '" + column.ColumnName + "' : '[IDENTITY]'";
+                            newPrimaryKeys += ", \"" + column.ColumnName + "\" : \"[IDENTITY]\"";
                         }
                     }
 
 
                     newPrimaryKeys += " }";
 
-                    string jsonData = "";
                     var actionExecuted = "update";
                     if (wherePrimaryKey.Length > 0)  // update
                     {
@@ -525,7 +499,6 @@ namespace DodoBird.Services
                         var sql = sbInsert.ToString().Substring(0, sbInsert.ToString().Length - 1) + ") " + sbValue.ToString().Substring(0, sbValue.ToString().Length - 1) + ");";
 
 
-
                         if (newGuid_.Length > 0) // is guid
                         {
                             sql = sbInsert.ToString().Substring(0, sbInsert.ToString().Length - 1) + ") " + sbValue.ToString().Substring(0, sbValue.ToString().Length - 1) + ");";
@@ -537,8 +510,9 @@ namespace DodoBird.Services
                             sql += "SELECT CAST(@@IDENTITY AS varchar(250));";
                             recordId = Db.Database.SqlQuery<string>(sql, sqlParameters).FirstOrDefault();
                             newPrimaryKeys = newPrimaryKeys.Replace("[IDENTITY]", recordId);
-                            var jsonData_ = GetFormData(newPrimaryKeys);
-                            json
+
+                            primaryKeys_ = newPrimaryKeys;
+
                         }
                         Db.SaveChanges();
 
@@ -546,7 +520,7 @@ namespace DodoBird.Services
 
                     }
 
-                    return new ClientResponse { Successful = true, Id = recordId.ToString(), ActionExecuted = actionExecuted, ErrorMessage = "", JsonData = jsonData };
+                    return new ClientResponse { Successful = true, Id = recordId.ToString(), ActionExecuted = actionExecuted, ErrorMessage = "", JsonData = "", PrimaryKeys = primaryKeys_ };
                 }
             }
             catch (Exception ex)
@@ -555,11 +529,63 @@ namespace DodoBird.Services
             }
         }
 
+        public static ClientResponse DeleteFormData(string json)
+        {
+
+            try
+            {
+                dynamic jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject(json);
+
+                var formId = Convert.ToInt32(jsonObj["FormId"]);
+
+                FormSchema formSchema = DataService.GetFormSchema(formId);
+                TableSchema tableSchema = DataService.GetTableSchema(formSchema.AppDatabaseId, formSchema.TableName);
+
+                // generate sql statement
+                List<SqlParameter> sqlParameters = new List<SqlParameter>();
+
+                StringBuilder sb = new StringBuilder();
+                sb.Append("DELETE FROM " + formSchema.TableName + " WHERE ");
+
+                // primary keys
+                var keyValue = "";
+                foreach (var key in tableSchema.PrimaryKeys)
+                {
+                    if (jsonObj[key.ColumnName] != null)
+                    {
+                        keyValue = jsonObj[key.ColumnName].ToString();
+                        sb.Append(key.ColumnName + "= @" + key.ColumnName + " AND ");
+                        sqlParameters.Add(new SqlParameter("@" + key.ColumnName, keyValue));
+                    }
+                }
+
+                var sql = sb.ToString();
+                sql = sql.Substring(0, sql.Length - 4);
+
+                // delete children of Menu
+                if (formSchema.AppDatabaseId == 1 && formSchema.TableName == "Menu")
+                {
+                    using (DodoBirdEntities Db = new DodoBirdEntities())
+                    {
+                        var sqlIds = "WITH ret AS (SELECT MenuId FROM Menu WHERE MenuId = " + keyValue + " UNION ALL SELECT  t2.MenuId FROM Menu t2 INNER JOIN ret t1 ON t2.ParentId = t1.MenuId)";
+                        sqlIds += "SELECT STUFF((SELECT ', ' + CAST(MenuId AS varchar(25)) FROM (SELECT MenuId FROM ret) AS T FoR XML PATH('')), 1, 1, '') AS Ids";
+                        var ids = Db.Database.SqlQuery<string>(sqlIds).FirstOrDefault();
+                        sqlIds = "DELETE FROM Menu WHERE MenuId IN (" + ids + ")";
+                        Db.Database.ExecuteSqlCommand(sqlIds);
+                    }
+                }
+
+                ClientResponse clientResponse = HelperService.ExecuteSql(formSchema.AppDatabaseId, sql, sqlParameters.ToArray());
 
 
+                return clientResponse;
+            }
+            catch (Exception ex)
+            {
+                return new ClientResponse { Successful = false, Id = "", ActionExecuted = "SaveFormData", ErrorMessage = ex.Message };
+            }
 
-
-
+        }
 
 
 
@@ -568,6 +594,9 @@ namespace DodoBird.Services
 }
 
 /*
+ * 
+WITH ret AS (SELECT MenuId FROM Menu WHERE MenuId = 1 UNION ALL SELECT  t2.MenuId FROM Menu t2 INNER JOIN ret t1 ON t2.ParentId = t1.MenuId)
+
              try
             {
                 using (DodoBirdEntities Db = new DodoBirdEntities())
