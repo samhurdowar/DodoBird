@@ -115,6 +115,7 @@ function ToJsonString(formName) {
     return json;
 }
 function BindForm(formName, data) {
+    console.log("BindForm formName=" + formName);
     var elementType = "";
     var dataValue = "";
     // get data properties
@@ -135,7 +136,7 @@ function BindForm(formName, data) {
                 var y = x[0];
                 elementType = y.type;
             }
-            //console.log("BindData id=" + id + "  elementType=" + elementType + "    dataValue=" + data[id]);
+            console.log("BindData id=" + id + "  elementType=" + elementType + "    dataValue=" + data[id]);
             if (keys.indexOf("|" + id + "|") > -1) {
                 dataValue = (data[id] != null) ? data[id] : "";
                 //console.log("BindData id=" + id + "  elementType=" + elementType + "    dataValue=" + dataValue);
@@ -188,6 +189,29 @@ function BindForm(formName, data) {
             console.log("BindForm error=" + e);
         }
     });
+}
+function GetFormLayout(formId, boxName) {
+    AppSpinner(true);
+    setTimeout(function () {
+        $.ajax({
+            url: "./Form/GetFormLayout",
+            type: "POST",
+            data: { formId: formId },
+            dataType: "json",
+            success: function (clientResponse) {
+                if (clientResponse.Successful) {
+                    var formLayout = clientResponse.JsonData + AddAlive();
+                    $("#" + boxName).html(formLayout);
+                }
+                else {
+                    MessageBox("Error", clientResponse.ErrorMessage, false);
+                }
+            },
+            complete: function () {
+                AppSpinner(false);
+            }
+        });
+    }, 300);
 }
 function EnableButton(id) {
     //console.log("EnableButton id=" + id);

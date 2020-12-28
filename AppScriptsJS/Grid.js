@@ -193,71 +193,49 @@ function GenerateGridTable(menuId, newTab, toFormId, records) {
         $("#grid" + menuId + "_" + gridId).hide();
         AppSpinner(true);
         var key = $(this).parent().attr("key");
-        GetFormLayout(toFormId, "form" + menuId + "_" + gridId);
         // wait for form to post to html
+        RandomRefreshObject = "init";
         var myVar = setInterval(function () {
+            console.log("Looking for RandomRefreshObject=" + RandomRefreshObject);
             if ($("#" + RandomRefreshObject).length) {
                 clearInterval(myVar);
-                console.log("GetForm() stopped");
-                setTimeout(function () {
-                    $.ajax({
-                        url: "./Form/GetFormData",
-                        type: "POST",
-                        data: { json: key },
-                        dataType: "json",
-                        success: function (clientResponse) {
-                            if (clientResponse.Successful) {
-                                var data_ = JSON.parse(clientResponse.JsonData);
-                                var data = data_[0];
-                                BindForm("FormId" + toFormId, data);
-                                // show form
-                                $("#form" + menuId + "_" + gridId).show();
-                                // set go back button
-                                $("#cmd_GoBack_FormId" + toFormId).click(function () {
-                                    // refresh grid if changed 
-                                    if ($("#FormId" + toFormId + " #FormSaved").val() == "T") {
-                                        GetGrid(menuId, false);
-                                    }
-                                    // show grid
-                                    $("#form" + menuId + "_" + gridId).hide();
-                                    $("#grid" + menuId + "_" + gridId).show();
-                                });
-                            }
-                            else {
-                                MessageBox("Error", clientResponse.ErrorMessage, false);
-                            }
-                        },
-                        complete: function () {
-                            AppSpinner(false);
+                console.log("Found RandomRefreshObject=" + RandomRefreshObject);
+                $.ajax({
+                    url: "./Form/GetFormData",
+                    type: "POST",
+                    data: { json: key },
+                    dataType: "json",
+                    success: function (clientResponse) {
+                        if (clientResponse.Successful) {
+                            console.log("JsonData=" + clientResponse.JsonData);
+                            var data_ = JSON.parse(clientResponse.JsonData);
+                            var data = data_[0];
+                            BindForm("FormId" + toFormId, data);
+                            // show form
+                            $("#form" + menuId + "_" + gridId).show();
+                            // set go back button
+                            $("#cmd_Cancel_FormId" + toFormId).click(function () {
+                                // refresh grid if changed 
+                                if ($("#FormId" + toFormId + " #FormSaved").val() == "T") {
+                                    GetGrid(menuId, false);
+                                }
+                                // show grid
+                                $("#form" + menuId + "_" + gridId).hide();
+                                $("#grid" + menuId + "_" + gridId).show();
+                            });
                         }
-                    });
-                }, 300);
+                        else {
+                            MessageBox("Error", clientResponse.ErrorMessage, false);
+                        }
+                    },
+                    complete: function () {
+                        AppSpinner(false);
+                    }
+                });
             }
         }, 300);
+        GetFormLayout(toFormId, "form" + menuId + "_" + gridId);
     });
-}
-function GetFormLayout(formId, boxName) {
-    AppSpinner(true);
-    setTimeout(function () {
-        $.ajax({
-            url: "./Form/GetFormLayout",
-            type: "POST",
-            data: { formId: formId },
-            dataType: "json",
-            success: function (clientResponse) {
-                if (clientResponse.Successful) {
-                    var formLayout = clientResponse.JsonData + AddAlive();
-                    $("#" + boxName).html(formLayout);
-                }
-                else {
-                    MessageBox("Error", clientResponse.ErrorMessage, false);
-                }
-            },
-            complete: function () {
-                AppSpinner(false);
-            }
-        });
-    }, 300);
 }
 function NavigatePage(menuId, pageIndex) {
     // update pageNavigation

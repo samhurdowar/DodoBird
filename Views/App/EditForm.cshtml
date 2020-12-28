@@ -1,13 +1,14 @@
 
 <style>
     .connectedFormColumns li {
-        padding: 5px;
-        width: 300px;
-        cursor:move;
+        padding: 3px;
+        width: 250px;
+        cursor: move;
     }
+
     .form-section-header li {
         padding: 5px;
-        width: 200px;
+        width: 410px;
         cursor: move;
     }
 
@@ -19,13 +20,13 @@
             color: #ff0000;
         }
 </style>
- 
+
 
 <div class="command-bar-container">
     <span id="cmd_Save_EditForm" class="command-disabled-span"><span class="command-icon fas fa-save">&nbsp;</span> Save</span>
 </div>
 
-<form id="EditForm">
+<form id="EditForm" name="EditForm">
     FormId <input type="text" id="FormId" value="" /><br />
     AppDatabaseId <input type="text" id="AppDatabaseId" /><br />
     TableName <input type="text" id="TableName" /><br />
@@ -54,7 +55,7 @@
                         Available Columns
                     </td>
                     <td style="width:80%;">
-                        Add Section
+                        <span onclick="EditSection(0)" class="command-active-span"><span class="command-icon-small fas fa-plus">&nbsp;</span> Add Section</span>
                     </td>
                 </tr>
 
@@ -87,6 +88,27 @@
     </ul>
 
 </form>
+
+
+
+<div id="WindowEditFormSection" class="modal-window">
+    <div style="padding-top:5px;padding-left:10px;"><span>Add Section</span>  <span style="float:right;padding-right:10px;cursor:pointer;" onclick="CloseModalWindow('WindowEditFormSection')">X</span></div>
+    <hr />
+    <div style="padding:25px;">
+        <div id="EditFormSection"></div>
+    </div>
+</div>
+
+
+
+<div id="WindowEditFormColumn" class="modal-window">
+    <div style="padding-top:5px;padding-left:10px;"><span>Add Column</span>  <span style="float:right;padding-right:10px;cursor:pointer;" onclick="CloseModalWindow('WindowEditFormColumn')">X</span></div>
+    <hr />
+    <div style="padding:25px;">
+        <div id="EditFormColumn"></div>
+    </div>
+</div>
+
 
 <script>
 

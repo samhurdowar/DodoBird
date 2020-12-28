@@ -30,7 +30,7 @@ function GetGridList(appDatabaseId, tableName) {
                     var row = grids[i];
 
                     obj.push("<li>");
-                    obj.push("<span id='GridId" + row.GridId + "' gridId='" + row.GridId + "' appDatabaseId='" + appDatabaseId + "' tableName='" + tableName + "' onclick='SelectGrid(this)' class='highlight-item'>" + row.GridName + "</span>");
+                    obj.push("<span id='HighlightGridId" + row.GridId + "' gridId='" + row.GridId + "' appDatabaseId='" + appDatabaseId + "' tableName='" + tableName + "' onclick='SelectGrid(this)' class='highlight-item'>" + row.GridName + "</span>");
                     obj.push("</li>");
                 }
 
@@ -84,7 +84,7 @@ function SelectGrid(t) {
 
 
                             GetGridSchema(gridId);
-                            HighlightItem("GridId" + gridId);
+                            HighlightItem("HighlightGridId" + gridId);
                             GetToFormOptions(appDatabaseId, tableName)
 
                             clearInterval(interval1);
@@ -95,8 +95,6 @@ function SelectGrid(t) {
 
 
                 $("#divProperties").html(response + AddAlive());
-
-
 
             },
             complete: function () {

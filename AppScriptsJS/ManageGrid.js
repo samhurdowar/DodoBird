@@ -21,7 +21,7 @@ function GetGridList(appDatabaseId, tableName) {
                 for (var i = 0; i < grids.length; i++) {
                     var row = grids[i];
                     obj.push("<li>");
-                    obj.push("<span id='GridId" + row.GridId + "' gridId='" + row.GridId + "' appDatabaseId='" + appDatabaseId + "' tableName='" + tableName + "' onclick='SelectGrid(this)' class='highlight-item'>" + row.GridName + "</span>");
+                    obj.push("<span id='HighlightGridId" + row.GridId + "' gridId='" + row.GridId + "' appDatabaseId='" + appDatabaseId + "' tableName='" + tableName + "' onclick='SelectGrid(this)' class='highlight-item'>" + row.GridName + "</span>");
                     obj.push("</li>");
                 }
                 $("#expand_Grids" + appDatabaseId + tableName + "_ul").html(obj.join(""));
@@ -63,7 +63,7 @@ function SelectGrid(t) {
                         if ($("#" + RandomRefreshObject).length) {
                             console.log("SelectGrid - Found RandomRefreshObject=" + RandomRefreshObject);
                             GetGridSchema(gridId);
-                            HighlightItem("GridId" + gridId);
+                            HighlightItem("HighlightGridId" + gridId);
                             GetToFormOptions(appDatabaseId, tableName);
                             clearInterval(interval1);
                         }

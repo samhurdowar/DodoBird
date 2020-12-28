@@ -181,7 +181,9 @@ table {
 .command-icon {
  font-size:1.35em;
 }
-
+.command-icon-small {
+    font-size: 1em;
+}
 /* command-bar  */
 .command-bar {
     background: #ddd;
@@ -250,6 +252,19 @@ table {
     z-index:2;
 }
 
+
+
+#overlay-modal {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    display: none;
+    background-color: #ccc;
+    opacity: 0.5;
+    z-index: 1;
+}
 #overlay {
     position: fixed;
     left: 0;

@@ -98,10 +98,23 @@ namespace DodoBird.Models
         public int FormSectionId { get; set; }
         public int SectionColumn { get; set; }
         public int ColumnOrder { get; set; }
+        public string DisplayName { get; set; }
         public string ColumnName { get; set; }
         public string ElementType { get; set; }
         public DateTime DateAdd { get; set; }
     }
+
+
+    public class SelectOption
+    {
+        public int SelectOptionId { get; set; }
+        public int FormColumnId { get; set; }
+        public string OptionValue { get; set; }
+        public string OptionText { get; set; }
+        public int OptionOrder { get; set; }
+    }
+
+
 
 }
 
@@ -110,7 +123,13 @@ namespace DodoBird.Models
 
 
 
-
+CREATE TABLE [dbo].SelectOption(
+	[SelectOptionId] [int] IDENTITY(1,1) NOT NULL primary key,
+	FormColumnId int not null default 0,
+	[OptionValue] [varchar](250) NOT NULL default '',
+	[OptionText] [varchar](250) NOT NULL default '',
+	OptionOrder int not null default 0
+)
 
 
 

@@ -68,13 +68,14 @@ namespace DodoBird.Controllers
                 StringBuilder sb = new StringBuilder();
 
                 sb.AppendLine("<div class='command-bar-container'>");
-                sb.AppendLine("    <span id='cmd_GoBack_FormId" + formId + "' class='command-active-span'><span class='command-icon fas fa-arrow-left'>&nbsp;</span> Go Back</span>");
                 sb.AppendLine("    <span id='cmd_Save_FormId" + formId + "' class='command-disabled-span'><span class='command-icon fas fa-save'>&nbsp;</span> Save</span>");
+                sb.AppendLine("    <span id='cmd_Cancel_FormId" + formId + "' class='command-active-span'><span class='command-icon fas fa-ban'>&nbsp;</span> Cancel</span>");
                 sb.AppendLine("</div>");
 
 
-                sb.AppendLine("<form id='FormId" + formId + "'>");
-                sb.AppendLine("PrimaryKeys: <input type='text' id='PrimaryKeys' style='width:400px;' />");
+                sb.AppendLine("<form id='FormId" + formId + "' name='FormId" + formId + "'>");
+                sb.AppendLine("FormName: <input type='text' id='FormNameDummy' style='width:400px;' value='FormId" + formId + "' />");
+                sb.AppendLine("<br>PrimaryKeys: <input type='text' id='PrimaryKeys' style='width:400px;' />");
                 sb.AppendLine("<br>FormSaved: <input type='text' id='FormSaved'  />");
 
                 // loop sections 
@@ -102,7 +103,20 @@ namespace DodoBird.Controllers
 
                             sb.AppendLine("<td>");
 
-                            sb.AppendLine("<input type='text' id='" + formColumn.ColumnName + "' />");
+                            if (formColumn.ElementType == "Dropdown")
+                            {
+                                sb.AppendLine("<select id='" + formColumn.ColumnName + "'>");
+                                sb.AppendLine("<option>Textbox</option>");
+                                sb.AppendLine("<option>Dropdown</option>");
+                                sb.AppendLine("</select>");
+
+                            } else
+                            {
+                                sb.AppendLine("<input type='text' id='" + formColumn.ColumnName + "' />");
+                            }
+
+
+                            
                             sb.AppendLine("</td>");
 
                             sb.AppendLine("</tr>");

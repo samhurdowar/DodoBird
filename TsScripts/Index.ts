@@ -146,13 +146,13 @@ function SortJson(array, key) {
 
 
 function OpenModalWindow(windowId) {
-    $("#overlay").css({ "display": "block" });
+    $("#overlay-modal").css({ "display": "block" });
     $("#" + windowId).css({ "display": "block" });
 }
  
 
 function CloseModalWindow(windowId) {
-    $("#overlay").css({ "display": "none" });
+    $("#overlay-modal").css({ "display": "none" });
     $("#" + windowId).css({ "display": "none" });
 }
 

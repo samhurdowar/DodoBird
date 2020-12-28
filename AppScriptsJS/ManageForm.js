@@ -21,7 +21,7 @@ function GetFormList(appDatabaseId, tableName) {
                 for (var i = 0; i < Forms.length; i++) {
                     var row = Forms[i];
                     obj.push("<li>");
-                    obj.push("<span id='FormId" + row.FormId + "' onclick='SelectForm(" + row.FormId + ")' class='highlight-item'>" + row.FormName + "</span>");
+                    obj.push("<span id='HighlightFormId" + row.FormId + "' onclick='SelectForm(" + row.FormId + ")' class='highlight-item'>" + row.FormName + "</span>");
                     obj.push("</li>");
                 }
                 $("#expand_Forms" + appDatabaseId + tableName + "_ul").html(obj.join(""));
@@ -43,7 +43,7 @@ function SelectForm(FormId) {
             success: function (response) {
                 $("#divProperties").html(response);
                 GetFormSchema(FormId);
-                HighlightItem("FormId" + FormId);
+                HighlightItem("HighlightFormId" + FormId);
             },
             complete: function () {
                 AppSpinner(false);
@@ -122,7 +122,21 @@ function SetFormLayout(formId) {
                     if (sectionColumns.length > 0) {
                         for (var y = 0; y < sectionColumns.length; y++) {
                             obj.push("<li id='SetColumn_" + sectionColumns[y].ColumnName + "'>");
-                            obj.push("<span class='edit-formlayout-column'>" + sectionColumns[y].ColumnName + "</span>");
+                            obj.push("<table>");
+                            obj.push("<tr>");
+                            obj.push("<td style='width:170px;'>");
+                            obj.push("<span class='edit-formlayout-column' formColumnId='" + sectionColumns[y].FormColumnId + "'>" + sectionColumns[y].DisplayName + "</span>");
+                            obj.push("</td>");
+                            obj.push("<td style='width:120px;'>");
+                            if (sectionColumns[y].ElementType == "Dropdown") {
+                                obj.push("<span><select readonly style='width:140px;'><option></option></select></span>");
+                            }
+                            else {
+                                obj.push("<span><input type='text' readonly style='width:140px;' /></span>");
+                            }
+                            obj.push("</td>");
+                            obj.push("</tr>");
+                            obj.push("</table>");
                             obj.push("</li>");
                         }
                     }
@@ -184,17 +198,95 @@ function SetFormLayout(formId) {
             }
             // edit section
             $(".edit-formlayout-section").click(function () {
-                console.log("edit section=" + $(this).attr("formSectionId"));
+                var formSectionId = $(this).attr("formSectionId");
+                EditFormSection(formSectionId);
             });
             // edit column
             $(".edit-formlayout-column").click(function () {
-                console.log("edit columnName=" + $(this).html());
+                var formColumnId = $(this).attr("formColumnId");
+                EditFormColumn(formColumnId);
             });
         },
         complete: function () {
             AppSpinner(false);
         }
     });
+}
+function EditFormSection(formSectionId) {
+    // wait for form to post to html
+    RandomRefreshObject = "init";
+    var myVar = setInterval(function () {
+        console.log("Looking for RandomRefreshObject=" + RandomRefreshObject);
+        if ($("#" + RandomRefreshObject).length) {
+            clearInterval(myVar);
+            console.log("Found RandomRefreshObject=" + RandomRefreshObject);
+            var key = "{ \"FormId\" : 27, \"FormSectionId\" : " + formSectionId + " }";
+            $.ajax({
+                url: "./Form/GetFormData",
+                type: "POST",
+                data: { json: key },
+                dataType: "json",
+                success: function (clientResponse) {
+                    if (clientResponse.Successful) {
+                        console.log("JsonData=" + clientResponse.JsonData);
+                        var data_ = JSON.parse(clientResponse.JsonData);
+                        var data = data_[0];
+                        BindForm("FormId27", data);
+                        // show form
+                        OpenModalWindow("WindowEditFormSection");
+                        // set cancel button
+                        $("#cmd_Cancel_FormId27").click(function () {
+                            CloseModalWindow("WindowEditFormSection");
+                        });
+                    }
+                    else {
+                        MessageBox("Error", clientResponse.ErrorMessage, false);
+                    }
+                },
+                complete: function () {
+                    AppSpinner(false);
+                }
+            });
+        }
+    }, 300);
+    GetFormLayout(27, "EditFormSection");
+}
+function EditFormColumn(formColumnId) {
+    // wait for form to post to html
+    RandomRefreshObject = "init";
+    var myVar = setInterval(function () {
+        if ($("#" + RandomRefreshObject).length) {
+            clearInterval(myVar);
+            var key = "{ \"FormId\" : 28, \"FormColumnId\" : " + formColumnId + " }";
+            $.ajax({
+                url: "./Form/GetFormData",
+                type: "POST",
+                data: { json: key },
+                dataType: "json",
+                success: function (clientResponse) {
+                    if (clientResponse.Successful) {
+                        console.log("JsonData=" + clientResponse.JsonData);
+                        var data_ = JSON.parse(clientResponse.JsonData);
+                        var data = data_[0];
+                        BindForm("FormId28", data);
+                        // show form
+                        OpenModalWindow("WindowEditFormColumn");
+                        // set cancel button
+                        $("#cmd_Cancel_FormId28").click(function () {
+                            CloseModalWindow("WindowEditFormColumn");
+                        });
+                    }
+                    else {
+                        MessageBox("Error", clientResponse.ErrorMessage, false);
+                    }
+                },
+                complete: function () {
+                    AppSpinner(false);
+                }
+            });
+        }
+    }, 300);
+    GetFormLayout(28, "EditFormColumn");
 }
 function SortFormSection(formId, formSectionId, newOrder) {
     $.ajax({
