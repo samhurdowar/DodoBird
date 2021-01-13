@@ -9,11 +9,51 @@ using DodoBird.Models.App;
 using DodoBird.Services;
 using System.Text;
 using DodoBird.Models;
+using System;
+using System.IO;
 
 namespace DodoBird.Controllers
 {
     public class DatabaseController : Controller
     {
+
+        [HttpPost]
+        public string InitDatabase(int appDatabaseId)
+        {
+
+            var filePath = AppDomain.CurrentDomain.BaseDirectory + "\\App_Data\\InitDatabase.sql";
+
+            var sql = System.IO.File.ReadAllText(filePath);
+
+            try
+            {
+                using (DodoBirdEntities Db = new DodoBirdEntities())
+                {
+
+                    Db.Database.Connection.ConnectionString = SessionService.GetConnectionString(appDatabaseId);
+
+                    string[] exes = sql.Split(new string[] { "INTERNAL_GO" }, StringSplitOptions.None);
+                    for (int i = 0; i < exes.Length; i++)
+                    {
+                        var exe = exes[i];
+                        Db.Database.ExecuteSqlCommand(exe);
+                    }
+
+                    var clientResponse = new ClientResponse { Successful = true, ActionExecuted = "InitDatabase", JsonData = "", ErrorMessage = "" };
+                    var jsonClientResponse = JsonConvert.SerializeObject(clientResponse);
+                    return jsonClientResponse;
+                }
+            }
+            catch (Exception ex)
+            {
+                var clientResponse = new ClientResponse { Successful = false, ActionExecuted = "GetJsonData", JsonData = "", ErrorMessage = ex.Message };
+                var jsonClientResponse = JsonConvert.SerializeObject(clientResponse);
+                return jsonClientResponse;
+            }
+
+        }
+
+
         [HttpPost]
         public string GetDatabaseList()
         {
@@ -31,6 +71,26 @@ namespace DodoBird.Controllers
             var clientResponse = HelperService.GetJsonData(appDatabaseId, sql);
             var jsonClientResponse = JsonConvert.SerializeObject(clientResponse);
             return jsonClientResponse;
+        }
+
+        [HttpPost]
+        public string GetCustomOptionListxxx(int appDatabaseId)
+        {
+            try
+            {
+                var sql = @"SELECT * FROM _CustomOption WHERE AppDatabaseId = " + appDatabaseId;
+
+                var clientResponse = HelperService.GetJsonData(appDatabaseId, sql);
+                var jsonClientResponse = JsonConvert.SerializeObject(clientResponse);
+                return jsonClientResponse;
+            }
+            catch (Exception ex)
+            {
+                var clientResponse = new ClientResponse { Successful = false, ActionExecuted = "GetJsonData", JsonData = "", ErrorMessage = ex.Message };
+                var jsonClientResponse = JsonConvert.SerializeObject(clientResponse);
+                return jsonClientResponse;
+            }
+
         }
 
         [HttpPost]
