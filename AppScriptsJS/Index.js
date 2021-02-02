@@ -21,17 +21,9 @@ function GetLookups() {
     });
 }
 function MenuClick(menuId) {
+    //console.log("menuId=" + menuId);
     AppSpinner(true);
     setTimeout(function () {
-        var isRefresh = false;
-        var tabName = "tab" + menuId.toString();
-        // refresh, set focus if tab already exists
-        $(".tab-item").each(function () {
-            var thisTabName = $(this).attr("id");
-            if (tabName == thisTabName) {
-                isRefresh = true;
-            }
-        });
         // get menu object
         var menu = Menus.find(function (w) { return w.MenuId == menuId; });
         // route menu 
@@ -74,15 +66,15 @@ function AddTab(menuId, menuTitle, content) {
             isRefresh = true;
         }
     });
+    TurnOffSpinner(); // Call before content, so it waits before
     if (!isRefresh) {
         $("#MainTab").append("<li id='tab" + menuId + "' class='tab-item' onclick=\"PageFocus('" + menuId + "')\">" + menuTitle + "<span class='main-tab-close fa fa-times' onclick=\"CloseTab('" + menuId + "')\"> </span> </li>");
-        $("#MainPageContent").append("<li id='page" + menuId + "' class='page-content'>" + content + "</li>");
+        $("#MainPageContent").append("<li id='page" + menuId + "' class='page-content'>" + content + "</li>" + AddAlive());
     }
     else {
-        $("#page" + menuId).html(content);
+        $("#page" + menuId).html(content + AddAlive());
     }
     PageFocus(menuId);
-    AppSpinner(false);
 }
 function PageFocus(menuId) {
     if (DisableFocus) {
@@ -250,5 +242,16 @@ function RefreshDOM(functionToFire) {
             }
         }
     }, 400);
+}
+function TurnOffSpinner() {
+    RandomRefreshObject = "";
+    var interval1 = setInterval(function () {
+        if (RandomRefreshObject.length > 0) {
+            if ($("#" + RandomRefreshObject).length) {
+                AppSpinner(false);
+                clearInterval(interval1);
+            }
+        }
+    }, 300);
 }
 //# sourceMappingURL=Index.js.map

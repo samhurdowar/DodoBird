@@ -323,9 +323,6 @@ function GetMenuList() {
                 ObjMenu.push("<ul>");
 
                 // get main menus
-                //let mainMenus = data.filter(it => it.ParentId == 0);
-                //mainMenus = SortJson(mainMenus, "SortOrder");
-
                 let mainMenus = data.filter(it => it.ParentId == 0);
 
                 for (var i in mainMenus) {
@@ -335,13 +332,13 @@ function GetMenuList() {
                     let subMenus = data.filter(w => w.ParentId == row.MenuId);
                     if (subMenus.length > 0) {
                         ObjMenu.push("<li onclick='MenuClick(" + row.MenuId + ")'>");
-                        ObjMenu.push("<span id='displayMenuId" + row.MenuId + "'>" + row.SortOrder + ": " + row.MenuTitle + "</span>");
+                        ObjMenu.push("<span id='displayMenuId" + row.MenuId + "'>" + row.MenuTitle + "</span>");
                         GetSubMenuList(subMenus, data);
                         ObjMenu.push("</li>");
 
                     } else {
                         ObjMenu.push("<li onclick='MenuClick(" + row.MenuId + ")'>");
-                        ObjMenu.push("<span id='displayMenuId" + row.MenuId + "'>" + row.SortOrder + ": " + row.MenuTitle + "</span>");
+                        ObjMenu.push("<span id='displayMenuId" + row.MenuId + "'>" + row.MenuTitle + "</span>");
                         ObjMenu.push("</li>");
                     }
 

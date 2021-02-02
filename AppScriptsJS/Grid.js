@@ -28,9 +28,6 @@ function GetGrid(menuId, newTab) {
             //} else {
             //    GenerateGridTable(menuId, newTab, data.Records);
             //}
-        },
-        complete: function () {
-            AppSpinner(false);
         }
     });
 }
@@ -181,7 +178,8 @@ function GenerateGridTable(menuId, newTab, toFormId, records) {
         AddTab(menuId, menuTitle, content_);
     }
     else {
-        $("#grid" + menuId + "_" + gridId).html(content);
+        TurnOffSpinner(); // Call before content, so it waits before
+        $("#grid" + menuId + "_" + gridId).html(content + AddAlive());
     }
     // set pageDropdown
     $("#pageDropdown" + menuId).val(PageNavigations[pageIndex].CurrentPage);

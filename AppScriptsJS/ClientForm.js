@@ -71,7 +71,9 @@ function ToJsonString(formName) {
     var o = {};
     $("#" + formName + " :input").each(function () {
         var id = $(this).attr("id");
-        var inputObject = $("#" + formName + " #" + id);
+        if (!id) {
+            id = $(this).attr("name");
+        }
         elementType = this.type;
         elementValue = this.value;
         //console.log("id=" + id + "    elementType=" + elementType + "    elementValue=" + elementValue);
@@ -111,7 +113,7 @@ function ToJsonString(formName) {
         catch (e) { }
     });
     var json = JSON.stringify(o);
-    console.log("json=" + json);
+    //console.log("json=" + json);
     return json;
 }
 function BindForm(formName, data) {

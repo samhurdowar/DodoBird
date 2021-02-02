@@ -157,12 +157,16 @@
         var targetType = $("#EditMenu input[name='TargetType']:checked").val();
         if (targetType == "grid") {
             $("#EditMenu #TargetId").val($("#EditMenu #TargetGridId").val());
+            $("#EditMenu #TargetFormId").val("0")
             $("#EditMenu #PageFile").val("");
         } else if (targetType == "form") {
             $("#EditMenu #TargetId").val($("#EditMenu #TargetFormId").val());
+            $("#EditMenu #TargetGridId").val("0")
             $("#EditMenu #PageFile").val("");
         } else if (targetType == "page") {
             $("#EditMenu #TargetId").val(0);
+            $("#EditMenu #TargetGridId").val("0");
+            $("#EditMenu #TargetFormId").val("0");
 
             if ($("#EditMenu #PageFile").val() == "") {
                 MessageBox("Warning", "Page file required", true);
@@ -173,9 +177,11 @@
             $("#EditMenu #PageFile").val("");
         }
 
+
+        //console.log("targetType=" + targetType);
         var json = ToJsonString("EditMenu");
 
-        //Save_EditMenu_(json);
+        Save_EditMenu_(json);
     }
 
     function Save_EditMenu_(json) {

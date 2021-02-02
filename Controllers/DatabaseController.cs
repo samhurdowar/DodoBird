@@ -35,8 +35,16 @@ namespace DodoBird.Controllers
                     string[] exes = sql.Split(new string[] { "INTERNAL_GO" }, StringSplitOptions.None);
                     for (int i = 0; i < exes.Length; i++)
                     {
-                        var exe = exes[i];
-                        Db.Database.ExecuteSqlCommand(exe);
+                        try
+                        {
+                            var exe = exes[i];
+
+                            Db.Database.ExecuteSqlCommand(exe);
+                        }
+                        catch (Exception)
+                        {
+                        }
+
                     }
 
                     var clientResponse = new ClientResponse { Successful = true, ActionExecuted = "InitDatabase", JsonData = "", ErrorMessage = "" };
