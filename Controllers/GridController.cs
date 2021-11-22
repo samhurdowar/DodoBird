@@ -40,7 +40,19 @@ namespace DodoBird.Controllers
                 }
 
                 // set select statement get page of records in json format
-                var selectStatment = "SELECT " + selectColumns + " FROM " + tableSchema.Owner + "." + tableSchema.TableName + " ORDER BY " + pageNavigation.OrderByColumn + " " + pageNavigation.SortDirection;
+                var selectStatment = "SELECT " + selectColumns + " FROM " + tableSchema.Owner + "." + tableSchema.TableName + " ";
+
+                // dependent tables
+                if (tableSchema.DependentTables.Count > 0)
+                {
+                    foreach (var dependentTable in tableSchema.DependentTables)
+                    {
+                        //xxxselectStatment += dependentTable.JoinType + " " + dependentTable.Owner + "." + dependentTable.TableName + " ON " + dependentTable.ParentOwner + "." + dependentTable.ParentTableName + "." + dependentTable.ParentKey + " = " ;
+                    }
+                }
+
+
+                selectStatment += " ORDER BY " + pageNavigation.OrderByColumn + " " + pageNavigation.SortDirection;
 
 
                 // set paging in json format
@@ -69,7 +81,7 @@ namespace DodoBird.Controllers
                 }
 
 
-                string json = "{ \"ToFormId\" : \"" + gridSchema.ToFormId + "\", \"RecordCount\" : " + recordCount + ", \"NumOfPages\" : " + numOfPages + ", \"OrderByColumn\" : \"" + pageNavigation.OrderByColumn + "\", \"SortDirection\" : \"" + pageNavigation.SortDirection + "\", \"Records\" : " + sbRecords.ToString() + " }";
+                string json = "{ \"ToFormId\" : \"" + gridSchema.ToFormId + "\", \"GridType\" : \"" + gridSchema.GridType + "\", \"RecordCount\" : " + recordCount + ", \"NumOfPages\" : " + numOfPages + ", \"OrderByColumn\" : \"" + pageNavigation.OrderByColumn + "\", \"SortDirection\" : \"" + pageNavigation.SortDirection + "\", \"Records\" : " + sbRecords.ToString() + " }";
 
                 return json;
 
@@ -88,13 +100,12 @@ namespace DodoBird.Controllers
             StringBuilder sb = new StringBuilder();
 
             // add formId and primary key columns
-            var formId = 6;  //xxx
             string primaryKeys = "";
-            primaryKeys = "'{ \"FormId\" : \"" + formId  + "\"";
+            primaryKeys = "'{ \"FormId\" : \"" + gridSchema.ToFormId + "\"";
 
             foreach (var key in tableSchema.PrimaryKeys)
             {
-                primaryKeys += ", \"" + key.ColumnName + "\" : \"' + CAST(" + key.ColumnName + " AS varchar(250) ) + '\"";
+                primaryKeys += ", \"" + key.ColumnName + "\" : \"' + CAST(" + tableSchema.Owner + "." + tableSchema.TableName + "." + key.ColumnName + " AS varchar(250) ) + '\"";
             }
 
             primaryKeys += " }' AS PrimaryKeys";

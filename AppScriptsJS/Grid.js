@@ -22,12 +22,12 @@ function GetGrid(menuId, newTab) {
                 PageNavigations[i].OrderByColumn = data.OrderByColumn;
                 PageNavigations[i].SortDirection = data.SortDirection;
             }
-            GenerateGridTable(menuId, newTab, data.ToFormId, data.Records);
-            //if (1==1) {
-            //    GenerateCustomGrid(menuId, newTab, data.Records);
-            //} else {
-            //    GenerateGridTable(menuId, newTab, data.Records);
-            //}
+            if (data.GridType == 1) {
+                GenerateCustomGrid(menuId, newTab, data.ToFormId, data.Records);
+            }
+            else {
+                GenerateGridTable(menuId, newTab, data.ToFormId, data.Records);
+            }
         }
     });
 }

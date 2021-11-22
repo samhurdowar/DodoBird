@@ -265,6 +265,7 @@ table {
     opacity: 0.5;
     z-index: 1;
 }
+
 #overlay {
     position: fixed;
     left: 0;
@@ -276,6 +277,7 @@ table {
     opacity: 0.5;
     z-index: 1;
 }
+
 .custom-tab-content {
     list-style-type: none;
     padding: 10px;
